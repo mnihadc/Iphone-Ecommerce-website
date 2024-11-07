@@ -11,7 +11,6 @@ const getLoginPage = (req, res, next) => {
 const SignUp = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-    console.log(username, email, password);
     if (!username || !email || !password) {
       return res.status(400).json({ error: "All fields are required." });
     }
@@ -51,7 +50,7 @@ const Login = async (req, res, next) => {
     if (!userEmail) {
       return res
         .status(401)
-        .json({ message: "Invalid credentials. Please try again." });
+        .json({ message: "Invalid email. Please try again." });
     }
     const isPasswordValid = await bcrypt.compare(password, userEmail.password);
     if (!isPasswordValid) {
