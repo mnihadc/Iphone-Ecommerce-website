@@ -1,33 +1,40 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const path = require("path"); // Import path module
-const exphbs = require("express-handlebars"); // Import express-handlebars
+const path = require("path");
+const mongoose = require("mongoose");
+const exphbs = require("express-handlebars");
 const homeRouter = require("./route/home.route");
 const authRouter = require("./route/auth.route");
 
 const app = express();
 dotenv.config();
 
-// Get the port number from environment variables
-const port = process.env.PORT_NO || 3000; // Default to 3000 if no port is specified
-
-// Set Handlebars as the view engine and configure the layout folder
+const port = process.env.PORT_NO;
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("MongoDB connected successfully!");
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+  });
 app.engine(
   "hbs",
   exphbs.engine({
     extname: "hbs",
-    defaultLayout: "main", // Specifies the default layout template (main.hbs)
-    layoutsDir: path.join(__dirname, "views/layouts"), // Path to the layouts folder
+    defaultLayout: "main",
+    layoutsDir: path.join(__dirname, "views/layouts"),
   })
 );
 app.set("view engine", "hbs");
 
-// Middleware to serve static files (CSS, images, JS, etc.)
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public/user")));
 app.use(express.static(path.join(__dirname, "public/css")));
 
-// Middleware to handle JSON requests
 app.use(express.json());
 
 // Routes
