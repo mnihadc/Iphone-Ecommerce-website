@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const path = require("path"); // Import path module
 const exphbs = require("express-handlebars"); // Import express-handlebars
 const homeRouter = require("./route/home.route");
+const authRouter = require("./route/auth.route");
 
 const app = express();
 dotenv.config();
@@ -24,12 +25,14 @@ app.set("view engine", "hbs");
 // Middleware to serve static files (CSS, images, JS, etc.)
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public/user")));
+app.use(express.static(path.join(__dirname, "public/css")));
 
 // Middleware to handle JSON requests
 app.use(express.json());
 
 // Routes
 app.use("/", homeRouter);
+app.use("/auth", authRouter);
 
 // Start the server
 app.listen(port, () => {

@@ -1,57 +1,77 @@
-/* Ensure the body content doesn't go under the fixed header */
-body {
+/* General Page and Header */
+body,
+html {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  height: 100%;
 }
 
-/* Header styling */
-header {
-  position: fixed;
+/* Navbar (Header) */
+.navbar {
+  padding: 0; /* Remove padding from navbar */
+  height: 60px; /* Adjust the height of the navbar */
+  position: fixed; /* Keep the navbar fixed at the top */
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px; /* Reduced height */
-  background-color: #333; /* Keep background color the same */
-  color: white;
-  text-align: center;
-  line-height: 60px; /* Reduced line-height to match the new height */
-  font-size: 18px; /* Adjusted font size for better alignment */
-  z-index: 1000;
+  background: lightgreen; /* Light Gray background color */
+  z-index: 1000; /* Ensure it's above all content */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a small shadow to differentiate the navbar */
 }
 
-/* Ensure content section doesn't go under the header */
+.navbar-logo {
+  height: 20px; /* Reduce logo size */
+  width: 20px; /* Reduce logo size */
+  margin-right: 10px;
+}
+
+.navbar-brand {
+  color: #000; /* Change font color to black for contrast on light gray */
+  font-size: 18px; /* Reduce font size for brand */
+  text-decoration: none;
+  padding: 0; /* Remove padding */
+  line-height: 60px; /* Vertically center the brand */
+}
+
+.navbar-nav .nav-link {
+  color: #000; /* Change font color to black for contrast */
+  font-weight: 700;
+  font-size: 1rem; /* Reduce font size */
+  padding: 10px 15px; /* Reduce padding for nav links */
+  transition: color 0.3s;
+  line-height: 60px; /* Vertically center the nav links */
+}
+
+.navbar-nav .nav-link:hover {
+  color: #555; /* Darker shade for hover effect */
+}
+
+.icon-small {
+  width: 20px; /* Adjust icon size */
+  height: 20px;
+  margin-top: 0; /* Align icon correctly */
+}
+
+/* Main Content to avoid overlap */
 .main-content {
-  margin-top: 70px; /* Adjusted top margin to avoid content being hidden behind the header */
-  padding: 20px;
+  padding-top: 70px; /* Adjust this to account for the fixed header */
+  margin-bottom: 60px; /* Add margin at the bottom to prevent overlap with footer */
 }
 
-/* Media Query for Mobile View */
+/* Responsive Styles for Smaller Screens */
 @media (max-width: 767px) {
-  /* Navbar logo adjustments */
   .navbar img {
-    width: 40px;
-    height: 40px;
-  }
-
-  /* Adjust navbar and header for smaller screens */
-  header {
-    height: 50px; /* Further reduce header height on smaller screens */
-    line-height: 50px; /* Adjust line-height to center content */
-  }
-
-  .navbar {
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
-  .navbar-brand {
-    font-size: 18px; /* Adjust brand text size on small screens */
-  }
-
-  /* Adjust cart and user icons for smaller screens */
-  .navbar-nav .nav-item a img {
     width: 20px;
-    height: 20px;
+    height: 20px; /* Reduced logo size for mobile */
+  }
+  .navbar-brand {
+    font-size: 16px; /* Smaller font size for smaller screens */
+  }
+  .navbar-nav .nav-link {
+    font-size: 0.9rem; /* Adjust font size on mobile */
+  }
+  .main-content {
+    padding-top: 60px; /* Adjust for smaller header */
   }
 }
