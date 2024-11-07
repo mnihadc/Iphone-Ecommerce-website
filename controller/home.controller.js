@@ -1,5 +1,5 @@
 const getHomePage = (req, res, next) => {
-  res.render("Home", {
+  res.render("users/home", {
     title: "Home Page",
     isHomePage: true,
   });

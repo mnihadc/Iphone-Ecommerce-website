@@ -10,7 +10,9 @@
   "description": "",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "exphbs": "^1.2.0",
     "express": "^4.21.1",
+    "express-handlebars": "^8.0.1",
     "hbs": "^4.2.0",
     "nodemon": "^3.1.7"
   }
