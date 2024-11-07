@@ -39,4 +39,29 @@ const SignUp = async (req, res, next) => {
   }
 };
 
-module.exports = { getLoginPage, SignUp };
+const Login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ error: "Email and password are required." });
+    }
+    const userEmail = await User.findOne({ email: email });
+    if (!userEmail) {
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials. Please try again." });
+    }
+    const isPasswordValid = await bcrypt.compare(password, userEmail.password);
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials. Please try again." });
+    }
+    res.redirect("/");
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { getLoginPage, SignUp, Login };
