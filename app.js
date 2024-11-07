@@ -6,7 +6,7 @@ dotenv.config();
 
 const port = process.env.PORT_NO;
 
-// Middleware to parse JSON
+// Build in middleware
 app.use(express.json());
 
 // Server listening on port
