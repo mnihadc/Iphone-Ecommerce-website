@@ -9,6 +9,9 @@ const authRouter = require("./route/auth.route");
 const app = express();
 dotenv.config();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const port = process.env.PORT_NO;
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -21,6 +24,7 @@ mongoose
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
   });
+
 app.engine(
   "hbs",
   exphbs.engine({
@@ -34,8 +38,6 @@ app.set("view engine", "hbs");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public/user")));
 app.use(express.static(path.join(__dirname, "public/css")));
-
-app.use(express.json());
 
 // Routes
 app.use("/", homeRouter);
