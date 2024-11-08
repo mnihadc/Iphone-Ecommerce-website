@@ -1,5 +1,5 @@
 const getHomePage = (req, res, next) => {
-  res.render("users/home", {
+  res.render("users/Home", {
     title: "Home Page",
     isHomePage: true,
     user: req.session.user,
