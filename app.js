@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
+const session = require("express-session");
 const homeRouter = require("./route/home.route");
 const authRouter = require("./route/auth.route");
 
@@ -11,7 +12,10 @@ dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
+// MongoDB connection
 const port = process.env.PORT_NO;
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -24,6 +28,15 @@ mongoose
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
   });
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 3600000 },
+  })
+);
 
 app.engine(
   "hbs",
