@@ -51,6 +51,10 @@ app.set("view engine", "hbs");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public/user")));
 app.use(express.static(path.join(__dirname, "public/css")));
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isAuthenticated || false;
+  next();
+});
 
 // Routes
 app.use("/", homeRouter);

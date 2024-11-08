@@ -32,11 +32,19 @@
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
                 </ul>
                 <ul class="navbar-nav ml-3">
+                    {{#if user}}
                     <li class="nav-item">
-                        <a class="nav-link" href="/auth/login">
+                        <a class="nav-link" href="/">
                             <img src="/images/user.svg" alt="User" class="icon-small">
                         </a>
                     </li>
+                    {{else}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">
+                            <button>Login</button>
+                        </a>
+                    </li>
+                    {{/if}}
                     <li class="nav-item">
                         <a class="nav-link" href="cart.html">
                             <img src="/images/cart.svg" alt="Cart" class="icon-small">

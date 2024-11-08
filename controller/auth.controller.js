@@ -38,7 +38,6 @@ const SignUp = async (req, res, next) => {
     next(error);
   }
 };
-
 const Login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -61,9 +60,11 @@ const Login = async (req, res, next) => {
         .status(401)
         .json({ message: "Invalid credentials. Please try again." });
     }
+
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+
     res.cookie("authToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -71,10 +72,28 @@ const Login = async (req, res, next) => {
       maxAge: 3600000,
     });
 
+    req.session.isAuthenticated = true;
+    req.session.user = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+    };
+
     res.redirect("/");
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { getLoginPage, SignUp, Login };
+const Logout = (req, res) => {
+  res.clearCookie("authToken");
+  req.session.isAuthenticated = false;
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Could not log out." });
+    }
+    res.redirect("/auth/login");
+  });
+};
+
+module.exports = { getLoginPage, SignUp, Login, Logout };
