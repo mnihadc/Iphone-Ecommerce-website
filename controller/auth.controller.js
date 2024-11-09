@@ -95,6 +95,7 @@ const Logout = (req, res) => {
     if (err) {
       return res.status(500).json({ message: "Could not log out." });
     }
+    res.clearCookie("connect.sid");
     res.redirect("/auth/login");
   });
 };
