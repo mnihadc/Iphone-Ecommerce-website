@@ -1,5 +1,6 @@
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const getProfile = async (req, res, next) => {
   const user = req.session.user;
@@ -12,7 +13,6 @@ const getProfile = async (req, res, next) => {
     if (!userData) {
       return res.status(404).json({ message: "User not found." });
     }
-
     res.render("users/Profile", {
       title: "Profile Page",
       isProfilePage: true,
@@ -45,32 +45,32 @@ const deleteUser = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body; // Get updated data from request body
-    const userId = req.params.id; // Get the user ID from the URL parameter
+    const { username, email, password } = req.body;
+    const userId = req.params.id;
 
-    // Optional: Hash the new password if provided
-    let updatedData = { username, email };
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10); // Hash the new password
-      updatedData.password = hashedPassword; // Add the hashed password to the update data
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found." });
     }
-
-    // Find and update the user by their ID
+    let updatedData = { username, email };
+    if (password && password !== existingUser.password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updatedData.password = hashedPassword;
+    } else {
+      updatedData.password = existingUser.password;
+    }
     const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
       new: true,
     });
+    req.session.user = {
+      id: updatedUser._id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+    };
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found." });
-    }
-
-    // Optionally, update session data if the logged-in user is the one being updated
-    req.session.user = updatedUser; // Update the session with the new user data
-
-    // Respond with a success message or redirect to the updated profile page
-    res.redirect("/profile/user"); // Redirect to the user's profile page
+    res.redirect("/profile/user");
   } catch (error) {
-    next(error); // Pass the error to the next middleware (for error handling)
+    next(error);
   }
 };
 

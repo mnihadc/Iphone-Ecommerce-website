@@ -2,6 +2,7 @@ const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+// Render Login Page
 const getLoginPage = (req, res) => {
   res.render("users/Login", {
     title: "Login Page",
@@ -9,6 +10,7 @@ const getLoginPage = (req, res) => {
   });
 };
 
+// Sign Up Logic
 const SignUp = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -38,6 +40,7 @@ const SignUp = async (req, res, next) => {
   }
 };
 
+// Login Logic
 const Login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -88,6 +91,8 @@ const Login = async (req, res, next) => {
     next(error);
   }
 };
+
+// Logout Logic
 const Logout = (req, res) => {
   res.clearCookie("authToken");
   req.session.isAuthenticated = false;
@@ -99,4 +104,4 @@ const Logout = (req, res) => {
     res.redirect("/auth/login");
   });
 };
-module.exports = { getLoginPage, Login, SignUp, Logout };
+module.exports = { Login, SignUp, Logout, getLoginPage };
