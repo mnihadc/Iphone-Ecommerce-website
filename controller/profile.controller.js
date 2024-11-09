@@ -33,6 +33,9 @@ const deleteUser = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
+    req.session.destroy();
+    res.clearCookie("authToken");
+    res.clearCookie("connect.sid");
     res.redirect("/auth/login");
   } catch (error) {
     next(error);

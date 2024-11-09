@@ -73,7 +73,10 @@
                                         <a class="btn btn-primary ml-3" href="/auth/logout">Logout</a>
                                     </div>
                                     <div>
-                                        <a class="btn btn-danger ml-3" href="">Delete-User</a>
+                                        <form action="/profile/delete-user/{{user.id}}" method="POST"
+                                            style="display:inline;">
+                                            <button type="submit" class="btn btn-danger ml-3">Delete-User</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
