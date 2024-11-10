@@ -7,6 +7,7 @@ const session = require("express-session");
 const homeRouter = require("./route/home.route");
 const authRouter = require("./route/auth.route");
 const profileRouter = require("./route/profile.route");
+const addressRouter = require("./route/address.route");
 
 const app = express();
 dotenv.config();
@@ -61,6 +62,7 @@ app.use((req, res, next) => {
 app.use("/", homeRouter);
 app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
+app.use("/address", addressRouter);
 
 // Start the server
 app.listen(port, () => {
