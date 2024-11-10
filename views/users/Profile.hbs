@@ -90,9 +90,23 @@
                         <div class="col-sm-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">
-                                    <a href="/address/get-create-address"><button type="button"
-                                            class="btn btn-success">Create Address</button>
+                                    {{#if address}}
+                                    <h6>Address Information</h6>
+                                    <p><strong>Full Name:</strong> {{address.fullName}}</p>
+                                    <p><strong>Email:</strong> {{address.email}}</p>
+                                    <p><strong>Gender:</strong> {{address.gender}}</p>
+                                    <p><strong>Date of Birth:</strong> {{address.dob}}</p>
+                                    <p><strong>Phone:</strong> {{address.phone}}</p>
+                                    <p><strong>Address:</strong> {{address.address}}</p>
+                                    <p><strong>City:</strong> {{address.city}}</p>
+                                    <p><strong>District:</strong> {{address.district}}</p>
+                                    <p><strong>State:</strong> {{address.state}}</p>
+                                    <p><strong>Postal Code:</strong> {{address.postalCode}}</p>
+                                    {{else}}
+                                    <a href="/address/get-create-address">
+                                        <button type="button" class="btn btn-success">Create Address</button>
                                     </a>
+                                    {{/if}}
                                 </div>
                             </div>
                         </div>

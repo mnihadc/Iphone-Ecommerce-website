@@ -1,6 +1,7 @@
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Address = require("../model/Address");
 
 const getProfile = async (req, res, next) => {
   const user = req.session.user;
@@ -13,6 +14,7 @@ const getProfile = async (req, res, next) => {
     if (!userData) {
       return res.status(404).json({ message: "User not found." });
     }
+    const address = await Address.findOne({ userId: user.id });
     res.render("users/Profile", {
       title: "Profile Page",
       isProfilePage: true,
@@ -21,6 +23,21 @@ const getProfile = async (req, res, next) => {
       user: req.session.user,
       username: userData.username,
       password: userData.password,
+      address: address
+        ? {
+            fullName: address.fullName,
+            email: address.email,
+            street: address.street,
+            city: address.city,
+            dob: address.dob,
+            address: address.address,
+            district: address.district,
+            state: address.state,
+            postalCode: address.postalCode,
+            phone: address.phone,
+            gender: address.gender,
+          }
+        : null,
     });
   } catch (error) {
     console.error("Error fetching user data:", error);
