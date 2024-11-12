@@ -46,11 +46,16 @@ a:hover {
 }
 
 /* Hero section */
+
 .hero {
-  background: #3b5d50;
-  padding: 4rem 0 4rem 0; /* Adjust for mobile */
-  position: relative;
+  background-image: url("https://images2.alphacoders.com/365/thumb-1920-36582.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 90vh;
+  padding: 4rem 0 4rem 0;
 }
+
 .hero .intro-excerpt {
   position: relative;
   z-index: 4;
@@ -59,7 +64,7 @@ a:hover {
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 30px;
-  font-size: 36px; /* Default font size */
+  font-size: 36px;
 }
 .hero p {
   color: rgba(255, 255, 255, 0.5);

@@ -7,8 +7,8 @@
     <title>{{title}}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/user-css/style.css">
-    <link rel="icon" href="/images/logo.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="/images/5b83693bae2828e7c357855f276520b0.jpg" type=" image/x-icon">
     {{#if isLoginPage}}
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/login.css">
@@ -20,13 +20,99 @@
     <link rel="stylesheet" href="/css/createaddress.css">
     {{/if}}
 </head>
+<style>
+    /* General Page and Header */
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        height: 100%;
+    }
+
+    /* Navbar (Header) */
+    /* Navbar (Header) */
+    .navbar {
+        background-color: #003366 !important;
+        /* Dark Blue Background */
+        height: 60px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+        color: #ffffff;
+        /* Bright White Text for Brand */
+        font-size: 22px;
+        text-decoration: none;
+        line-height: 60px;
+    }
+
+    .navbar-nav .nav-link {
+        color: #d4e4ff;
+        /* Light Blue for Better Readability */
+        font-weight: 700;
+        padding: 10px 15px;
+        transition: color 0.3s;
+        line-height: 60px;
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #ffcc00;
+        /* Golden Yellow for Hover Effect */
+    }
+
+    .icon-small {
+        width: 20px;
+        height: 20px;
+        color: #d4e4ff;
+        /* Match Link Color */
+    }
+
+    /* Main Content to avoid overlap */
+    .main-content {
+        padding-top: 50px;
+        /* Adjust this to account for the fixed header */
+        margin-bottom: 60px;
+        /* Add margin at the bottom to prevent overlap with footer */
+    }
+
+    /* Responsive Styles for Smaller Screens */
+    @media (max-width: 767px) {
+        .navbar img {
+            width: 20px;
+            height: 20px;
+            /* Reduced logo size for mobile */
+        }
+
+        .navbar-brand {
+            font-size: 16px;
+            /* Smaller font size for smaller screens */
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 0.9rem;
+            /* Adjust font size on mobile */
+        }
+
+        .main-content {
+            padding-top: 60px;
+            /* Adjust for smaller header */
+        }
+    }
+</style>
 
 <body>
 
     <!-- Fixed Navbar Header -->
     <nav class="navbar navbar-expand-md fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="/">Big_Fit Home Decor</a>
+            <img class="icon-small " style="background: none;" src="/images/5b83693bae2828e7c357855f276520b0.jpg"
+                alt="">
+            <a class="navbar-brand ml-2" href="/">iStore</a>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
