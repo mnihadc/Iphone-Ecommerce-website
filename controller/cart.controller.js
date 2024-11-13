@@ -1,5 +1,12 @@
 const Cart = require("../model/Cart");
 
+const getCartPage = (req, res, next) => {
+  res.render("users/Cart", {
+    title: "Home Page",
+    isHomePage: true,
+    user: req.session.user,
+  });
+};
 const addToCart = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -22,4 +29,4 @@ const addToCart = async (req, res, next) => {
   }
 };
 
-module.exports = { addToCart };
+module.exports = { addToCart,getCartPage };
