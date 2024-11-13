@@ -58,7 +58,8 @@
                 <!-- Start Product Column -->
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
                     <!-- Create a clickable link that navigates to the product details page -->
-                    <a class="product-item" href="/product/{{this._id}}">
+                    <!-- HTML Template: Add Product to Cart -->
+                    <a class="product-item" href="/cart/addtocart/{{this._id}}">
                         <!-- Check if productImages exists and show the first image -->
                         <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
                         <h3 class="product-title" style="color: black;">{{this.name}}</h3>
