@@ -8,6 +8,7 @@ const homeRouter = require("./route/home.route");
 const authRouter = require("./route/auth.route");
 const profileRouter = require("./route/profile.route");
 const addressRouter = require("./route/address.route");
+const cartRouter = require("./route/cart.route");
 
 const app = express();
 dotenv.config();
@@ -63,6 +64,7 @@ app.use("/", homeRouter);
 app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/address", addressRouter);
+app.use("/cart", cartRouter);
 
 // Start the server
 app.listen(port, () => {
