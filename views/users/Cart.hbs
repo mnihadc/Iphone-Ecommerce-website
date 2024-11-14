@@ -127,7 +127,8 @@
                             </div>
                             <div class="col">
                                 &euro; {{this.finalPrice}}
-                                <span class="close">&#10005;</span>
+                                <span class="close remove-cart-item" data-product-id="{{this._id}}">&#10005;</span>
+
                             </div>
 
                         </div>
@@ -170,5 +171,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const removeButtons = document.querySelectorAll(".remove-cart-item");
+
+        removeButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const productId = this.getAttribute("data-product-id");
+
+                fetch(`/cart/remove-cart/${productId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Item removed from cart successfully!");
+                            location.reload();
+                        } else {
+                            alert("Failed to remove item from cart.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error removing item from cart:", error);
+                    });
+            });
+        });
+    });
+</script>
 
 </html>

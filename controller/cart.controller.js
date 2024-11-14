@@ -20,17 +20,18 @@ const getCartPage = async (req, res, next) => {
         finalPrice: product.offerPrice || product.price,
         categoryName: product.category ? product.category.name : "",
         productName: product.name,
+        _id: product._id,
       };
     });
 
     const totalPrice = products.reduce((total, product) => {
       return total + product.finalPrice;
     }, 0);
-
     res.render("users/Cart", {
       title: "Cart Page",
       isHomePage: true,
       user: user,
+      cartItems: cartItems,
       products: products,
       totalPrice: totalPrice,
       allowProtoAccess: true,
