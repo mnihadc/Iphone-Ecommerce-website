@@ -1,12 +1,26 @@
-const verifyToken = require("../middleware/verifyToken");
+const mongoose = require("mongoose");
 const Cart = require("../model/Cart");
+const Product = require("../model/Product");
 
-const getCartPage = (req, res, next) => {
-  res.render("users/Cart", {
-    title: "Home Page",
-    isHomePage: true,
-    user: req.session.user,
-  });
+const getCartPage = async (req, res, next) => {
+  try {
+    const user = req.session.user;
+    const userId = user.id;
+    const cartItems = await Cart.find({ userId });
+    const products = await Product.find({
+      _id: { $in: cartItems.map((item) => item.productId) },
+    });
+
+    res.render("users/Cart", {
+      title: "Cart Page",
+      isHomePage: true,
+      user: user,
+      products: products,
+    });
+  } catch (error) {
+    console.error("Error fetching cart details:", error);
+    next(error);
+  }
 };
 
 const addToCart = async (req, res, next) => {
