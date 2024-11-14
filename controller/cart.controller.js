@@ -1,3 +1,4 @@
+const verifyToken = require("../middleware/verifyToken");
 const Cart = require("../model/Cart");
 
 const getCartPage = (req, res, next) => {
@@ -11,7 +12,11 @@ const getCartPage = (req, res, next) => {
 const addToCart = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const userId = req.session.user.id;
+    const userId = req.session?.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not logged in" });
+    }
 
     const existingCartItem = await Cart.findOne({ userId, productId });
     if (existingCartItem) {

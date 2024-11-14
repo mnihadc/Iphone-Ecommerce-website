@@ -530,19 +530,27 @@
                         "Content-Type": "application/json",
                     },
                 })
-                    .then(response => {
-                        if (response.ok) {
-                            alert("Item added to cart successfully!");
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 201) {
+                            alert(message); 
+                        } else if (status === 400) {
+                            alert("Item is already in cart.");
+                        } else if (status === 401) {
+                            alert("Please log in to add items to the cart.");
+                            window.location.href = "/auth/login";
                         } else {
-                            alert("Item is already in cart or an error occurred.");
+                            alert("An unexpected error occurred.");
                         }
                     })
                     .catch(error => {
                         console.error("Error adding to cart:", error);
+                        alert("An error occurred. Please try again later.");
                     });
             });
         });
     });
 </script>
+
 
 </html>
