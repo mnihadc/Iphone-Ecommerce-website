@@ -6,16 +6,34 @@ const getCartPage = async (req, res, next) => {
   try {
     const user = req.session.user;
     const userId = user.id;
+
     const cartItems = await Cart.find({ userId });
-    const products = await Product.find({
+
+    let products = await Product.find({
       _id: { $in: cartItems.map((item) => item.productId) },
     });
+
+    products = products.map((product) => {
+      return {
+        ...product.toObject(),
+        firstImage: product.productImages && product.productImages[0],
+        finalPrice: product.offerPrice || product.price,
+        categoryName: product.category ? product.category.name : "",
+        productName: product.name,
+      };
+    });
+
+    const totalPrice = products.reduce((total, product) => {
+      return total + product.finalPrice;
+    }, 0);
 
     res.render("users/Cart", {
       title: "Cart Page",
       isHomePage: true,
       user: user,
       products: products,
+      totalPrice: totalPrice,
+      allowProtoAccess: true,
     });
   } catch (error) {
     console.error("Error fetching cart details:", error);
