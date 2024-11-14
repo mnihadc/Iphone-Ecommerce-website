@@ -51,16 +51,13 @@
         </div>
     </div>
     <!-- End Hero Section -->
+    <!--Product display -->
     <div class="product-section">
         <div class="container">
             <div class="row">
                 {{#each products}}
-                <!-- Start Product Column -->
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                    <!-- Create a clickable link that navigates to the product details page -->
-                    <!-- HTML Template: Add Product to Cart -->
-                    <a class="product-item" href="/cart/addtocart/{{this._id}}">
-                        <!-- Check if productImages exists and show the first image -->
+                    <div class="product-item">
                         <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
                         <h3 class="product-title" style="color: black;">{{this.name}}</h3>
                         <strong class="product-price">
@@ -70,17 +67,16 @@
                             ${{this.price}}
                             {{/if}}
                         </strong>
-                        <span class="icon-cross">
-                            <img src="images/cross.svg" class="img-fluid" alt="remove">
-                        </span>
-                    </a>
+                        <button class="add-to-cart-btn" data-product-id="{{this._id}}">
+                            Add to Cart
+                        </button>
+                    </div>
                 </div>
-                <!-- End Product Column -->
                 {{/each}}
             </div>
         </div>
     </div>
-
+    <!--End Product Display -->
 
     <!-- Start Why Choose Us Section -->
     <div class="why-choose-section">
@@ -519,5 +515,33 @@
     <script src="js/tiny-slider.js"></script>
     <script src="js/custom.js"></script>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const productId = this.getAttribute("data-product-id");
+
+                fetch(`/cart/addtocart/${productId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Item added to cart successfully!");
+                        } else {
+                            alert("Item is already in cart or an error occurred.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error adding to cart:", error);
+                    });
+            });
+        });
+    });
+</script>
 
 </html>

@@ -7,20 +7,18 @@ const getCartPage = (req, res, next) => {
     user: req.session.user,
   });
 };
+
 const addToCart = async (req, res, next) => {
   try {
     const { productId } = req.params;
     const userId = req.session.user.id;
-    const existingCartItem = await Cart.findOne({ userId, productId });
 
+    const existingCartItem = await Cart.findOne({ userId, productId });
     if (existingCartItem) {
       return res.status(400).json({ message: "Item already in cart" });
     }
-    const newCartItem = new Cart({
-      userId,
-      productId,
-    });
 
+    const newCartItem = new Cart({ userId, productId });
     await newCartItem.save();
 
     res.status(201).json({ message: "Item added to cart successfully" });
@@ -29,4 +27,4 @@ const addToCart = async (req, res, next) => {
   }
 };
 
-module.exports = { addToCart,getCartPage };
+module.exports = { addToCart, getCartPage };
