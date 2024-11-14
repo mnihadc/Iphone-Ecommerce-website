@@ -64,4 +64,18 @@ const addToCart = async (req, res, next) => {
   }
 };
 
-module.exports = { addToCart, getCartPage };
+const removeCartItem = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const user = req.session.user;
+    const userId = user.id;
+    if (!userId) {
+      return res.status(401).json({ message: "User not logged in" });
+    }
+    await Cart.deleteOne({ userId, productId });
+    res.status(200).json({ message: "Item removed from cart successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { addToCart, getCartPage, removeCartItem };
