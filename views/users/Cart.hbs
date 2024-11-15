@@ -147,8 +147,10 @@
                     <form>
                         <p>SHIPPING</p>
                         <select>
-                            <option class="text-muted">Standard-Delivery- &euro;5.00</option>
+                            <option value="Standard-Delivery" class="text-muted">Standard-Delivery- &euro;5.00</option>
+                            <option value="Express-Delivery" class="text-muted">Express-Delivery-&euro;10.00</option>
                         </select>
+
                         <p>GIVE CODE</p>
                         <input id="code" placeholder="Enter your code">
                     </form>
@@ -247,16 +249,14 @@
     document.querySelector(".btn").addEventListener("click", function (e) {
         e.preventDefault();
 
-        const offerCode = document.getElementById("code").value;
-        const shippingMethod = document.querySelector("select").value;
-        const totalPrice = parseFloat(
-            document.querySelector(".total-price").textContent.trim()
-        );
+        const offerCode = document.getElementById("code").value.trim();
+        const shippingMethod = document.querySelector("select").value.trim();
 
-        if (isNaN(totalPrice)) {
-            alert("Invalid total price. Please try again.");
+        if (!["Express-Delivery", "Standard-Delivery"].includes(shippingMethod)) {
+            alert("Invalid shipping method. Please select a valid option.");
             return;
         }
+
 
         const cartItems = [];
         document.querySelectorAll(".quantity").forEach((quantityElement) => {
@@ -267,10 +267,14 @@
             }
         });
 
+        if (cartItems.length === 0) {
+            alert("Your cart is empty. Please add items to checkout.");
+            return;
+        }
+
         const cartData = {
-            offerCode,
+            offerCode: offerCode || null,
             shippingMethod,
-            totalPrice,
             items: cartItems,
         };
 
@@ -287,14 +291,15 @@
                     alert("Checkout successful! Your order is being processed.");
                     window.location.href = "/";
                 } else {
-                    alert("Error during checkout: " + data.message);
+                    alert(`Error during checkout: ${data.message}`);
                 }
             })
             .catch((err) => {
-                console.error("Error:", err);
-                alert("An error occurred while processing your checkout.");
+                console.error("Checkout Error:", err);
+                alert("An unexpected error occurred. Please try again later.");
             });
     });
+
 </script>
 
 
