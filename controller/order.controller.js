@@ -1,51 +1,77 @@
-const Checkout = require("../models/Checkout"); // Assuming Checkout model is stored in models/Checkout.js
-const Cart = require("../models/Cart"); // Assuming Cart model is stored in models/Cart.js
+const Checkout = require("../model/Checkout");
+const Cart = require("../model/Cart");
+const Product = require("../model/Product");
 
 const checkout = async (req, res, next) => {
   try {
-    const { userId, offerCode, shippingMethod } = req.body; // Get data from the request
+    const { offerCode, shippingMethod, totalPrice, items } = req.body;
+    const user = req.session.user;
+    const userId = user.id;
 
-    // Get the cart items for the user
-    const cart = await Cart.findOne({ userId: userId });
-    if (!cart) {
+    if (!userId || userId === "") {
+      return res
+        .status(400)
+        .json({ message: "User ID is required and cannot be empty" });
+    }
+
+    const cart = await Cart.find({ userId: userId }).populate("productId");
+    if (!cart || cart.length === 0) {
       return res.status(400).json({ message: "Cart not found for the user" });
     }
 
-    // Calculate total price with shipping and offer code
-    let totalPrice = cart.totalPrice;
     let discount = 0;
+    let finalTotalPrice = totalPrice; // Make sure it's declared with 'let' to allow modification
 
-    // Check if offer code exists
+    // Apply discount based on offer code
     if (offerCode) {
-      // Example: Apply 10% discount for the offer code "DISCOUNT10"
       if (offerCode === "DISCOUNT10") {
         discount = totalPrice * 0.1; // 10% discount
-        totalPrice -= discount;
+        finalTotalPrice -= discount; // Modify finalTotalPrice
       }
     }
 
-    // Add shipping cost
+    // Add shipping cost based on shipping method
     const shippingCost = shippingMethod === "Express-Delivery" ? 10 : 5;
-    totalPrice += shippingCost;
+    finalTotalPrice += shippingCost;
 
-    // Create the checkout record
-    const checkout = new Checkout({
+    const checkoutItems = [];
+    for (const item of items) {
+      const product = cart.find(
+        (c) => c.productId._id.toString() === item.productId
+      );
+      if (product) {
+        const productDetails = product.productId;
+        const unitPrice = productDetails.unitPrice;
+        const itemPrice = unitPrice * item.quantity;
+        checkoutItems.push({
+          productId: item.productId,
+          productName: productDetails.name,
+          quantity: item.quantity,
+          totalPrice: itemPrice,
+        });
+      }
+    }
+
+    finalTotalPrice += shippingCost; // Add shipping to the final price
+    
+    const newCheckout = new Checkout({
       userId: userId,
-      items: cart.items,
-      totalPrice: totalPrice,
+      items: checkoutItems,
+      totalPrice: finalTotalPrice,
+      offerCode: offerCode || null,
+      delivery: shippingMethod,
       updatedAt: Date.now(),
     });
 
-    // Save the checkout record
-    await checkout.save();
+    await newCheckout.save();
+    await Cart.deleteMany({ userId: userId });
 
-    // Optional: You may want to clear the cart after checkout
-    // await Cart.deleteOne({ userId: userId });
-
-    res.status(200).json({ message: "Checkout successful", checkout });
+    res
+      .status(200)
+      .json({ message: "Checkout successful", checkout: newCheckout });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error during checkout" });
+    res.status(500).json({ message: "Error during checkout", error: err });
   }
 };
 

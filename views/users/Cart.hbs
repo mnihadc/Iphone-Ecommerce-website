@@ -250,23 +250,40 @@
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Handle Checkout Button click
         document.querySelector(".btn").addEventListener("click", function (e) {
             e.preventDefault();
 
-            const offerCode = document.getElementById("code").value;  // Get offer code
-            const shippingMethod = document.querySelector("select").value;  // Get selected shipping method
+            // Get the values from the form
+            const offerCode = document.getElementById("code").value;  // Offer code input
+            const shippingMethod = document.querySelector("select").value;  // Shipping method
+            const totalPrice = parseFloat(document.querySelector(".total-price").textContent.trim());  // Total price displayed
 
-            const userId = "{{userId}}";  // You can dynamically insert userId from your backend
+            if (isNaN(totalPrice)) {
+                alert("Invalid total price. Please try again.");
+                return;
+            }
 
+            // Collect the cart items (productId and quantity)
+            const cartItems = [];
+            const quantityElements = document.querySelectorAll(".quantity");
+            quantityElements.forEach(quantityElement => {
+                const productId = quantityElement.getAttribute("data-product-id");
+                const quantity = parseInt(quantityElement.textContent.trim(), 10);
+                if (!isNaN(quantity) && productId) {
+                    cartItems.push({ productId, quantity });
+                }
+            });
+
+            // Prepare the data to send to the backend
             const cartData = {
-                userId: userId,
                 offerCode: offerCode,
-                shippingMethod: shippingMethod
+                shippingMethod: shippingMethod,
+                totalPrice: totalPrice,
+                items: cartItems
             };
 
-            // Send a POST request to the backend
-            fetch("/checkout", {
+            // Send the data to the backend
+            fetch("/order/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -277,7 +294,7 @@
                 .then(data => {
                     if (data.message === "Checkout successful") {
                         alert("Checkout successful! Your order is being processed.");
-                        window.location.href = "/order-summary";  // Redirect to order summary page
+                        window.location.href = "/";  // Redirect to order summary page
                     } else {
                         alert("Error during checkout: " + data.message);
                     }
@@ -288,8 +305,8 @@
                 });
         });
     });
-</script>
 
+</script>
 
 
 </html>

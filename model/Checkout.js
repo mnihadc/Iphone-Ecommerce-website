@@ -23,10 +23,6 @@ const checkoutSchema = new mongoose.Schema({
         required: true,
         min: 1,
       },
-      unitPrice: {
-        type: Number,
-        required: true,
-      },
       totalPrice: {
         type: Number,
         required: true,
@@ -57,4 +53,6 @@ const checkoutSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Checkout", checkoutSchema);
+const Checkout = mongoose.model("Checkout", checkoutSchema);
+
+module.exports = Checkout;
