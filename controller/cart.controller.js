@@ -14,19 +14,25 @@ const getCartPage = async (req, res, next) => {
     });
 
     products = products.map((product) => {
+      const cartItem = cartItems.find(
+        (item) => item.productId.toString() === product._id.toString()
+      );
       return {
         ...product.toObject(),
         firstImage: product.productImages && product.productImages[0],
-        finalPrice: product.offerPrice || product.price,
-        categoryName: product.category ? product.category.name : "",
-        productName: product.name,
+        finalPrice: (product.offerPrice || product.price) * cartItem.quantity,
+        category: product.category ? product.category.name : "",
+        name: product.name,
         _id: product._id,
+        newQuantity: cartItem.quantity,
+        unitPrice: product.offerPrice || product.price,
       };
     });
 
     const totalPrice = products.reduce((total, product) => {
       return total + product.finalPrice;
     }, 0);
+
     res.render("users/Cart", {
       title: "Cart Page",
       isHomePage: true,
@@ -80,21 +86,41 @@ const removeCartItem = async (req, res, next) => {
   }
 };
 
-const updateQuantity = async (req, res, next) => {
+const updateQuantity = async (req, res) => {
   try {
     const { productId, quantity } = req.params;
-    const user = req.session.user;
-    const userId = user.id;
+    const userId = req.session?.user?.id;
+
     if (!userId) {
       return res.status(401).json({ message: "User not logged in" });
     }
-    await Cart.updateOne(
+
+    const updatedQuantity = parseInt(quantity, 10);
+    if (isNaN(updatedQuantity) || updatedQuantity < 1) {
+      return res.status(400).json({ message: "Invalid quantity" });
+    }
+
+    const cartItem = await Cart.findOneAndUpdate(
       { userId, productId },
-      { quantity: parseInt(quantity) }
+      { quantity: updatedQuantity },
+      { new: true }
     );
-    res.status(200).json({ message: "Quantity updated successfully" });
+
+    if (!cartItem) {
+      return res.status(404).json({ message: "Item not found in cart" });
+    }
+
+    const product = await Product.findById(productId);
+    const unitPrice = product.offerPrice || product.price;
+    const finalPrice = unitPrice * updatedQuantity;
+
+    res.status(200).json({
+      message: "Quantity updated successfully",
+      finalPrice: finalPrice.toFixed(2),
+    });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Error updating quantity", error });
   }
 };
+
 module.exports = { addToCart, getCartPage, removeCartItem, updateQuantity };
