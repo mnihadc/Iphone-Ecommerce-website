@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Page</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .bodyHead {
+            margin-top: 20px;
+            background: #f8f9fa;
+        }
+
+        .cart-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-item .cart-item-product {
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-item .cart-item-product-thumb {
+            width: 90px;
+            margin-right: 15px;
+        }
+
+        .cart-item .cart-item-product-thumb img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .cart-item .cart-item-product-info {
+            flex: 1;
+        }
+
+        .cart-item .cart-item-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .count-input select {
+            width: 100px;
+        }
+
+        .remove-item {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            background-color: #ff5252;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(255, 82, 82, 0.5);
+        }
+
+        .remove-item i {
+            font-size: 14px;
+        }
+
+        .cart-summary {
+            text-align: center;
+        }
+
+        .cart-summary .btn {
+            width: 100%;
+            padding: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .cart-item {
+                padding: 10px;
+                display: block;
+            }
+
+            .cart-item .cart-item-product {
+                display: block;
+                text-align: center;
+            }
+
+            .cart-item .cart-item-product-thumb {
+                width: 80px;
+                margin: 0 auto 10px;
+            }
+
+            .cart-item .cart-item-product-info {
+                text-align: center;
+            }
+
+            .cart-item-label {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .cart-summary {
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .cart-summary {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bodyHead">
+        <div class="container pb-5 mb-2">
+
+            <!-- Cart Item-->
+            <div class="cart-item d-md-flex justify-content-between">
+                <span class="remove-item"><i class="fa fa-times"></i></span>
+                <div class="cart-item-product">
+                    <div class="cart-item-product-thumb">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Product">
+                    </div>
+                    <div class="cart-item-product-info">
+                        <h4 class="cart-item-product-title">Canon EOS M50 Mirrorless Camera</h4>
+                        <span><strong>Type:</strong> Mirrorless</span><br>
+                        <span><strong>Color:</strong> Black</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="cart-item-label">Quantity</div>
+                    <div class="count-input">
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="cart-item-label">Subtotal</div>
+                    <span class="text-xl font-weight-medium">$910.00</span>
+                </div>
+                <div class="text-center">
+                    <div class="cart-item-label">Discount</div>
+                    <span class="text-xl font-weight-medium">$35.00</span>
+                </div>
+            </div>
+
+            <!-- Cart Item-->
+            <div class="cart-item d-md-flex justify-content-between">
+                <span class="remove-item"><i class="fa fa-times"></i></span>
+                <div class="cart-item-product">
+                    <div class="cart-item-product-thumb">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="Product">
+                    </div>
+                    <div class="cart-item-product-info">
+                        <h4 class="cart-item-product-title">Apple iPhone X 256 GB Space Gray</h4>
+                        <span><strong>Memory:</strong> 256GB</span><br>
+                        <span><strong>Color:</strong> Space Gray</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="cart-item-label">Quantity</div>
+                    <div class="count-input">
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="cart-item-label">Subtotal</div>
+                    <span class="text-xl font-weight-medium">$1,450.00</span>
+                </div>
+                <div class="text-center">
+                    <div class="cart-item-label">Discount</div>
+                    <span class="text-xl font-weight-medium">—</span>
+                </div>
+            </div>
+
+            <!-- Coupon + Subtotal-->
+            <div class="d-flex justify-content-between align-items-center text-center text-sm-left">
+                <form class="form-inline py-2">
+                    <label class="sr-only">Coupon code</label>
+                    <input class="form-control form-control-sm my-2 mr-3" type="text" placeholder="Coupon code"
+                        required="">
+                    <button class="btn btn-secondary btn-sm my-2 mx-auto mx-sm-0" type="submit">Apply Coupon</button>
+                </form>
+                <div class="py-2"><span
+                        class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Subtotal:</span><span
+                        class="d-inline-block align-middle text-xl font-weight-medium">$2,548.50</span></div>
+            </div>
+
+            <!-- Buttons-->
+            <hr class="my-3">
+            <div class="row pt-3 pb-5 mb-2">
+                <div class="col-sm-6 mb-3"><a class="btn btn-secondary btn-block" href="#"><i
+                            class="fe-icon-refresh-ccw"></i>&nbsp;Update Cart</a></div>
+                <div class="col-sm-6 mb-3"><a class="btn btn-primary btn-block" href="checkout-address.html"><i
+                            class="fe-icon-credit-card"></i>&nbsp;Checkout</a></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
