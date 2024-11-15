@@ -169,7 +169,7 @@
                         <div class="col">TOTAL PRICE</div>
                         <div class="col text-right">&euro; <span class="total-price">{{totalPrice}}</span></div>
                     </div>
-                    <button class="btn">CHECKOUT</button>
+                    <button type="button" class="btn btn-primary">Checkout</button>
                 </div>
             </div>
         </div>
@@ -246,6 +246,47 @@
                 totalPriceElement.textContent = totalPrice.toFixed(2);
             }
         }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Handle Checkout Button click
+        document.querySelector(".btn").addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const offerCode = document.getElementById("code").value;  // Get offer code
+            const shippingMethod = document.querySelector("select").value;  // Get selected shipping method
+
+            const userId = "{{userId}}";  // You can dynamically insert userId from your backend
+
+            const cartData = {
+                userId: userId,
+                offerCode: offerCode,
+                shippingMethod: shippingMethod
+            };
+
+            // Send a POST request to the backend
+            fetch("/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Checkout successful") {
+                        alert("Checkout successful! Your order is being processed.");
+                        window.location.href = "/order-summary";  // Redirect to order summary page
+                    } else {
+                        alert("Error during checkout: " + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    alert("An error occurred while processing your checkout.");
+                });
+        });
     });
 </script>
 
