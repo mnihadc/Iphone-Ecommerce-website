@@ -533,7 +533,7 @@
                     .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
                     .then(({ status, message }) => {
                         if (status === 201) {
-                            alert(message); 
+                            alert(message);
                         } else if (status === 400) {
                             alert("Item is already in cart.");
                         } else if (status === 401) {

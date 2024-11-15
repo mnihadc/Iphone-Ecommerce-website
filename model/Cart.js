@@ -12,6 +12,13 @@ const cartSchema = new Schema({
     ref: "Product",
     required: true,
   },
+  quantity: {
+    type: Number,
+    default: 1,
+    min: 1,
+    max: 10,
+    required: true,
+  },
   createdTime: {
     type: Date,
     default: Date.now,

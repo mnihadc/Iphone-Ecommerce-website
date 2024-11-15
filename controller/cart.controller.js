@@ -79,4 +79,22 @@ const removeCartItem = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { addToCart, getCartPage, removeCartItem };
+
+const updateQuantity = async (req, res, next) => {
+  try {
+    const { productId, quantity } = req.params;
+    const user = req.session.user;
+    const userId = user.id;
+    if (!userId) {
+      return res.status(401).json({ message: "User not logged in" });
+    }
+    await Cart.updateOne(
+      { userId, productId },
+      { quantity: parseInt(quantity) }
+    );
+    res.status(200).json({ message: "Quantity updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { addToCart, getCartPage, removeCartItem, updateQuantity };
