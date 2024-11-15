@@ -71,4 +71,26 @@ const checkout = async (req, res) => {
   }
 };
 
-module.exports = checkout;
+const getCheckoutSummery = async (req, res, next) => {
+  try {
+    const user = req.session.user;
+    const userId = user.id;
+
+    const checkoutData = await Checkout.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(1);
+
+    if (!checkoutData || checkoutData.length === 0) {
+      return res.status(404).json({ message: "No checkout history found" });
+    }
+    res.render("user/Checkout-Summery", {
+      title: "Checkout Summary",
+      isCheckoutSummery: true,
+      checkout: checkoutData[0],
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { checkout, getCheckoutSummery };

@@ -1,8 +1,13 @@
 const express = require("express");
-const checkout = require("../controller/Order.controller");
+const {
+  checkout,
+  getCheckoutSummery,
+} = require("../controller/order.controller");
+const verifyToken = require("../middleware/verifyToken");
 
 const router = express.Router();
 
-router.post("/checkout", checkout);
+router.post("/checkout", verifyToken, checkout);
+router.get("/checkout-summery", getCheckoutSummery);
 
 module.exports = router;
