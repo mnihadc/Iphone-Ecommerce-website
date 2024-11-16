@@ -19,22 +19,14 @@
             height: 100%;
         }
 
-        .textIstore {
-            display: flex;
-            align-items: center;
-            color: #2554C7;
-            font-size: 2rem;
-            font-weight: bold;
-            text-decoration: none;
-            line-height: 80px;
-        }
-
         /* Navbar Styling */
         .navbar {
             background-color: whitesmoke;
             height: 80px;
             position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             width: 100%;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -120,21 +112,23 @@
             background-color: #f0f0f0;
         }
 
-        /* Main Content */
+        html {
+            scroll-behavior: smooth;
+        }
+
         .main-content {
-            padding-top: 90px;
+            padding-top: 80px;
         }
     </style>
 
 </head>
 
 <body>
-    <!-- Fixed Navbar Header -->
-    <nav class="navbar navbar-expand-md">
+    <nav class="navbar navbar-expand-md fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img  src="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" alt="Logo">
-                <h3 class="textIstore mt-2">iStore</h3>
+                <img class="mb-2" src="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" alt="Logo">
+                <span class="" style="font-size:2rem;font-weight: bolder;">iStore</span>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -153,19 +147,14 @@
                 <ul class="navbar-nav ml-3">
                     {{#if user}}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link" href="/profile/user">
                             <img src="/images/user.svg" alt="User" class="icon-small">
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                            <a class="dropdown-item nav-link" href="/profile/user">Profile</a>
-                            <a class="dropdown-item nav-link" href="/auth/logout">Logout</a>
-                        </div>
                     </li>
                     {{else}}
                     <li class="nav-item"><a class="nav-link" href="/auth/login"><b>Login</b></a></li>
                     {{/if}}
-                    <li class="nav-item ">
+                    <li class="nav-item">
                         <a class="nav-link" href="/cart/get-cart">
                             <img src="/images/cart.svg" alt="Cart" class="icon-small">
                         </a>
@@ -175,14 +164,10 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div>
+    <div class="main-content">
         {{{body}}}
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
