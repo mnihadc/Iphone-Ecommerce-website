@@ -118,104 +118,95 @@
 </head>
 
 <body>
+    <div class="container p-2">
+        <h1 class="mt-4">Checkout Summary</h1>
 
-    <div class="bodyHead">
-        <div class="container pb-5 mb-2">
+        <!-- User Information -->
+        {{#if user}}
+        <div class="alert alert-info">
+            Logged in as: <strong>{{user.username}}</strong>
+        </div>
+        {{/if}}
 
-            <!-- Cart Item-->
-            <div class="cart-item d-md-flex justify-content-between">
-                <span class="remove-item"><i class="fa fa-times"></i></span>
-                <div class="cart-item-product">
-                    <div class="cart-item-product-thumb">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Product">
+        <!-- Checkout Items -->
+        <div class="mt-4">
+            <h3>Order Details</h3>
+            {{#if checkout.items.length}}
+            <div class="list-group">
+                {{#each checkout.items}}
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <img src="{{this.product.image}}" alt="{{this.product.name}}" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-5">
+                            <h5>{{this.product.name}}</h5>
+                            <p>
+                                <strong>Category:</strong> {{this.product.category}}<br>
+                                <strong>Battery:</strong> {{this.product.battery}}<br>
+                                <strong>Price:</strong> ${{this.product.price}}
+                            </p>
+                        </div>
+
+                        <div class="col-md-2 text-center">
+                            <strong>Color:</strong>
+                            <ul class="list-unstyled mb-0">
+                                {{#each this.product.colorOptions}}
+                                <li>
+                                    {{this.colorName}} ({{this.colorCode}})
+                                </li>
+                                {{/each}}
+                            </ul>
+                            <p><strong>Quantity:</strong> {{this.quantity}}</p>
+                        </div>
+                        <div class="col-md-3 text-right">
+                            <h5>Subtotal: ${{this.itemTotalPrice}}</h5>
+                        </div>
                     </div>
-                    <div class="cart-item-product-info">
-                        <h4 class="cart-item-product-title">Canon EOS M50 Mirrorless Camera</h4>
-                        <span><strong>Type:</strong> Mirrorless</span><br>
-                        <span><strong>Color:</strong> Black</span>
-                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="cart-item-label">Quantity</div>
-                    <div class="count-input">
-                        <select class="form-control">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="cart-item-label">Subtotal</div>
-                    <span class="text-xl font-weight-medium">$910.00</span>
-                </div>
-                <div class="text-center">
-                    <div class="cart-item-label">Discount</div>
-                    <span class="text-xl font-weight-medium">$35.00</span>
-                </div>
+                {{/each}}
             </div>
+            {{else}}
+            <p>No items found in the checkout summary.</p>
+            {{/if}}
+        </div>
 
-            <!-- Cart Item-->
-            <div class="cart-item d-md-flex justify-content-between">
-                <span class="remove-item"><i class="fa fa-times"></i></span>
-                <div class="cart-item-product">
-                    <div class="cart-item-product-thumb">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="Product">
-                    </div>
-                    <div class="cart-item-product-info">
-                        <h4 class="cart-item-product-title">Apple iPhone X 256 GB Space Gray</h4>
-                        <span><strong>Memory:</strong> 256GB</span><br>
-                        <span><strong>Color:</strong> Space Gray</span>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="cart-item-label">Quantity</div>
-                    <div class="count-input">
-                        <select class="form-control">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="cart-item-label">Subtotal</div>
-                    <span class="text-xl font-weight-medium">$1,450.00</span>
-                </div>
-                <div class="text-center">
-                    <div class="cart-item-label">Discount</div>
-                    <span class="text-xl font-weight-medium">—</span>
-                </div>
-            </div>
+        <!-- Order Summary -->
+        <div class="mt-4">
+            <h3>Order Summary</h3>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Subtotal:</span>
+                    <strong>${{checkout.totalPrice}}</strong>
+                </li>
+                {{#if checkout.discount}}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Discount:</span>
+                    <strong>-${{checkout.discount}}</strong>
+                </li>
+                {{/if}}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Delivery:</span>
+                    <strong>${{checkout.delivery}}</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total:</span>
+                    <strong>${{checkout.totalPrice}}</strong>
+                </li>
+            </ul>
+        </div>
 
-            <!-- Coupon + Subtotal-->
-            <div class="d-flex justify-content-between align-items-center text-center text-sm-left">
-                <form class="form-inline py-2">
-                    <label class="sr-only">Coupon code</label>
-                    <input class="form-control form-control-sm my-2 mr-3" type="text" placeholder="Coupon code"
-                        required="">
-                    <button class="btn btn-secondary btn-sm my-2 mx-auto mx-sm-0" type="submit">Apply Coupon</button>
-                </form>
-                <div class="py-2"><span
-                        class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Subtotal:</span><span
-                        class="d-inline-block align-middle text-xl font-weight-medium">$2,548.50</span></div>
-            </div>
+        <!-- Offer Code -->
+        {{#if checkout.offerCode}}
+        <div class="mt-3">
+            <p><strong>Applied Offer Code:</strong> {{checkout.offerCode}}</p>
+        </div>
+        {{/if}}
 
-            <!-- Buttons-->
-            <hr class="my-3">
-            <div class="row pt-3 pb-5 mb-2">
-                <div class="col-sm-6 mb-3"><a class="btn btn-secondary btn-block" href="#"><i
-                            class="fe-icon-refresh-ccw"></i>&nbsp;Update Cart</a></div>
-                <div class="col-sm-6 mb-3"><a class="btn btn-primary btn-block" href="checkout-address.html"><i
-                            class="fe-icon-credit-card"></i>&nbsp;Checkout</a></div>
-            </div>
-
+        <!-- Navigation Buttons -->
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="/cart" class="btn btn-secondary">Back to Cart</a>
+            <a href="/confirm-order" class="btn btn-primary">Confirm Order</a>
         </div>
     </div>
 
