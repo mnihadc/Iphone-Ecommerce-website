@@ -22,7 +22,6 @@ const checkout = async (req, res) => {
     const productIds = cart.map((item) => item.productId);
     const products = await Product.find({ _id: { $in: productIds } });
 
-    // Map the products to cart items
     const cartItems = cart.map((item) => {
       const product = products.find(
         (prod) => prod._id.toString() === item.productId.toString()
@@ -57,10 +56,8 @@ const checkout = async (req, res) => {
       delivery: shippingMethod,
     });
 
-    // Save the checkout and clear the cart
     await newCheckout.save();
     await Cart.deleteMany({ userId });
-
     res.status(200).json({
       message: "Checkout successful",
       checkout: newCheckout,
@@ -76,7 +73,6 @@ const getCheckoutSummery = async (req, res, next) => {
     const user = req.session.user;
     const userId = user.id;
 
-    // Fetch the most recent checkout for the user
     const checkoutData = await Checkout.find({ userId })
       .sort({ createdAt: -1 })
       .limit(1);
@@ -85,13 +81,10 @@ const getCheckoutSummery = async (req, res, next) => {
       return res.status(404).json({ message: "No checkout history found" });
     }
 
-    // Extract product IDs from the checkout items
     const productIds = checkoutData[0].items.map((item) => item.productId);
 
-    // Fetch the product details
     const products = await Product.find({ _id: { $in: productIds } });
 
-    // Map checkout items to include detailed product information along with the quantity
     const checkoutItemsWithDetails = checkoutData[0].items.map((item) => {
       const product = products.find(
         (prod) => prod._id.toString() === item.productId.toString()
@@ -100,8 +93,8 @@ const getCheckoutSummery = async (req, res, next) => {
       return {
         productId: item.productId,
         productName: item.productName,
-        quantity: item.quantity, // Include quantity from checkout
-        itemTotalPrice: item.itemTotalPrice, // Total price for the item
+        quantity: item.quantity,
+        itemTotalPrice: item.itemTotalPrice,
         product: product
           ? {
               name: product.name,
@@ -111,21 +104,19 @@ const getCheckoutSummery = async (req, res, next) => {
                 colorCode: color.colorCode,
               })),
               category: product.category,
-              image: product.productImages[0], // Use the first image
+              image: product.productImages[0],
               price: product.offerPrice || product.price,
-              stock: product.stock, // Include stock quantity of the product
+              stock: product.stock,
             }
           : null,
       };
     });
 
-    // Calculate the total price again (if necessary)
     const totalPrice = checkoutItemsWithDetails.reduce(
       (acc, item) => acc + item.itemTotalPrice,
       0
     );
 
-    // Prepare the full checkout data to render
     const fullCheckoutData = {
       checkout: {
         ...checkoutData[0].toObject(),
@@ -137,7 +128,6 @@ const getCheckoutSummery = async (req, res, next) => {
       },
     };
 
-    // Render the checkout summary page with full data
     res.render("users/Checkout-Summery", {
       title: "Checkout Summary",
       user: req.session.user,
