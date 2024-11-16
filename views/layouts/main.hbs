@@ -8,6 +8,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    {{#if isShopPage}}
+    <link rel="stylesheet" href="/css/shop.css">
+    {{/if}}
     <link rel="icon" href="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" type="image/x-icon">
     <style>
         /* General Page and Header */
@@ -127,7 +130,7 @@
     <nav class="navbar navbar-expand-md fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img class="mb-2" src="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" alt="Logo">
+                <img class="" src="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" alt="Logo">
                 <span class="" style="font-size:2rem;font-weight: bolder;">iStore</span>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"

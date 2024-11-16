@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <h4>Shop</h4>
+        </div>
+        <div class="product-section">
+            <div class="container">
+                <div class="row">
+                    {{#each products}}
+                    <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+                        <div class="product-item">
+                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                            <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                            <strong class="product-price">
+                                {{#if this.offerPrice}}
+                                <span class="product-price-old">${{this.offerPrice}}</span>
+                                {{else}}
+                                ${{this.price}}
+                                {{/if}}
+                            </strong>
+                            <button class="add-to-cart-btn" style="border-radius: 7px;border: silver 1px;color: green;"
+                                data-product-id="{{this._id}}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
