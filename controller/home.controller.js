@@ -41,7 +41,7 @@ const getShopPage = async (req, res, next) => {
 
     res.render("users/Shop", {
       title: "Shop Page",
-      isHomePage: true,
+      isShopPage: true,
       user: req.session.user,
       products: products,
     });
@@ -49,6 +49,7 @@ const getShopPage = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = {
   getHomePage,
   getShopPage,

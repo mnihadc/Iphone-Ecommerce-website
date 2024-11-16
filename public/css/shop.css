@@ -1,6 +1,47 @@
 .product-section {
   padding: 7rem 0;
 }
+h4 {
+  color: rgb(98, 89, 89);
+}
+#searchSuggestions {
+  display: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#searchSuggestions .list-group-item {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+/* Filter Bar Styling */
+.filter-bar {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  padding: 15px 0;
+}
+
+.filter-bar .form-control {
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.filter-bar .btn {
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #2554c7;
+  color: white;
+}
+
+@media (max-width: 767px) {
+  .filter-bar {
+    padding: 10px;
+  }
+
+  .filter-bar .btn {
+    font-size: 0.9rem;
+  }
+}
 
 .product-section .product-item {
   text-align: center;

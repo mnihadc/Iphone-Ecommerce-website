@@ -8,9 +8,40 @@
 </head>
 
 <body>
-    <div class="container">
-        <div>
-            <h4>Shop</h4>
+    <div class="container pt-3">
+        <h4 style="color: green;font-size: x-large;font-weight: bold;">Shop</h4>
+        <div class="filter-bar container-fluid bg-light py-3">
+            <div>
+                <form id="filterForm" class="row align-items-center">
+                    <div class="col-12 col-md-4 mb-3 mb-md-0">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search products..."
+                            autocomplete="off" />
+                        <div id="searchSuggestions" class="list-group position-absolute w-100"
+                            style="z-index: 1000; display: none;"></div>
+                    </div>
+                    <div class="col-12 col-md-3 mb-3 mb-md-0">
+                        <select class="form-control" id="categorySelect">
+                            <option value="">All Categories</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="fashion">Fashion</option>
+                            <option value="home">Home & Living</option>
+                            <option value="toys">Toys</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3 mb-3 mb-md-0">
+                        <select class="form-control" id="priceRangeSelect">
+                            <option value="">Price Range</option>
+                            <option value="0-50">$0 - $50</option>
+                            <option value="50-100">$50 - $100</option>
+                            <option value="100-200">$100 - $200</option>
+                            <option value="200+">$200+</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="product-section">
             <div class="container">
@@ -38,6 +69,165 @@
             </div>
         </div>
     </div>
+
+    <footer class="footer-32892 pb-0" style="background: rgb(59, 55, 55);color: azure;padding-top: 2rem;">
+        <div class="site-section">
+            <div class="container">
+
+
+                <div class="row">
+
+                    <div class="col-md pr-md-5 mb-4 mb-md-0">
+                        <h3>About Us</h3>
+                        <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam itaque
+                            unde facere repellendus, odio et iste voluptatum aspernatur ratione mollitia tempora
+                            eligendi maxime est, blanditiis accusamus. Incidunt, aut, quis!</p>
+                        <ul class="list-unstyled quick-info mb-4">
+                            <li><a href="#" class="d-flex align-items-center"><span class="icon mr-3 icon-phone"></span>
+                                    +1 291 3912 329</a></li>
+                            <li><a href="#" class="d-flex align-items-center"><span
+                                        class="icon mr-3 icon-envelope"></span> info@gmail.com</a></li>
+                        </ul>
+
+                        <form action="#" class="subscribe">
+                            <input type="text" class="form-control" placeholder="Enter your e-mail">
+                            <input type="submit" class="btn btn-submit" value="Send">
+                        </form>
+                    </div>
+                    <div class="col-md mb-4 mb-md-0">
+                        <h3>Latest Tweet</h3>
+                        <ul class="list-unstyled tweets">
+                            <li class="d-flex">
+                                <div class="mr-4"><span class="icon icon-twitter"></span></div>
+                                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
+                                    veniam porro excepturi.</div>
+                            </li>
+                            <li class="d-flex">
+                                <div class="mr-4"><span class="icon icon-twitter"></span></div>
+                                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
+                                    veniam porro excepturi.</div>
+                            </li>
+                            <li class="d-flex">
+                                <div class="mr-4"><span class="icon icon-twitter"></span></div>
+                                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
+                                    veniam porro excepturi.</div>
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <div class="col-md-3 mb-4 mb-md-0">
+                        <h3>Instagram</h3>
+                        <div class="row gallery">
+                            <div class="col-6">
+                                <a href="#"><img src="images/img_1.jpg" alt="Image" class="img-fluid"></a>
+                                <a href="#"><img src="images/img_2.jpg" alt="Image" class="img-fluid"></a>
+                            </div>
+                            <div class="col-6">
+                                <a href="#"><img src="images/img_3.jpg" alt="Image" class="img-fluid"></a>
+                                <a href="#"><img src="images/img_4.jpg" alt="Image" class="img-fluid"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="py-5 footer-menu-wrap d-md-flex align-items-center">
+                            <ul class="list-unstyled footer-menu mr-auto">
+                                <li><a href="#">Home</a></li>
+                                <li><a href="#">About</a></li>
+                                <li><a href="#">Our works</a></li>
+                                <li><a href="#">Services</a></li>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Contacts</a></li>
+                            </ul>
+                            <div class="site-logo-wrap ml-auto">
+                                <a href="#" class="site-logo">
+                                    Colorlib
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterForm = document.getElementById("filterForm");
+        const searchInput = document.getElementById("searchInput");
+        const categorySelect = document.getElementById("categorySelect");
+        const priceRangeSelect = document.getElementById("priceRangeSelect");
+
+        filterForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const searchQuery = searchInput.value.toLowerCase();
+            const selectedCategory = categorySelect.value;
+            const selectedPriceRange = priceRangeSelect.value;
+
+            const productItems = document.querySelectorAll(".product-item");
+
+            productItems.forEach((item) => {
+                const productName = item.querySelector(".product-title").innerText.toLowerCase();
+                const productCategory = item.getAttribute("data-category");
+                const productPrice = parseFloat(item.getAttribute("data-price"));
+
+                let matchesSearch = !searchQuery || productName.includes(searchQuery);
+                let matchesCategory = !selectedCategory || productCategory === selectedCategory;
+                let matchesPrice = true;
+
+                if (selectedPriceRange) {
+                    const [minPrice, maxPrice] = selectedPriceRange.split("-").map(Number);
+                    matchesPrice =
+                        (!minPrice || productPrice >= minPrice) &&
+                        (!maxPrice || productPrice <= maxPrice);
+                }
+
+                if (matchesSearch && matchesCategory && matchesPrice) {
+                    item.style.display = "block";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const productId = this.getAttribute("data-product-id");
+
+                fetch(`/cart/addtocart/${productId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 201) {
+                            alert(message);
+                        } else if (status === 400) {
+                            alert("Item is already in cart.");
+                        } else if (status === 401) {
+                            alert("Please log in to add items to the cart.");
+                            window.location.href = "/auth/login";
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error adding to cart:", error);
+                        alert("An error occurred. Please try again later.");
+                    });
+            });
+        });
+    });
+</script>
 
 </html>
