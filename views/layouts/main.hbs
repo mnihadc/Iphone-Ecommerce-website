@@ -8,111 +8,138 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="icon" href="/images/5b83693bae2828e7c357855f276520b0.jpg" type=" image/x-icon">
-    {{#if isLoginPage}}
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/login.css">
-    {{/if}}
-    {{#if isProfilePage}}
-    <link rel="stylesheet" href="/css/profile.css">
-    {{/if}}
-    {{#if isAddressPage}}
-    <link rel="stylesheet" href="/css/createaddress.css">
-    {{/if}}
-</head>
-<style>
-    /* General Page and Header */
-    body,
-    html {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        height: 100%;
-    }
+    <link rel="icon" href="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" type="image/x-icon">
+    <style>
+        /* General Page and Header */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
 
-    /* Navbar (Header) */
-    /* Navbar (Header) */
-    .navbar {
-        background-color: #003366 !important;
-        /* Dark Blue Background */
-        height: 60px;
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+        .textIstore {
+            display: flex;
+            align-items: center;
+            color: #2554C7;
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+            line-height: 80px;
+        }
 
-    .navbar-brand {
-        color: #ffffff;
-        /* Bright White Text for Brand */
-        font-size: 22px;
-        text-decoration: none;
-        line-height: 60px;
-    }
-
-    .navbar-nav .nav-link {
-        color: #d4e4ff;
-        /* Light Blue for Better Readability */
-        font-weight: 700;
-        padding: 10px 15px;
-        transition: color 0.3s;
-        line-height: 60px;
-    }
-
-    .navbar-nav .nav-link:hover {
-        color: #ffcc00;
-        /* Golden Yellow for Hover Effect */
-    }
-
-    .icon-small {
-        width: 20px;
-        height: 20px;
-        color: #d4e4ff;
-        /* Match Link Color */
-    }
-
-    /* Main Content to avoid overlap */
-    .main-content {
-        padding-top: 50px;
-        /* Adjust this to account for the fixed header */
-        margin-bottom: 60px;
-        /* Add margin at the bottom to prevent overlap with footer */
-    }
-
-    /* Responsive Styles for Smaller Screens */
-    @media (max-width: 767px) {
-        .navbar img {
-            width: 20px;
-            height: 20px;
-            /* Reduced logo size for mobile */
+        /* Navbar Styling */
+        .navbar {
+            background-color: whitesmoke;
+            height: 80px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand {
-            font-size: 16px;
-            /* Smaller font size for smaller screens */
+            display: flex;
+            align-items: center;
+            color: #2554C7;
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+            line-height: 80px;
+        }
+
+        .navbar-brand img {
+            width: 40px;
+            /* Larger logo size */
+            height: 40px;
+            margin-right: 10px;
+            background-color: #2554C7;
+            /* Set background color */
+            border-radius: 50%;
+            /* Make it circular */
+            padding: 5px;
+            /* Add some spacing inside */
         }
 
         .navbar-nav .nav-link {
-            font-size: 0.9rem;
-            /* Adjust font size on mobile */
+            color: #2554C7;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 20px;
         }
 
-        .main-content {
-            padding-top: 60px;
-            /* Adjust for smaller header */
+        .navbar-nav .nav-link:hover {
+            color: #ffcc00;
         }
-    }
-</style>
+
+        .icon-small {
+            width: 30px;
+            height: 30px;
+            color: #2554C7;
+            background: rgb(153, 153, 153);
+            border-radius: 1.5rem;
+            padding: 4px;
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 767px) {
+            .navbar {
+                height: auto;
+            }
+
+            .navbar-toggler {
+                border: none;
+                font-size: 1.5rem;
+                color: #2554C7;
+            }
+
+            .navbar-nav {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                font-size: 1.1rem;
+                padding: 10px;
+            }
+
+            .dropdown-menu {
+                width: 100%;
+                border: none;
+                box-shadow: none;
+            }
+        }
+
+        .dropdown-menu .nav-link {
+            color: #2554C7;
+        }
+
+        .dropdown-menu .nav-link:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 90px;
+        }
+    </style>
+
+</head>
 
 <body>
-
     <!-- Fixed Navbar Header -->
-    <nav class="navbar navbar-expand-md fixed-top">
+    <nav class="navbar navbar-expand-md">
         <div class="container">
-            <img class="icon-small " style="background: none;" src="/images/5b83693bae2828e7c357855f276520b0.jpg"
-                alt="">
-            <a class="navbar-brand ml-2" href="/">iStore</a>
+            <a class="navbar-brand" href="/">
+                <img  src="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" alt="Logo">
+                <h3 class="textIstore mt-2">iStore</h3>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
@@ -125,19 +152,20 @@
                 </ul>
                 <ul class="navbar-nav ml-3">
                     {{#if user}}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile/user">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-toggle="dropdown" aria-expanded="false">
                             <img src="/images/user.svg" alt="User" class="icon-small">
                         </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                            <a class="dropdown-item nav-link" href="/profile/user">Profile</a>
+                            <a class="dropdown-item nav-link" href="/auth/logout">Logout</a>
+                        </div>
                     </li>
                     {{else}}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/auth/login">
-                            <b>Login</b>
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/auth/login"><b>Login</b></a></li>
                     {{/if}}
-                    <li class="nav-item">
+                    <li class="nav-item ">
                         <a class="nav-link" href="/cart/get-cart">
                             <img src="/images/cart.svg" alt="Cart" class="icon-small">
                         </a>
@@ -147,11 +175,14 @@
         </div>
     </nav>
 
-    <div class="main-content">
+    <!-- Main Content -->
+    <div>
         {{{body}}}
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
