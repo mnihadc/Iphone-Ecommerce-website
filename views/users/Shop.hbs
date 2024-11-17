@@ -53,8 +53,12 @@
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
                     data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
                     <div class="product-item">
-                        <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
-                        <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                        <a href="/product-view/{{this._id}}">
+                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                        </a>
+                        <a href="/product-view/{{this._id}}">
+                            <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                        </a>
                         <h6 class="product-title" style="color: black;">{{this.category}}</h6>
                         <strong class="product-price">
                             {{#if this.offerPrice}}
@@ -102,8 +106,12 @@
                         productList.innerHTML = data.products.map(product => `
                         <div class="col-12 col-md-4 col-lg-3 mb-4 product-item">
                             <div class="product-card">
-                                <img src="${product.productImages}" class="img-fluid" alt="${product.name}">
-                                <h5>${product.name}</h5>
+                                <a href="/product-view/${product._id}">
+                                     <img src="${product.productImages}" class="img-fluid" alt="${product.name}">
+                                </a>
+                                <a href="/product-view/${product._id}">
+                                    <h5>${product.name}</h5>
+                                </a>
                                 <p>${product.category}</p>
                                 <p class="product-price">
                                     ${product.offerPrice
