@@ -75,11 +75,13 @@ const getShopPage = async (req, res, next) => {
 };
 
 const searchSuggestions = async (req, res, next) => {
-  const query = req.query.q;
+  const query = req.query.q; // Extract search query
   try {
-    const products = await Product.find({
-      name: { $regex: query, $options: "i" },
-    }).limit(5);
+    // Use regex for case-insensitive matching
+    const products = await Product.find(
+      { name: { $regex: query, $options: "i" } },
+      { name: 1 } // Only return the name field
+    ); // Limit results to avoid unnecessary load
     res.json(products);
   } catch (error) {
     next(error);

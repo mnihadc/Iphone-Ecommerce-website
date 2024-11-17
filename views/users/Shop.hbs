@@ -9,183 +9,221 @@
 
 <body>
     <div class="container pt-3">
-        <h4 style="color: green;font-size: x-large;font-weight: bold;">Shop</h4>
+        <h4 style="color: green; font-size: x-large; font-weight: bold;">Shop</h4>
         <div class="filter-bar container-fluid bg-light py-3">
-            <div>
-                <form id="filterForm" class="row align-items-center">
-                    <div class="col-12 col-md-4 mb-3 mb-md-0">
+            <form id="filterForm" class="row align-items-center">
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
+                    <div class="input-group">
                         <input type="text" class="form-control" id="searchInput" placeholder="Search products..."
                             autocomplete="off" />
-                        <div id="searchSuggestions" class="list-group position-absolute w-100"
-                            style="z-index: 1000; display: none;"></div>
+                        <button type="button" class="btn btn-primary btn-search" id="searchButton">Search</button>
                     </div>
-                    <div class="col-12 col-md-3 mb-3 mb-md-0">
-                        <select class="form-control" id="categorySelect">
-                            <option value="">None</option>
-                            {{#each categories}}
-                            <option value="{{category}}">{{category}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-3 mb-3 mb-md-0">
-                        <select class="form-control" id="priceRangeSelect">
-                            <option value="">None</option>
-                            <option value="0-50">$0 - $50</option>
-                            <option value="51-100">$51 - $100</option>
-                            <option value="101-200">$101 - $200</option>
-                            <option value="201-500">$201 - $500</option>
-                            <option value="500-1000">$500 - $1000</option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-2">
-                        <button type="submit" class="btn btn-primary btn-block">Filter</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="product-section">
-            <div class="container">
-                <div class="row" id="productList">
-                    {{#each products}}
-                    <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
-                        data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
-                        <div class="product-item">
-                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
-                            <h3 class="product-title" style="color: black;">{{this.name}}</h3>
-                            <h6 class="product-title" style="color: black;">{{this.category}}</h6>
-                            <strong class="product-price">
-                                {{#if this.offerPrice}}
-                                <span class="product-price-old">${{this.offerPrice}}</span>
-                                {{else}}
-                                ${{this.price}}
-                                {{/if}}
-                            </strong>
-                            <button class="add-to-cart-btn" style="border-radius: 7px;border: silver 1px;color: green;"
-                                data-product-id="{{this._id}}">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                    {{/each}}
+                    <div id="searchSuggestions" class="list-group position-absolute w-100"
+                        style="z-index: 1000; display: none;"></div>
                 </div>
-            </div>
+                <div class="col-12 col-md-3 mb-3 mb-md-0">
+                    <select class="form-control" id="categorySelect">
+                        <option value="">None</option>
+                        {{#each categories}}
+                        <option value="{{category}}">{{category}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="col-12 col-md-3 mb-3 mb-md-0">
+                    <select class="form-control" id="priceRangeSelect">
+                        <option value="">None</option>
+                        <option value="0-1000">$0 - $1000</option>
+                        <option value="1000-10000">$1000 - $10000</option>
+                        <option value="10000-50000">$10000 - $50000</option>
+                        <option value="50000-200000">$50000 - $200000</option>
+                        <option value="200000-500000">$200000 - $500000</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-2">
+                    <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <footer class="footer-32892 pb-0" style="background: rgb(59, 55, 55);color: azure;padding-top: 2rem;">
-        <!-- Footer content here -->
-    </footer>
-</body>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('searchInput');
-        const categorySelect = document.getElementById('categorySelect');
-        const priceRangeSelect = document.getElementById('priceRangeSelect');
-        const productList = document.getElementById('productList');
-        const searchSuggestions = document.getElementById('searchSuggestions');
-
-        function fetchProducts() {
-            const params = new URLSearchParams({
-                search: searchInput.value,
-                category: categorySelect.value,
-                priceRange: priceRangeSelect.value,
-            });
-
-            fetch(`/shop?${params.toString()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(res => res.json())
-                .then(data => {
-                    productList.innerHTML = data.products.map(product => `
-                <div class="col-12 col-md-4 col-lg-3 mb-4 product-item" 
-                    data-category="${product.category}" 
-                    data-price="${product.offerPrice || product.price}">
-                    <div class="product-card">
-                        <img src="${product.productImages}" class="img-fluid" alt="${product.name}">
-                        <h5>${product.name}</h5>
-                        <p>${product.category}</p>
-                        <p class="product-price">
-                            ${product.offerPrice ? `<span class="text-danger">$${product.offerPrice}</span> <del class="product-price-old">$${product.price}</del>` : `$${product.price}`}
-                        </p>
-                        <button class="add-to-cart-btn" style="border-radius: 7px; border: silver 1px; color: green;" data-product-id="${product._id}">
+    <div class="product-section">
+        <div class="container">
+            <div class="row" id="productList">
+                {{#each products}}
+                <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
+                    data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
+                    <div class="product-item">
+                        <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                        <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                        <h6 class="product-title" style="color: black;">{{this.category}}</h6>
+                        <strong class="product-price">
+                            {{#if this.offerPrice}}
+                            <span class="product-price-old">${{this.offerPrice}}</span>
+                            {{else}}
+                            ${{this.price}}
+                            {{/if}}
+                        </strong>
+                        <button class="add-to-cart-btn" style="border-radius: 7px; border: silver 1px; color: green;"
+                            data-product-id="{{this._id}}">
                             Add to Cart
                         </button>
                     </div>
                 </div>
-            `).join('');
+                {{/each}}
+            </div>
+        </div>
+    </div>
 
-                    // Reattach event listeners for the "Add to Cart" buttons
-                    attachAddToCartListeners();
+    <footer class="footer-32892 pb-0" style="background: rgb(59, 55, 55); color: azure; padding-top: 2rem;">
+        <!-- Footer content here -->
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const searchSuggestions = document.getElementById('searchSuggestions');
+            const searchButton = document.getElementById('searchButton');
+            const categorySelect = document.getElementById('categorySelect');
+            const priceRangeSelect = document.getElementById('priceRangeSelect');
+            const productList = document.getElementById('productList');
+
+            let activeIndex = -1; // Tracks the active suggestion
+
+            function fetchProducts() {
+                const params = new URLSearchParams({
+                    search: searchInput.value,
+                    category: categorySelect.value,
+                    priceRange: priceRangeSelect.value,
                 });
-        }
 
-
-        searchInput.addEventListener('input', () => {
-            if (searchInput.value.length > 2) {
-                fetch(`/shop/suggestions?q=${searchInput.value}`)
+                fetch(`/shop?${params.toString()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                     .then(res => res.json())
                     .then(data => {
-                        searchSuggestions.innerHTML = data.map(product => `
-                                <div class="suggestion-item">${product.name}</div>
-                            `).join('');
-                        searchSuggestions.style.display = 'block';
+                        productList.innerHTML = data.products.map(product => `
+                        <div class="col-12 col-md-4 col-lg-3 mb-4 product-item">
+                            <div class="product-card">
+                                <img src="${product.productImages}" class="img-fluid" alt="${product.name}">
+                                <h5>${product.name}</h5>
+                                <p>${product.category}</p>
+                                <p class="product-price">
+                                    ${product.offerPrice
+                                ? `<span class="text-danger">$${product.offerPrice}</span> <del class="product-price-old">$${product.price}</del>`
+                                : `$${product.price}`}
+                                </p>
+                                <button class="add-to-cart-btn" data-product-id="${product._id}">Add to Cart</button>
+                            </div>
+                        </div>
+                        `).join('');
                     });
-            } else {
-                searchSuggestions.style.display = 'none';
             }
-        });
 
-        searchSuggestions.addEventListener('click', (e) => {
-            if (e.target.classList.contains('suggestion-item')) {
-                searchInput.value = e.target.textContent;
-                searchSuggestions.style.display = 'none';
+            // Fetch suggestions
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim();
+                if (query.length > 2) {
+                    fetch(`/search-suggestions?q=${query}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                searchSuggestions.innerHTML = data.map((product, index) => `
+                                    <div class="suggestion-item ${index === activeIndex ? 'active' : ''}" data-name="${product.name}">
+                                        ${product.name}
+                                    </div>
+                                `).join('');
+                                searchSuggestions.style.display = 'block';
+                            } else {
+                                searchSuggestions.innerHTML = '<div class="suggestion-item">No results found</div>';
+                                searchSuggestions.style.display = 'block';
+                            }
+                        });
+                } else {
+                    searchSuggestions.style.display = 'none';
+                }
+            });
+
+            // Handle form submission
+            document.getElementById('filterForm').addEventListener('submit', (e) => {
+                e.preventDefault();
                 fetchProducts();
-            }
-        });
+            });
 
-        categorySelect.addEventListener('change', fetchProducts);
-        priceRangeSelect.addEventListener('change', fetchProducts);
+            // Search button click
+            searchButton.addEventListener('click', () => {
+                fetchProducts();
+            });
 
-        fetchProducts();
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const productList = document.getElementById('productList');
+            // Handle suggestion click
+            searchSuggestions.addEventListener('click', (e) => {
+                if (e.target.classList.contains('suggestion-item')) {
+                    searchInput.value = e.target.getAttribute('data-name');
+                    searchSuggestions.style.display = 'none';
+                    fetchProducts();
+                }
+            });
 
-        // Attach event listener to the parent container (productList)
-        productList.addEventListener('click', function (e) {
-            // Check if the clicked element is a "Add to Cart" button
-            if (e.target && e.target.classList.contains('add-to-cart-btn')) {
-                const productId = e.target.getAttribute("data-product-id");
+            // Navigate and select suggestion with keyboard
+            searchInput.addEventListener('keydown', (e) => {
+                const items = searchSuggestions.querySelectorAll('.suggestion-item');
+                if (items.length > 0) {
+                    if (e.key === 'ArrowDown') {
+                        activeIndex = (activeIndex + 1) % items.length;
+                    } else if (e.key === 'ArrowUp') {
+                        activeIndex = (activeIndex - 1 + items.length) % items.length;
+                    } else if (e.key === 'Enter' && activeIndex >= 0) {
+                        searchInput.value = items[activeIndex].getAttribute('data-name');
+                        searchSuggestions.style.display = 'none';
+                        fetchProducts();
+                        e.preventDefault();
+                    }
 
-                fetch(`/cart/addtocart/${productId}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
-                    .then(({ status, message }) => {
-                        if (status === 201) {
-                            alert(message);
-                        } else if (status === 400) {
-                            alert("Item is already in cart.");
-                        } else if (status === 401) {
-                            alert("Please log in to add items to the cart.");
-                            window.location.href = "/auth/login";
-                        } else {
-                            alert("An unexpected error occurred.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error adding to cart:", error);
-                        alert("An error occurred. Please try again later.");
+                    items.forEach((item, index) => {
+                        item.classList.toggle('active', index === activeIndex);
                     });
-            }
+                }
+            });
         });
-    });
+    </script>
 
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const productList = document.getElementById('productList');
+
+            // Attach event listener to the parent container (productList)
+            productList.addEventListener('click', function (e) {
+                // Check if the clicked element is a "Add to Cart" button
+                if (e.target && e.target.classList.contains('add-to-cart-btn')) {
+                    const productId = e.target.getAttribute("data-product-id");
+
+                    fetch(`/cart/addtocart/${productId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    })
+                        .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                        .then(({ status, message }) => {
+                            if (status === 201) {
+                                alert(message);
+                            } else if (status === 400) {
+                                alert("Item is already in cart.");
+                            } else if (status === 401) {
+                                alert("Please log in to add items to the cart.");
+                                window.location.href = "/auth/login";
+                            } else {
+                                alert("An unexpected error occurred.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error adding to cart:", error);
+                            alert("An error occurred. Please try again later.");
+                        });
+                }
+            });
+        });
+
+    </script>
+
+</body>
 
 
 </html>

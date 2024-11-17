@@ -111,7 +111,27 @@ h4 {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+.list-group {
+  background-color: black;
+  color: white;
+  max-height: 200px;
+  overflow-y: auto;
+}
 
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background-color: gray;
+  color: white;
+}
+
+.btn-search {
+  margin-left: 5px;
+}
 .product-section .product-item:before {
   bottom: 0;
   left: 0;
