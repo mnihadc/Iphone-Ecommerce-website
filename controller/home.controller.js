@@ -88,8 +88,26 @@ const searchSuggestions = async (req, res, next) => {
   }
 };
 
+const getViewProduct = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
+    res.render("users/Product", {
+      title: product.name,
+      product: product,
+      isViewProduct: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getHomePage,
   getShopPage,
   searchSuggestions,
+  getViewProduct,
 };
