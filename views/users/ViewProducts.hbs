@@ -76,13 +76,16 @@
                 <i class="product-price">₹{{price}}</i>
                 <b class="product-offer-price">₹{{offerPrice}}</b>
             </span>
-            <button class="add-to-cart-btn">Add to Cart</button>
+            <button class="add-to-cart-btn" style="border-radius: 7px;border: silver 1px;color: green;"
+                data-product-id="{{this._id}}">
+                Add to Cart
+            </button>
         </div>
     </div>
     <div class="product-section">
         <div class="container">
             <div class="row">
-                {{#each products}}
+                {{#each limitedProducts}}
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
                     <div class="product-item">
                         <!-- Link the image to the view product page -->
@@ -100,7 +103,7 @@
                             ${{this.price}}
                             {{/if}}
                         </strong>
-                        <button class="add-to-cart-btn" style="border-radius: 7px;border: silver 1px;color: green;"
+                        <button class="add-to-cart-btns" style="border-radius: 7px;border: silver 1px;color: green;"
                             data-product-id="{{this._id}}">
                             Add to Cart
                         </button>
@@ -113,5 +116,75 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart-btns");
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const productId = this.getAttribute("data-product-id");
+
+                fetch(`/cart/addtocart/${productId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 201) {
+                            alert(message);
+                        } else if (status === 400) {
+                            alert("Item is already in cart.");
+                        } else if (status === 401) {
+                            alert("Please log in to add items to the cart.");
+                            window.location.href = "/auth/login";
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error adding to cart:", error);
+                        alert("An error occurred. Please try again later.");
+                    });
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const productId = this.getAttribute("data-product-id");
+
+                fetch(`/cart/addtocart/${productId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 201) {
+                            alert(message);
+                        } else if (status === 400) {
+                            alert("Item is already in cart.");
+                        } else if (status === 401) {
+                            alert("Please log in to add items to the cart.");
+                            window.location.href = "/auth/login";
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error adding to cart:", error);
+                        alert("An error occurred. Please try again later.");
+                    });
+            });
+        });
+    });
+</script>
 
 </html>

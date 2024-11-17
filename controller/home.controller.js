@@ -67,6 +67,7 @@ const getShopPage = async (req, res, next) => {
         isShopPage: true,
         products: products,
         categories: categories.map((cat) => ({ category: cat })),
+        user: req.session.user,
       });
     }
   } catch (error) {
@@ -91,11 +92,17 @@ const getViewProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
     const product = await Product.findById(productId);
+    const allProducts = await Product.find();
+
+    const shuffledProducts = allProducts.sort(() => Math.random() - 0.5);
+    const limitedProducts = shuffledProducts.slice(
+      0,
+      Math.min(shuffledProducts.length, 16)
+    );
+
     if (!product) {
       return res.status(404).json({ message: "Product not found." });
     }
-
-    // Format the release date
     const formattedReleaseDate = new Date(
       product.releaseDate
     ).toLocaleDateString("en-US", {
@@ -104,8 +111,8 @@ const getViewProduct = async (req, res, next) => {
       day: "numeric",
     });
 
-    // Destructure the product data
     const {
+      _id,
       name,
       category,
       description,
@@ -118,9 +125,9 @@ const getViewProduct = async (req, res, next) => {
       releaseDate,
     } = product;
 
-    // Send individual fields to the view
     res.render("users/ViewProducts", {
       title: name,
+      _id,
       name,
       category,
       description,
@@ -132,6 +139,8 @@ const getViewProduct = async (req, res, next) => {
       specifications,
       releaseDate: formattedReleaseDate,
       isViewProduct: true,
+      user: req.session.user,
+      limitedProducts,
     });
   } catch (error) {
     next(error);
