@@ -47,6 +47,9 @@ app.engine(
     extname: "hbs",
     defaultLayout: "main",
     layoutsDir: path.join(__dirname, "views/layouts"),
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true, // Allow access to prototype properties
+    },
   })
 );
 app.set("view engine", "hbs");

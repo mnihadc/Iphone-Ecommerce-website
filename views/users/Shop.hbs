@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Shop</title>
 </head>
 
 <body>
@@ -21,20 +21,20 @@
                     </div>
                     <div class="col-12 col-md-3 mb-3 mb-md-0">
                         <select class="form-control" id="categorySelect">
-                            <option value="">All Categories</option>
-                            <option value="electronics">Electronics</option>
-                            <option value="fashion">Fashion</option>
-                            <option value="home">Home & Living</option>
-                            <option value="toys">Toys</option>
+                            <option value="">None</option>
+                            {{#each categories}}
+                            <option value="{{category}}">{{category}}</option>
+                            {{/each}}
                         </select>
                     </div>
                     <div class="col-12 col-md-3 mb-3 mb-md-0">
                         <select class="form-control" id="priceRangeSelect">
-                            <option value="">Price Range</option>
+                            <option value="">None</option>
                             <option value="0-50">$0 - $50</option>
-                            <option value="50-100">$50 - $100</option>
-                            <option value="100-200">$100 - $200</option>
-                            <option value="200+">$200+</option>
+                            <option value="51-100">$51 - $100</option>
+                            <option value="101-200">$101 - $200</option>
+                            <option value="201-500">$201 - $500</option>
+                            <option value="500-1000">$500 - $1000</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2">
@@ -43,14 +43,17 @@
                 </form>
             </div>
         </div>
+
         <div class="product-section">
             <div class="container">
-                <div class="row">
+                <div class="row" id="productList">
                     {{#each products}}
-                    <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+                    <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
+                        data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
                         <div class="product-item">
                             <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
                             <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                            <h6 class="product-title" style="color: black;">{{this.category}}</h6>
                             <strong class="product-price">
                                 {{#if this.offerPrice}}
                                 <span class="product-price-old">${{this.offerPrice}}</span>
@@ -71,136 +74,89 @@
     </div>
 
     <footer class="footer-32892 pb-0" style="background: rgb(59, 55, 55);color: azure;padding-top: 2rem;">
-        <div class="site-section">
-            <div class="container">
-
-
-                <div class="row">
-
-                    <div class="col-md pr-md-5 mb-4 mb-md-0">
-                        <h3>About Us</h3>
-                        <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam itaque
-                            unde facere repellendus, odio et iste voluptatum aspernatur ratione mollitia tempora
-                            eligendi maxime est, blanditiis accusamus. Incidunt, aut, quis!</p>
-                        <ul class="list-unstyled quick-info mb-4">
-                            <li><a href="#" class="d-flex align-items-center"><span class="icon mr-3 icon-phone"></span>
-                                    +1 291 3912 329</a></li>
-                            <li><a href="#" class="d-flex align-items-center"><span
-                                        class="icon mr-3 icon-envelope"></span> info@gmail.com</a></li>
-                        </ul>
-
-                        <form action="#" class="subscribe">
-                            <input type="text" class="form-control" placeholder="Enter your e-mail">
-                            <input type="submit" class="btn btn-submit" value="Send">
-                        </form>
-                    </div>
-                    <div class="col-md mb-4 mb-md-0">
-                        <h3>Latest Tweet</h3>
-                        <ul class="list-unstyled tweets">
-                            <li class="d-flex">
-                                <div class="mr-4"><span class="icon icon-twitter"></span></div>
-                                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
-                                    veniam porro excepturi.</div>
-                            </li>
-                            <li class="d-flex">
-                                <div class="mr-4"><span class="icon icon-twitter"></span></div>
-                                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
-                                    veniam porro excepturi.</div>
-                            </li>
-                            <li class="d-flex">
-                                <div class="mr-4"><span class="icon icon-twitter"></span></div>
-                                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere unde omnis
-                                    veniam porro excepturi.</div>
-                            </li>
-                        </ul>
-                    </div>
-
-
-                    <div class="col-md-3 mb-4 mb-md-0">
-                        <h3>Instagram</h3>
-                        <div class="row gallery">
-                            <div class="col-6">
-                                <a href="#"><img src="images/img_1.jpg" alt="Image" class="img-fluid"></a>
-                                <a href="#"><img src="images/img_2.jpg" alt="Image" class="img-fluid"></a>
-                            </div>
-                            <div class="col-6">
-                                <a href="#"><img src="images/img_3.jpg" alt="Image" class="img-fluid"></a>
-                                <a href="#"><img src="images/img_4.jpg" alt="Image" class="img-fluid"></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="py-5 footer-menu-wrap d-md-flex align-items-center">
-                            <ul class="list-unstyled footer-menu mr-auto">
-                                <li><a href="#">Home</a></li>
-                                <li><a href="#">About</a></li>
-                                <li><a href="#">Our works</a></li>
-                                <li><a href="#">Services</a></li>
-                                <li><a href="#">Blog</a></li>
-                                <li><a href="#">Contacts</a></li>
-                            </ul>
-                            <div class="site-logo-wrap ml-auto">
-                                <a href="#" class="site-logo">
-                                    Colorlib
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+        <!-- Footer content here -->
     </footer>
 </body>
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const filterForm = document.getElementById("filterForm");
-        const searchInput = document.getElementById("searchInput");
-        const categorySelect = document.getElementById("categorySelect");
-        const priceRangeSelect = document.getElementById("priceRangeSelect");
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const categorySelect = document.getElementById('categorySelect');
+        const priceRangeSelect = document.getElementById('priceRangeSelect');
+        const productList = document.getElementById('productList');
+        const searchSuggestions = document.getElementById('searchSuggestions');
 
-        filterForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const searchQuery = searchInput.value.toLowerCase();
-            const selectedCategory = categorySelect.value;
-            const selectedPriceRange = priceRangeSelect.value;
-
-            const productItems = document.querySelectorAll(".product-item");
-
-            productItems.forEach((item) => {
-                const productName = item.querySelector(".product-title").innerText.toLowerCase();
-                const productCategory = item.getAttribute("data-category");
-                const productPrice = parseFloat(item.getAttribute("data-price"));
-
-                let matchesSearch = !searchQuery || productName.includes(searchQuery);
-                let matchesCategory = !selectedCategory || productCategory === selectedCategory;
-                let matchesPrice = true;
-
-                if (selectedPriceRange) {
-                    const [minPrice, maxPrice] = selectedPriceRange.split("-").map(Number);
-                    matchesPrice =
-                        (!minPrice || productPrice >= minPrice) &&
-                        (!maxPrice || productPrice <= maxPrice);
-                }
-
-                if (matchesSearch && matchesCategory && matchesPrice) {
-                    item.style.display = "block";
-                } else {
-                    item.style.display = "none";
-                }
+        function fetchProducts() {
+            const params = new URLSearchParams({
+                search: searchInput.value,
+                category: categorySelect.value,
+                priceRange: priceRangeSelect.value,
             });
+
+            fetch(`/shop?${params.toString()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.json())
+                .then(data => {
+                    productList.innerHTML = data.products.map(product => `
+                <div class="col-12 col-md-4 col-lg-3 mb-4 product-item" 
+                    data-category="${product.category}" 
+                    data-price="${product.offerPrice || product.price}">
+                    <div class="product-card">
+                        <img src="${product.productImages}" class="img-fluid" alt="${product.name}">
+                        <h5>${product.name}</h5>
+                        <p>${product.category}</p>
+                        <p class="product-price">
+                            ${product.offerPrice ? `<span class="text-danger">$${product.offerPrice}</span> <del class="product-price-old">$${product.price}</del>` : `$${product.price}`}
+                        </p>
+                        <button class="add-to-cart-btn" style="border-radius: 7px; border: silver 1px; color: green;" data-product-id="${product._id}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+                    // Reattach event listeners for the "Add to Cart" buttons
+                    attachAddToCartListeners();
+                });
+        }
+
+
+        searchInput.addEventListener('input', () => {
+            if (searchInput.value.length > 2) {
+                fetch(`/shop/suggestions?q=${searchInput.value}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        searchSuggestions.innerHTML = data.map(product => `
+                                <div class="suggestion-item">${product.name}</div>
+                            `).join('');
+                        searchSuggestions.style.display = 'block';
+                    });
+            } else {
+                searchSuggestions.style.display = 'none';
+            }
         });
+
+        searchSuggestions.addEventListener('click', (e) => {
+            if (e.target.classList.contains('suggestion-item')) {
+                searchInput.value = e.target.textContent;
+                searchSuggestions.style.display = 'none';
+                fetchProducts();
+            }
+        });
+
+        categorySelect.addEventListener('change', fetchProducts);
+        priceRangeSelect.addEventListener('change', fetchProducts);
+
+        fetchProducts();
     });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const productList = document.getElementById('productList');
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
-
-        addToCartButtons.forEach(button => {
-            button.addEventListener("click", function () {
-                const productId = this.getAttribute("data-product-id");
+        // Attach event listener to the parent container (productList)
+        productList.addEventListener('click', function (e) {
+            // Check if the clicked element is a "Add to Cart" button
+            if (e.target && e.target.classList.contains('add-to-cart-btn')) {
+                const productId = e.target.getAttribute("data-product-id");
 
                 fetch(`/cart/addtocart/${productId}`, {
                     method: "POST",
@@ -225,9 +181,11 @@
                         console.error("Error adding to cart:", error);
                         alert("An error occurred. Please try again later.");
                     });
-            });
+            }
         });
     });
+
 </script>
+
 
 </html>
