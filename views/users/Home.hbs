@@ -58,8 +58,14 @@
                 {{#each products}}
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
                     <div class="product-item">
-                        <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
-                        <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                        <!-- Link the image to the view product page -->
+                        <a href="/product-view/{{this._id}}">
+                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                        </a>
+                        <!-- Optionally, make the product title clickable too -->
+                        <a href="/product-view/{{this._id}}" style="text-decoration: none;">
+                            <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                        </a>
                         <strong class="product-price">
                             {{#if this.offerPrice}}
                             <span class="product-price-old">${{this.offerPrice}}</span>

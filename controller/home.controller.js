@@ -87,7 +87,6 @@ const searchSuggestions = async (req, res, next) => {
     next(error);
   }
 };
-
 const getViewProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -95,9 +94,43 @@ const getViewProduct = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found." });
     }
-    res.render("users/Product", {
-      title: product.name,
-      product: product,
+
+    // Format the release date
+    const formattedReleaseDate = new Date(
+      product.releaseDate
+    ).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    // Destructure the product data
+    const {
+      name,
+      category,
+      description,
+      price,
+      offerPrice,
+      stock,
+      productImages,
+      colorOptions,
+      specifications,
+      releaseDate,
+    } = product;
+
+    // Send individual fields to the view
+    res.render("users/ViewProducts", {
+      title: name,
+      name,
+      category,
+      description,
+      price,
+      offerPrice,
+      stock,
+      productImages,
+      colorOptions,
+      specifications,
+      releaseDate: formattedReleaseDate,
       isViewProduct: true,
     });
   } catch (error) {
