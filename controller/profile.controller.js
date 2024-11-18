@@ -44,9 +44,11 @@ const getProfile = async (req, res, next) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
 const deleteUser = async (req, res, next) => {
   try {
     const dataId = req.params.id;
+
     const user = await User.findByIdAndDelete(dataId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });

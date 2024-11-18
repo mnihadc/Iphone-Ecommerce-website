@@ -32,11 +32,11 @@
                 <div class="col-12 col-md-3 mb-3 mb-md-0">
                     <select class="form-control" id="priceRangeSelect">
                         <option value="">None</option>
-                        <option value="0-1000">$0 - $1000</option>
-                        <option value="1000-10000">$1000 - $10000</option>
-                        <option value="10000-50000">$10000 - $50000</option>
-                        <option value="50000-200000">$50000 - $200000</option>
-                        <option value="200000-500000">$200000 - $500000</option>
+                        <option value="0-1000">₹0 - ₹1000</option>
+                        <option value="1000-10000">₹1000 - ₹10000</option>
+                        <option value="10000-50000">₹10000 - ₹50000</option>
+                        <option value="50000-200000">₹50000 - ₹200000</option>
+                        <option value="200000-500000">₹200000 - ₹500000</option>
                     </select>
                 </div>
                 <div class="col-12 col-md-2">
@@ -62,7 +62,7 @@
                         <h6 class="product-title" style="color: black;">{{this.category}}</h6>
                         <strong class="product-price">
                             {{#if this.offerPrice}}
-                            <span class="product-price-old">${{this.offerPrice}}</span>
+                            <span class="product-price-old">₹{{this.offerPrice}}</span>
                             {{else}}
                             ${{this.price}}
                             {{/if}}
@@ -115,8 +115,8 @@
                                 <p>${product.category}</p>
                                 <p class="product-price">
                                     ${product.offerPrice
-                                ? `<span class="text-danger">$${product.offerPrice}</span> <del class="product-price-old">$${product.price}</del>`
-                                : `$${product.price}`}
+                                ? `<span class="text-danger">₹${product.offerPrice}</span> <del class="product-price-old" style="color: gray;">₹${product.price}</del>`
+                                : `₹${product.price}`}
                                 </p>
                                 <button class="add-to-cart-btn" data-product-id="${product._id}">Add to Cart</button>
                             </div>

@@ -144,7 +144,7 @@
                             <p>
                                 <strong>Category:</strong> {{this.product.category}}<br>
                                 <strong>Battery:</strong> {{this.product.battery}}<br>
-                                <strong>Price:</strong> ${{this.product.price}}
+                                <strong>Price:</strong> ₹{{this.product.price}}
                             </p>
                         </div>
 
@@ -160,7 +160,7 @@
                             <p><strong>Quantity:</strong> {{this.quantity}}</p>
                         </div>
                         <div class="col-md-3 text-right">
-                            <h5>Subtotal: ${{this.itemTotalPrice}}</h5>
+                            <h5>Subtotal: ₹{{this.itemTotalPrice}}</h5>
                         </div>
                     </div>
                 </div>
@@ -177,21 +177,21 @@
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Subtotal:</span>
-                    <strong>${{checkout.totalPrice}}</strong>
+                    <strong>₹{{checkout.totalPrice}}</strong>
                 </li>
                 {{#if checkout.discount}}
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Discount:</span>
-                    <strong>-${{checkout.discount}}</strong>
+                    <strong>-₹{{checkout.discount}}</strong>
                 </li>
                 {{/if}}
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Delivery:</span>
-                    <strong>${{checkout.delivery}}</strong>
+                    <strong>₹{{checkout.delivery}}</strong>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Total:</span>
-                    <strong>${{checkout.totalPrice}}</strong>
+                    <strong>₹{{checkout.totalPrice}}</strong>
                 </li>
             </ul>
         </div>

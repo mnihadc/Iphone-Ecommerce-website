@@ -108,6 +108,8 @@
                         </div>
                     </div>
 
+                    {{#if products.length}}
+                    <!-- Display the cart items if there are products -->
                     {{#each products}}
                     <div class="row border-top border-bottom">
                         <div class="row main align-items-center">
@@ -126,47 +128,63 @@
                                 <a class="increment" data-product-id="{{this._id}}"
                                     data-price="{{this.unitPrice}}">+</a>
                             </div>
-                            <div class="col">&euro; <span class="item-price">{{this.finalPrice}}</span>
+                            <div class="col">₹<span class="item-price">{{this.finalPrice}}</span>
                                 <span class="close remove-cart-item" data-product-id="{{this._id}}">&#10005;</span>
                             </div>
                         </div>
                     </div>
                     {{/each}}
 
-                    <div class="back-to-shop"><a href="#">&leftarrow;</a><span class="text-muted">Back to shop</span>
+                    <div class="back-to-shop"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to
+                            shop</span>
                     </div>
-                </div>
+                    {{else}}
+                    <!-- Display a message if the cart is empty -->
+                    <div class="">
+                        <div class="back-to-shop"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to
+                                shop</span>
+                        </div>
+                        <img style="width: 500px;height: 400px;text-align: center"
+                            src="https://img.freepik.com/premium-vector/empty-cart_701961-7086.jpg" alt="Cart is Empty">
 
-                <div class="col-md-4 summary">
-                    <h5><b>Summary</b></h5>
-                    <hr>
-                    <div class="row">
-                        <div class="col">ITEMS {{products.length}}</div>
-                        <div class="col text-right">&euro; <span class="total-price">{{totalPrice}}</span></div>
-                    </div>
-                    <form>
-                        <p>SHIPPING</p>
-                        <select>
-                            <option value="Standard-Delivery" class="text-muted">Standard-Delivery- &euro;5.00</option>
-                            <option value="Express-Delivery" class="text-muted">Express-Delivery-&euro;10.00</option>
-                        </select>
 
-                        <p>GIVE CODE</p>
-                        <input id="code" placeholder="Enter your code">
-                    </form>
-                    <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
-                        <div class="col">TOTAL PRICE</div>
-                        <div class="col text-right">&euro; <span class="total-price">{{totalPrice}}</span></div>
+                        {{/if}}
                     </div>
-                    <button type="button" class="btn btn-primary">Checkout</button>
+
+                    <div class="col-md-4 summary">
+                        {{#if products.length}}
+                        <h5><b>Summary</b></h5>
+                        <hr>
+                        <div class="row">
+                            <div class="col">ITEMS {{products.length}}</div>
+                            <div class="col text-right">₹<span class="total-price">{{totalPrice}}</span></div>
+                        </div>
+                        <form>
+                            <p>SHIPPING</p>
+                            <select>
+                                <option value="Standard-Delivery" class="text-muted">Standard-Delivery- ₹5.00
+                                </option>
+                                <option value="Express-Delivery" class="text-muted">Express-Delivery-₹10.00
+                                </option>
+                            </select>
+
+                            <p>GIVE CODE</p>
+                            <input id="code" placeholder="Enter your code">
+                        </form>
+                        <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                            <div class="col">TOTAL PRICE</div>
+                            <div class="col text-right">₹<span class="total-price">{{totalPrice}}</span></div>
+                        </div>
+                        <button type="button" class="btn btn-primary">Checkout</button>
+                        {{/if}}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+        <!-- Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 </body>
 
 <script>
