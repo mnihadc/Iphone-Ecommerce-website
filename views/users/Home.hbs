@@ -552,7 +552,7 @@
                             alert(message);
                         } else if (status === 400) {
                             alert("Item is already in cart.");
-                        } else if (status === 401) {
+                        } else if (status === 401 && status === 404) {
                             alert("Please log in to add items to the cart.");
                             window.location.href = "/auth/login";
                         } else {

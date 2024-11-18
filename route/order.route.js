@@ -8,6 +8,6 @@ const verifyToken = require("../middleware/verifyToken");
 const router = express.Router();
 
 router.post("/checkout", verifyToken, checkout);
-router.get("/checkout-summery", getCheckoutSummery);
+router.get("/checkout-summery", verifyToken, getCheckoutSummery);
 
 module.exports = router;
