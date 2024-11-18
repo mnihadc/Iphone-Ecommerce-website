@@ -1,0 +1,245 @@
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* About Section Styles */
+.about-intro {
+  background: linear-gradient(135deg, #ff6347, #ff9966);
+  /* Gradient effect */
+  color: white;
+  padding: 50px 0;
+  text-align: center;
+  position: relative;
+}
+
+.about-intro h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.about-intro p {
+  font-size: 18px;
+  color: white;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.cta-button {
+  background-color: #333;
+  color: white;
+  font-size: 18px;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #ff6347;
+}
+
+/* Why Shop Section Styles */
+.why-shop {
+  padding: 50px 0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.why-shop h2 {
+  font-size: 32px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.features {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.feature {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 30%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.feature:hover {
+  transform: translateY(-10px);
+}
+
+.feature-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.feature h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  font-size: 16px;
+  color: #555;
+}
+
+/* Our Promise Section Styles */
+.our-promise {
+  padding: 50px 0;
+  background-color: #ff6347;
+  color: white;
+  text-align: center;
+}
+
+.our-promise h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.our-promise p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.our-promise ul {
+  list-style: none;
+  font-size: 16px;
+  color: white;
+}
+
+.our-promise ul li {
+  margin: 10px 0;
+}
+
+/* Customer Testimonials */
+.customer-testimonials {
+  background-color: #f9f9f9;
+  padding: 50px 0;
+}
+
+.testimonials {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.testimonial {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 30%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.testimonial:hover {
+  transform: translateY(-10px);
+}
+
+.testimonial-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+
+.testimonial h4 {
+  font-size: 20px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.testimonial p {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
+
+/* Partner Brands Section */
+.partner-brands {
+  padding: 50px 0;
+  background-color: #fff;
+  text-align: center;
+}
+
+.brand-logos {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.brand-logos img {
+  width: 150px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.brand-logos img:hover {
+  transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .features {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .feature {
+    width: 100%;
+  }
+
+  .testimonials {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .testimonial {
+    width: 100%;
+  }
+
+  .brand-logos {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .brand-logos img {
+    width: 45%;
+    /* Make each logo 45% width */
+  }
+}
