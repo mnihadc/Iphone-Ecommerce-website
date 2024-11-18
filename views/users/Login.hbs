@@ -11,7 +11,7 @@
 
 <body>
     <div class="loginhead">
-        <div class="main">
+        <div class="mains">
             <input type="checkbox" id="chk" aria-hidden="true">
 
             <div class="signup">
@@ -23,7 +23,7 @@
                     {{#if signUpError}}
                     <p style="color: red;text-align: center ;">{{signUpError}}</p>
                     {{/if}}
-                    <button>Sign up</button>
+                    <button class="logButton">Sign up</button>
                 </form>
             </div>
 
@@ -35,7 +35,7 @@
                     {{#if loginError}}
                     <p style="color: red;text-align: center;">{{loginError}}</p>
                     {{/if}}
-                    <button>Login</button>
+                    <button class="logButton">Login</button>
                 </form>
             </div>
         </div>

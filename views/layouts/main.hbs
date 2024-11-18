@@ -96,6 +96,8 @@
             .navbar-nav {
                 display: flex;
                 flex-direction: column;
+                align-items: flex-start;
+                margin-left: 0;
             }
 
             .nav-link {
@@ -130,17 +132,21 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-md fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img class="" src="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" alt="Logo">
-                <span class="" style="font-size:2rem;font-weight: bolder;">iStore</span>
+                <img src="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" alt="Logo">
+                <span style="font-size:2rem;font-weight: bolder;">iStore</span>
             </a>
+
+            <!-- Navbar Toggler (Hamburger for mobile) -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fas fa-bars"></i>
             </button>
 
+            <!-- Navbar Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
@@ -170,9 +176,15 @@
         </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="main-content">
         {{{body}}}
     </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 

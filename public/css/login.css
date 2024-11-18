@@ -6,15 +6,17 @@ body {
   background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
 }
 
-/* Main Content Wrapper */
 .loginhead {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Subtract navbar height */
+  margin-top: 80px; /* Add space to account for navbar */
+  padding-top: 20px; /* Optional for breathing room */
+  box-sizing: border-box;
 }
 
-.loginhead .main {
+.loginhead .mains {
   width: 350px;
   height: 500px;
   background: red;
@@ -59,7 +61,7 @@ input {
   border-radius: 5px;
 }
 
-button {
+.logButton {
   width: 70%;
   height: 40px;
   margin: 20px auto;
@@ -76,7 +78,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.logButton:hover {
   background: #6d44b8;
 }
 
