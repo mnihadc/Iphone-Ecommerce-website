@@ -147,9 +147,17 @@ const getViewProduct = async (req, res, next) => {
   }
 };
 
+const getAbout = (req, res, next) => {
+  res.render("users/About", {
+    title: "About",
+    isAboutPage: true,
+    user: req.session.user,
+  });
+};
 module.exports = {
   getHomePage,
   getShopPage,
   searchSuggestions,
   getViewProduct,
+  getAbout,
 };
