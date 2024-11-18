@@ -139,4 +139,20 @@ const getCheckoutSummery = async (req, res, next) => {
   }
 };
 
-module.exports = { checkout, getCheckoutSummery };
+const CancelOrder = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const order = await Checkout.findByIdAndDelete(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found." });
+    }
+
+    res.status(200).json({ message: "Order canceled successfully." });
+  } catch (error) {
+    console.error("Error canceling order:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+module.exports = { checkout, getCheckoutSummery, CancelOrder };
