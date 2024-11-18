@@ -130,6 +130,138 @@
         .main-content {
             padding-top: 80px;
         }
+
+        /* Footer Styling */
+        .footer {
+            background-color: #1d1d1f;
+            color: #fff;
+            padding: 60px 0;
+            position: relative;
+            border-top: 5px solid #ff5722;
+            /* Apple branding accent */
+        }
+
+        .footer h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .footer .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 0 15px;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer ul li {
+            margin: 10px 0;
+        }
+
+        .footer ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer ul li a:hover {
+            text-decoration: underline;
+            color: #ff5722;
+            /* Hover color */
+        }
+
+        .footer .social-icons a {
+            color: #fff;
+            font-size: 20px;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .footer .social-icons a:hover {
+            color: #ff5722;
+        }
+
+        .footer .subscribe input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer .subscribe input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .footer .subscribe input[type="submit"]:hover {
+            background-color: #e64a19;
+        }
+
+        .footer .gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .footer .gallery img:hover {
+            transform: scale(1.1);
+        }
+
+        .footer .site-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: blue;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .footer .site-logo a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        .footer .site-logo a:hover {
+            color: #ff5722;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .footer .container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer .social-icons {
+                margin-top: 20px;
+            }
+
+            .footer .subscribe input[type="text"] {
+                width: 80%;
+                margin-bottom: 15px;
+            }
+
+            .footer .gallery img {
+                max-width: 100%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 
 </head>
@@ -182,6 +314,80 @@
     <div class="main-content">
         {{{body}}}
     </div>
+    <footer class="footer">
+        <div class="container">
+            <!-- About Us -->
+            <div class="col-md-3 mb-4">
+                <h3>About Us</h3>
+                <p>Welcome to the official Apple Store. Explore and shop the latest Apple products including iPhones,
+                    iPads, Macs, and more.</p>
+                <ul>
+                    <li><a href="tel:+123456789">📞 +1 234 567 890</a></li>
+                    <li><a href="mailto:support@apple.com">📧 support@apple.com</a></li>
+                </ul>
+            </div>
+
+            <!-- Latest Tweet -->
+            <div class="col-md-3 mb-4">
+                <h3>Latest Tweets</h3>
+                <ul>
+                    <li>📱 New iPhone 16 launched! Discover its amazing features. #Apple #iPhone16</li>
+                    <li>💻 iMac M1 now with up to 64GB RAM. #Apple #MacBook</li>
+                    <li>🎧 New AirPods Pro 2nd Gen available now! #AirPods #Apple</li>
+                </ul>
+            </div>
+
+            <!-- Instagram Gallery -->
+            <div class="col-md-3 mb-4">
+                <h3>Instagram</h3>
+                <div class="row gallery">
+                    <div class="col-6">
+                        <a class="p-2" href="#"><img class="p-2"
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZVTcHa4jezwfnSDZNrcPUzeALWP4WyYZV4g&s"
+                                alt="Instagram Image 1"></a>
+                    </div>
+                    <div class="col-6">
+                        <a class="p-2" href="#"><img class="p-2"
+                                src="https://media.wired.com/photos/643d7e61cdba28f045ac3f59/master/pass/macbook_sec_GettyImages-1368668740.jpg"
+                                alt="Instagram Image 2"></a>
+                    </div>
+                    <div class="col-6">
+                        <a class="p-2" href="#"><img class="p-2"
+                                src="https://imageio.forbes.com/specials-images/imageserve/64650aa8c2219ac74a7a7422/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds"
+                                alt="Instagram Image 3"></a>
+                    </div>
+                    <div class="col-6">
+                        <a href="#"><img class="p-2"
+                                src="https://img.freepik.com/premium-photo/collection-apple-products-including-apple-products-other-items_1077802-146335.jpg"
+                                alt="Instagram Image 4"></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Menu -->
+            <div class="col-md-3 mb-4">
+                <ul class="footer-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="/shop">Shop</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="site-logo">
+                    <a href="#">iStore</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="text-center social-icons">
+            <a href="https://twitter.com/apple" target="_blank"><span class="fa fa-twitter"></span></a>
+            <a href="https://facebook.com/apple" target="_blank"><span class="fa fa-facebook"></span></a>
+            <a href="https://instagram.com/apple" target="_blank"><span class="fa fa-instagram"></span></a>
+            <a href="https://youtube.com/apple" target="_blank"><span class="fa fa-youtube"></span></a>
+        </div>
+    </footer>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
