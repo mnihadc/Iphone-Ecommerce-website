@@ -13,8 +13,19 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
-    minlength: 8,
+    minlength: 8, // Only required for non-OAuth users
+  },
+  googleId: {
+    type: String, // Stores Google profile ID
+    unique: true, // Ensures uniqueness for Google logins
+    sparse: true, // Allows null/undefined for non-Google users
+  },
+  profileImage: {
+    type: String, // Stores the user's Google profile picture URL
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

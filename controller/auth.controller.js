@@ -104,4 +104,5 @@ const Logout = (req, res) => {
     res.redirect("/auth/login");
   });
 };
+
 module.exports = { Login, SignUp, Logout, getLoginPage };
