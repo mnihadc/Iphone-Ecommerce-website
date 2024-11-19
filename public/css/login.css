@@ -11,8 +11,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 80px); /* Subtract navbar height */
-  margin-top: 80px; /* Add space to account for navbar */
-  padding-top: 20px; /* Optional for breathing room */
+  margin-top: 60px; /* Add space to account for navbar */
   box-sizing: border-box;
 }
 

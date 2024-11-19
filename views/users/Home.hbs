@@ -260,5 +260,43 @@
     <!-- Custom JS -->
     <script src="js/main.js"></script>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const productSection = document.querySelector('.product-section');
+
+        // Attach event listener to the parent container (productSection)
+        productSection.addEventListener('click', function (e) {
+            // Check if the clicked element is a "Add to Cart" button
+            if (e.target && e.target.classList.contains('add-to-cart-btn')) {
+                const productId = e.target.getAttribute("data-product-id");
+
+                fetch(`/cart/addtocart/${productId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 201) {
+                            alert(message); // Item added successfully
+                        } else if (status === 400) {
+                            alert("Item is already in cart.");
+                        } else if (status === 401) {
+                            alert("Please log in to add items to the cart.");
+                            window.location.href = "/auth/login";
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error adding to cart:", error);
+                        alert("An error occurred. Please try again later.");
+                    });
+            }
+        });
+    });
+
+</script>
 
 </html>
