@@ -32,7 +32,8 @@
 									<div id="form-message-success" class="mb-4">
 										Your message was sent, thank you!
 									</div>
-									<form method="POST" id="contactForm" name="contactForm" class="contactForm">
+									<form method="POST" action="/contact-us" id="contactForm" name="contactForm"
+										class="contactForm">
 										<div class="row">
 											<div class="col-md-6">
 												<div class="form-group">
@@ -126,5 +127,43 @@
 	<script src="js/main.js"></script>
 
 </body>
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const form = document.getElementById("contactForm");
+
+		form.addEventListener("submit", async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(form);
+
+			try {
+				const response = await fetch("/contact-us", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(Object.fromEntries(formData)),
+				});
+
+				if (response.ok) {
+					document.getElementById("form-message-success").style.display = "block";
+					document.getElementById("form-message-warning").style.display = "none";
+					form.reset();
+				} else {
+					const result = await response.json();
+					document.getElementById("form-message-warning").innerText =
+						result.error || "There was an issue with your submission.";
+					document.getElementById("form-message-warning").style.display = "block";
+					document.getElementById("form-message-success").style.display = "none";
+				}
+			} catch (error) {
+				document.getElementById("form-message-warning").innerText =
+					"An unexpected error occurred.";
+				document.getElementById("form-message-warning").style.display = "block";
+			}
+		});
+	});
+
+</script>
 
 </html>

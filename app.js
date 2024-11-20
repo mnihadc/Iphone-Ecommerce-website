@@ -12,11 +12,13 @@ const authRouter = require("./route/auth.route");
 const profileRouter = require("./route/profile.route");
 const addressRouter = require("./route/address.route");
 const cartRouter = require("./route/cart.route");
+const bodyParser = require("body-parser");
 const orderRouter = require("./route/order.route");
 const app = express();
 dotenv.config();
 
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 const cookieParser = require("cookie-parser");
 const User = require("./model/User");

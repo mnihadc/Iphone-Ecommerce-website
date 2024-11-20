@@ -1,5 +1,5 @@
 const Product = require("../model/Product");
-
+const nodemailer = require("nodemailer");
 const getHomePage = async (req, res, next) => {
   try {
     const products = await Product.aggregate([
@@ -169,6 +169,46 @@ const getContactUs = (req, res, next) => {
     user: req.session.user,
   });
 };
+
+const ContactUs = async (req, res, next) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    // Validate input
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
+
+    // Configure Nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // Using Gmail
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // The app-specific password
+      },
+    });
+
+    // Email content
+    const mailOptions = {
+      from: email,
+      to: "mncnihad@gmail.com", // Recipient's email (your email)
+      subject: `Contact Form Submission: ${subject}`,
+      text: `You received a new message from ${name} (${email}):\n\n${message}`,
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    // Respond to the client
+    res.json({
+      message: "Thank you for contacting us. We'll get back to you soon.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "There was an error sending the email." });
+  }
+};
+
 module.exports = {
   getHomePage,
   getShopPage,
@@ -177,4 +217,5 @@ module.exports = {
   getAbout,
   getBlog,
   getContactUs,
+  ContactUs,
 };
