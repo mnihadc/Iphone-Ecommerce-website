@@ -155,4 +155,69 @@ const CancelOrder = async (req, res, next) => {
   }
 };
 
-module.exports = { checkout, getCheckoutSummery, CancelOrder };
+const getOrder = async (req, res, next) => {
+  try {
+    const user = req.session.user;
+    const userId = user?.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User not authenticated" });
+    }
+
+    // Fetch all orders for the user
+    const orders = await Checkout.find({ userId }).sort({ createdAt: -1 });
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    // Extract all product IDs from all orders
+    const allProductIds = orders.flatMap((order) =>
+      order.items.map((item) => item.productId)
+    );
+    console.log(allProductIds);
+
+    // Fetch product details for all product IDs
+    const products = await Product.find({ _id: { $in: allProductIds } });
+
+    // Enrich each order's items with product details
+    const enrichedOrders = orders.map((order) => {
+      const enrichedItems = order.items.map((item) => {
+        const product = products.find(
+          (prod) => prod._id.toString() === item.productId.toString()
+        );
+
+        return {
+          ...item.toObject(),
+          product: product
+            ? {
+                name: product.name,
+                category: product.category,
+                image: product.productImages[0],
+                price: product.offerPrice || product.price,
+                stock: product.stock,
+                specifications: product.specifications,
+              }
+            : null, // Handle missing product details gracefully
+        };
+      });
+
+      return {
+        ...order.toObject(),
+        items: enrichedItems,
+      };
+    });
+    // Pass enriched orders data to the frontend
+    res.render("users/Order", {
+      title: "Your Orders",
+      user: req.session.user,
+      isOrderPage: true,
+      orders: enrichedOrders,
+    });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    next(error);
+  }
+};
+
+module.exports = { checkout, getCheckoutSummery, CancelOrder, getOrder };
