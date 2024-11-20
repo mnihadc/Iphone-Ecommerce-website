@@ -130,6 +130,7 @@ const handleForgotPassword = async (req, res) => {
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
+
     user.otp = otp;
     user.otpExpire = Date.now() + 15 * 60 * 1000;
     await user.save();
@@ -164,37 +165,33 @@ const handleOtpVerification = async (req, res) => {
 
     // Validate inputs
     if (!email || !otp) {
-      return res.render("users/forgotPassword", {
-        title: "Verify OTP",
-        email,
-        error: "Please provide the OTP.",
-      });
+      return res.status(400).json({ error: "Email and OTP are required." });
     }
 
-    // Find the user and verify the OTP
+    // Find the user
     const user = await User.findOne({ email });
-    if (!user || user.otp !== otp || Date.now() > user.otpExpire) {
-      return res.render("users/forgotPassword", {
-        title: "Verify OTP",
-        email,
-        error: "Invalid or expired OTP.",
-      });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "User not found with the provided email." });
     }
 
-    // Clear OTP after verification
+    // Validate OTP and check expiration
+    const isOtpValid = user.otp === otp && Date.now() <= user.otpExpire;
+    if (!isOtpValid) {
+      return res.status(400).json({ error: "Invalid or expired OTP." });
+    }
+
+    // Clear OTP after successful verification
     user.otp = null;
     user.otpExpire = null;
     await user.save();
 
-    // Redirect to password reset page
-    res.redirect(`/get-create-newuser?email=${email}`);
+    // Return success response
+    res.status(200).json({ message: "OTP verified successfully." });
   } catch (error) {
     console.error(error);
-    res.status(500).render("users/forgotPassword", {
-      title: "Verify OTP",
-      email,
-      error: "An error occurred while verifying the OTP.",
-    });
+    res.status(500).json({ error: "An error occurred while verifying OTP." });
   }
 };
 

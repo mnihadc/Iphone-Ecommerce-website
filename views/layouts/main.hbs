@@ -312,11 +312,13 @@
                     {{else}}
                     <li class="nav-item"><a class="nav-link" href="/auth/login"><b>Login</b></a></li>
                     {{/if}}
+                    {{#if user}}
                     <li class="nav-item">
                         <a class="nav-link" href="/cart/get-cart">
                             <img src="/images/cart.svg" alt="Cart" class="icon-small">
                         </a>
                     </li>
+                    {{/if}}
                 </ul>
             </div>
         </div>

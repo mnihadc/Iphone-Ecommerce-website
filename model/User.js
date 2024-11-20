@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema({
   profileImage: {
     type: String, // Stores the user's Google profile picture URL
   },
+  otp: {
+    type: String, // Stores the OTP
+  },
+  otpExpire: {
+    type: Date, // Stores the OTP expiration time
+  },
   createdAt: {
     type: Date,
     default: Date.now,
