@@ -84,6 +84,12 @@ input {
   border-radius: 5px;
 }
 
+.forgot-password {
+  color: red;
+  display: flex;
+  justify-content: center;
+}
+
 .logButton {
   width: 70%;
   height: 40px;

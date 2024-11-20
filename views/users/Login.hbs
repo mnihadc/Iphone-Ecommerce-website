@@ -39,6 +39,7 @@
                     <label for="chk" aria-hidden="true">Login</label>
                     <input type="email" name="email" placeholder="Email" required>
                     <input type="password" name="password" placeholder="Password" required>
+                    <a href="/auth/get-forgot-password" class="forgot-password">forgot-password</a>
                     {{#if loginError}}
                     <p style="color: red;text-align: center;">{{loginError}}</p>
                     {{/if}}
