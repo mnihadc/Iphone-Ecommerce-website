@@ -154,10 +154,18 @@ const getAbout = (req, res, next) => {
     user: req.session.user,
   });
 };
+const getBlog = (req, res, next) => {
+  res.render("users/Blog", {
+    title: "Blog",
+    isBlogPage: true,
+    user: req.session.user,
+  });
+};
 module.exports = {
   getHomePage,
   getShopPage,
   searchSuggestions,
   getViewProduct,
   getAbout,
+  getBlog,
 };
