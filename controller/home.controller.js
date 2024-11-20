@@ -161,6 +161,14 @@ const getBlog = (req, res, next) => {
     user: req.session.user,
   });
 };
+
+const getContactUs = (req, res, next) => {
+  res.render("users/ContactUs", {
+    title: "Contact Us",
+    isContactUsPage: true,
+    user: req.session.user,
+  });
+};
 module.exports = {
   getHomePage,
   getShopPage,
@@ -168,4 +176,5 @@ module.exports = {
   getViewProduct,
   getAbout,
   getBlog,
+  getContactUs,
 };

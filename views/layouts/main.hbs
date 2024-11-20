@@ -23,6 +23,9 @@
     {{#if isBlogPage}}
     <link rel="stylesheet" href="/blog.css">
     {{/if}}
+    {{#if isContactUsPage}}
+    <link rel="stylesheet" href="/contact.css">
+    {{/if}}
 
     <link rel="icon" href="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg" type="image/x-icon">
     <style>
@@ -295,7 +298,7 @@
                     <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
                     <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
                     <li class="nav-item"><a class="nav-link" href="/get-blogs">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/get-contact-us">Contact Us</a></li>
                 </ul>
                 <ul class="navbar-nav ml-3">
                     {{#if user}}
