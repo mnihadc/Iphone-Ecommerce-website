@@ -187,13 +187,71 @@ const handleOtpVerification = async (req, res) => {
     await user.save();
 
     // Redirect to password reset page
-    res.redirect(`/auth/reset-password?email=${email}`);
+    res.redirect(`/get-create-newuser?email=${email}`);
   } catch (error) {
     console.error(error);
     res.status(500).render("users/forgotPassword", {
       title: "Verify OTP",
       email,
       error: "An error occurred while verifying the OTP.",
+    });
+  }
+};
+
+const getResetPassword = (req, res, next) => {
+  res.render("users/resetPassword", {
+    title: "Create New Password",
+    isResetPasswordPage: true,
+    email: req.query.email,
+  });
+};
+
+// Handle the password reset logic
+const handleResetPassword = async (req, res) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
+
+    if (!password || !confirmPassword) {
+      return res.render("users/resetPassword", {
+        title: "Create New Password",
+        error: "Both password fields are required.",
+        email,
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.render("users/resetPassword", {
+        title: "Create New Password",
+        error: "Passwords do not match.",
+        email,
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.render("users/resetPassword", {
+        title: "Create New Password",
+        error: "No user found with that email address.",
+        email,
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    user.otp = null; // Clear OTP after successful reset
+    user.otpExpire = null; // Clear OTP expiry
+    await user.save();
+
+    // Send the user to the login page after successful password reset
+    res.redirect("/auth/login");
+  } catch (error) {
+    console.error(error);
+    res.status(500).render("users/resetPassword", {
+      title: "Create New Password",
+      error: "There was an error resetting your password.",
+      email,
     });
   }
 };
@@ -206,4 +264,6 @@ module.exports = {
   forgotPassword,
   handleForgotPassword,
   handleOtpVerification,
+  getResetPassword,
+  handleResetPassword,
 };
