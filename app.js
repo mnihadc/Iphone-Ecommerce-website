@@ -94,18 +94,20 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-app.engine(
-  "hbs",
-  exphbs.engine({
-    extname: "hbs",
-    defaultLayout: "main",
-    layoutsDir: path.join(__dirname, "views/layouts"),
-    runtimeOptions: {
-      allowProtoPropertiesByDefault: true, // Allow access to prototype properties
-    },
-  })
-);
-app.set("view engine", "hbs");
+const hbs = exphbs.create({
+  extname: "hbs",
+  defaultLayout: "main",
+  layoutsDir: path.join(__dirname, "views/layouts"),
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+  },
+  helpers: {
+    eq: (a, b) => a === b, // Custom "eq" helper
+  },
+});
+
+app.engine("hbs", hbs.engine);
+app.set("view engine", "hbs"); // Set the default view engine
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public/user")));

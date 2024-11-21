@@ -1,6 +1,7 @@
 const Checkout = require("../model/Checkout");
 const Cart = require("../model/Cart");
 const Product = require("../model/Product");
+const moment = require("moment");
 
 const checkout = async (req, res) => {
   try {
@@ -154,10 +155,10 @@ const CancelOrder = async (req, res, next) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
-
 const getOrder = async (req, res, next) => {
   try {
     const user = req.session.user;
+
     const userId = user?.id;
 
     if (!userId) {
@@ -175,7 +176,6 @@ const getOrder = async (req, res, next) => {
     const allProductIds = orders.flatMap((order) =>
       order.items.map((item) => item.productId)
     );
-    console.log(allProductIds);
 
     // Fetch product details for all product IDs
     const products = await Product.find({ _id: { $in: allProductIds } });
@@ -202,11 +202,52 @@ const getOrder = async (req, res, next) => {
         };
       });
 
+      const totalPrice = enrichedItems.reduce(
+        (acc, item) => acc + item.product.price * item.quantity,
+        0
+      );
+      const gst = totalPrice * 0.18;
+
+      // Calculate delivery date (+7 days from createdAt in IST)
+      const createdDate = new Date(order.createdAt);
+      const deliveryDate = new Date(
+        createdDate.getTime() + 7 * 24 * 60 * 60 * 1000
+      );
+
+      // Calculate progress (percentage of days passed)
+      const currentDate = new Date();
+      const totalDays = 7; // 7 days for delivery
+      const daysPassed = Math.min(
+        Math.ceil((currentDate - createdDate) / (1000 * 60 * 60 * 24)),
+        totalDays
+      );
+      const progress = (daysPassed / totalDays) * 100;
+
+      const options = {
+        timeZone: "Asia/Kolkata",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      };
+
+      const formattedDeliveryDate = deliveryDate.toLocaleString(
+        "en-IN",
+        options
+      );
+
       return {
         ...order.toObject(),
         items: enrichedItems,
+        totalPrice,
+        gst,
+        deliveryDate: formattedDeliveryDate,
+        progress: progress.toFixed(2), // Add progress percentage
       };
     });
+
     // Pass enriched orders data to the frontend
     res.render("users/Order", {
       title: "Your Orders",
