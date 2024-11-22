@@ -8,6 +8,8 @@ const GoogleStrategy = require("passport-google-oauth20");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
 const session = require("express-session");
+const MongoStore = require("connect-mongo"); // Import the session store
+const mongoose = require("mongoose");
 const homeRouter = require("./route/home.route");
 const authRouter = require("./route/auth.route");
 const profileRouter = require("./route/profile.route");
@@ -43,10 +45,14 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // Don't save uninitialized sessions
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI, // MongoDB URI from environment
+      ttl: 14 * 24 * 60 * 60, // Session expiration time (14 days)
+    }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Only secure in production
-      maxAge: 3600000,
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      maxAge: 3600000, // Cookie expiration (1 hour)
     },
   })
 );
@@ -86,14 +92,13 @@ passport.use(
 
 // Serialize the user ID into the session
 passport.serializeUser((user, done) => {
-  done(null, user.user._id);
+  done(null, user.user._id); // Store user ID in the session
 });
 
-// Deserialize the user from the database using the ID stored in the session
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
-    done(null, user);
+    done(null, user); // Fetch user from the database based on the ID
   } catch (error) {
     done(error, null);
   }
@@ -131,8 +136,9 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/auth/login" }),
   async (req, res) => {
     try {
+      // Create JWT token
       const token = jwt.sign(
-        { userId: req.user.user._id }, // Include user ID in the token
+        { userId: req.user.user._id }, // Include user ID in the JWT
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
@@ -142,10 +148,10 @@ app.get(
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 3600000, // 1 hour
+        maxAge: 3600000, // Cookie expires in 1 hour
       });
 
-      // Set session variables
+      // Store user in session
       req.session.isAuthenticated = true;
       req.session.user = {
         id: req.user.user._id,
