@@ -138,39 +138,19 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/auth/login" }),
-  async (req, res) => {
-    try {
-      // Create JWT token
-      const token = jwt.sign(
-        { userId: req.user.user._id }, // Include user ID in the JWT
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
-
-      // Store JWT in a cookie
-      res.cookie("authToken", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 3600000, // Cookie expires in 1 hour
-      });
-
-      // Store user in session
+  (req, res) => {
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error("Error regenerating session:", err);
+        return res.redirect("/auth/login");
+      }
+      req.session.user = req.user.user;
       req.session.isAuthenticated = true;
-      req.session.user = {
-        id: req.user.user._id,
-        username: req.user.user.username,
-        email: req.user.user.email,
-      };
-
-      // Redirect to profile page
-      res.redirect("/profile/user");
-    } catch (error) {
-      console.error("Error generating JWT:", error);
-      res.redirect("/auth/login");
-    }
+      res.redirect("/profile");
+    });
   }
 );
+
 // Routes
 app.use("/", homeRouter);
 app.use("/auth", authRouter);
