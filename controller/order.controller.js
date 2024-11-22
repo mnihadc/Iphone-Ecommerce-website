@@ -370,6 +370,7 @@ const handlePaymentSuccess = async (req, res) => {
     res.render("users/Payment-Success", {
       title: "Payment Successful",
       message: "Thank you! Your payment was successful.",
+      user: req.session.user,
     });
   } catch (error) {
     console.error("Error handling payment success:", error);
