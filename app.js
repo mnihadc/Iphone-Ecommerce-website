@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const cors = require("cors");
 const GoogleStrategy = require("passport-google-oauth20");
-const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
 const session = require("express-session");
 const MongoStore = require("connect-mongo"); // Import the session store
