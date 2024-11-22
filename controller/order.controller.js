@@ -412,8 +412,12 @@ const initiatePaymentOrder = async (req, res, next) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `${req.protocol}://${req.get("host")}/order/success`,
-      cancel_url: `${req.protocol}://${req.get("host")}/order/cancel`,
+      success_url: `${req.protocol}://${req.get(
+        "host"
+      )}/order/success?orderId=${orderId}`,
+      cancel_url: `${req.protocol}://${req.get(
+        "host"
+      )}/order/cancel?orderId=${orderId}`,
       customer_email: user.email,
     });
 
@@ -426,6 +430,7 @@ const initiatePaymentOrder = async (req, res, next) => {
 // Handle Payment Success
 const handlePaymentSuccess = async (req, res) => {
   try {
+    const { orderId } = req.query; // Fetch orderId from query params
     const user = req.session.user;
     const userId = user?.id;
 
@@ -433,11 +438,20 @@ const handlePaymentSuccess = async (req, res) => {
       return res.status(400).json({ message: "User ID is required" });
     }
 
-    // Fetch the latest checkout data for the user
-    const checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
+    let checkout;
 
-    if (!checkout) {
-      return res.status(404).json({ message: "No checkout data found" });
+    if (orderId) {
+      // If orderId is provided, find the specific order
+      checkout = await Checkout.findById(orderId);
+      if (!checkout) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+    } else {
+      // If no orderId, use the latest checkout for the user
+      checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
+      if (!checkout) {
+        return res.status(404).json({ message: "No checkout data found" });
+      }
     }
 
     // Update the paymentStatus to true
@@ -457,13 +471,44 @@ const handlePaymentSuccess = async (req, res) => {
     res.status(500).json({ message: "Error handling payment success", error });
   }
 };
+
 // Handle Payment Cancellation
 const handlePaymentCancel = async (req, res) => {
-  res.render("users/Payment-Cancel", {
-    title: "Payment Canceled",
-    user: req.session.user,
-    message: "You canceled the payment process. Please try again.",
-  });
+  try {
+    const { orderId } = req.query; // Fetch orderId from query params
+    const user = req.session.user;
+    const userId = user?.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    let checkout;
+
+    if (orderId) {
+      // If orderId is provided, find the specific order
+      checkout = await Checkout.findById(orderId);
+      if (!checkout) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+    } else {
+      // If no orderId, use the latest checkout for the user
+      checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
+      if (!checkout) {
+        return res.status(404).json({ message: "No checkout data found" });
+      }
+    }
+
+    // Render payment cancel page
+    res.render("users/Payment-Cancel", {
+      title: "Payment Canceled",
+      user: req.session.user,
+      message: "You canceled the payment process. Please try again.",
+    });
+  } catch (error) {
+    console.error("Error handling payment cancel:", error);
+    res.status(500).json({ message: "Error handling payment cancel", error });
+  }
 };
 
 module.exports = {
