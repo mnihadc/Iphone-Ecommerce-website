@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
+const cors = require("cors");
 const GoogleStrategy = require("passport-google-oauth20");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
@@ -23,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 const cookieParser = require("cookie-parser");
 const User = require("./model/User");
 app.use(cookieParser());
-
+app.use(cors());
 // MongoDB connection
 const port = process.env.PORT_NO || 3000;
 mongoose
@@ -43,9 +44,13 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, maxAge: 3600000 },
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // Only secure in production
+      maxAge: 3600000,
+    },
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
