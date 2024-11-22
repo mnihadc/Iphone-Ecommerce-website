@@ -281,13 +281,17 @@ const initiatePayment = async (req, res) => {
       return res.status(404).json({ message: "No checkout data found." });
     }
 
+    // If payment is already completed, prevent further payment attempts
+    if (checkout.paymentStatus) {
+      return res.status(400).json({ message: "Payment already completed" });
+    }
+
     // Map checkout items to Stripe's line item format
     const lineItems = checkout.items
       .map((item) => {
-        // Ensure itemTotalPrice is a valid number
         if (!item.itemTotalPrice || isNaN(item.itemTotalPrice)) {
           console.log("Invalid item total price for item:", item);
-          return null; // Handle invalid data gracefully
+          return null;
         }
 
         return {
@@ -296,12 +300,12 @@ const initiatePayment = async (req, res) => {
             product_data: {
               name: item.productName,
             },
-            unit_amount: item.itemTotalPrice * 100, // Convert to paise (for INR)
+            unit_amount: item.itemTotalPrice * 100,
           },
           quantity: item.quantity,
         };
       })
-      .filter((item) => item !== null); // Filter out any invalid items
+      .filter((item) => item !== null);
 
     if (lineItems.length === 0) {
       return res
@@ -309,7 +313,7 @@ const initiatePayment = async (req, res) => {
         .json({ message: "Invalid items data, unable to process payment." });
     }
 
-    // Include delivery charge as a separate line item (ensure delivery is a valid number)
+    // Include delivery charge as a separate line item
     const deliveryCharge = isNaN(checkout.delivery) ? 0 : checkout.delivery;
     lineItems.push({
       price_data: {
@@ -342,7 +346,27 @@ const initiatePayment = async (req, res) => {
 // Handle Payment Success
 const handlePaymentSuccess = async (req, res) => {
   try {
-    // Here, you could update the order status in your database if needed
+    const user = req.session.user;
+    const userId = user?.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    // Fetch the latest checkout data for the user
+    const checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
+
+    if (!checkout) {
+      return res.status(404).json({ message: "No checkout data found" });
+    }
+
+    // Update the paymentStatus to true
+    checkout.paymentStatus = true;
+    await checkout.save();
+
+    // You can add further actions like sending a confirmation email, updating stock, etc.
+
+    // Render payment success page
     res.render("users/Payment-Success", {
       title: "Payment Successful",
       message: "Thank you! Your payment was successful.",

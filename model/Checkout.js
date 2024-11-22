@@ -48,6 +48,11 @@ const checkoutSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    paymentStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true }
 );
