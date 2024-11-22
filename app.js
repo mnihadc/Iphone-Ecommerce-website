@@ -25,7 +25,7 @@ const User = require("./model/User");
 app.use(cookieParser());
 
 // MongoDB connection
-const port = process.env.PORT_NO;
+const port = process.env.PORT_NO || 3000;
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
