@@ -114,17 +114,19 @@
                             <div class="d-flex justify-content-between mb-5">
                                 <p class="text-muted mb-0">Receipts Voucher: <strong>{{offerCode}}</strong></p>
                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+                            </div>
 
+                            <div class="p-2 d-flex justify-content-between">
                                 {{#if (eq paymentStatus false)}}
                                 <!-- Payment Button (if payment is not done yet) -->
-                                <a class="btn btn-primary" href="#" onclick="initiatePayment('{{_id}}')">Confirm
-                                    Order</a>
+                                <a class="btn btn-primary" href="#" onclick="initiatePayment('{{_id}}')">Proceed to
+                                    payment</a>
 
                                 {{/if}}
 
-
+                                <a href="#" class="btn btn-secondary" onclick="cancelOrder('{{_id}}')">Cancel
+                                    Order</a>
                             </div>
-
 
                             <!-- Footer -->
                             <div class="card-footer d-flex justify-content-between align-items-center px-4 py-4">
@@ -162,6 +164,27 @@
             });
     }
 
+</script>
+<script>
+    function cancelOrder(orderId) {
+        if (confirm("Are you sure you want to cancel this order?")) {
+            fetch(`/order/cancel-order/${orderId}`, {
+                method: "post",
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        alert("Order canceled successfully.");
+                        window.location.href = "/shop";
+                    } else {
+                        alert("Failed to cancel the order. Please try again.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error canceling order:", error);
+                    alert("An error occurred. Please try again.");
+                });
+        }
+    }
 </script>
 
 </html>
