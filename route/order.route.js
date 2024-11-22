@@ -7,6 +7,7 @@ const {
   initiatePayment,
   handlePaymentSuccess,
   handlePaymentCancel,
+  initiatePaymentOrder,
 } = require("../controller/order.controller");
 const verifyToken = require("../middleware/verifyToken");
 
@@ -19,5 +20,6 @@ router.get("/get-orders", verifyToken, getOrder);
 router.post("/initiate-payment", initiatePayment);
 router.get("/success", handlePaymentSuccess);
 router.get("/cancel", handlePaymentCancel);
+router.post("/initiate-payment-order/:orderId", initiatePaymentOrder);
 
 module.exports = router;

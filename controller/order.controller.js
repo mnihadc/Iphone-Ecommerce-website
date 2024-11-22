@@ -343,6 +343,86 @@ const initiatePayment = async (req, res) => {
   }
 };
 
+const initiatePaymentOrder = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    const user = req.session.user;
+    const userId = user.id;
+
+    if (!orderId) {
+      return res
+        .status(400)
+        .json({ message: "User ID is required and cannot be empty" });
+    }
+
+    // Fetch the latest checkout data for the user
+    const checkout = await Checkout.findOne({ _id: orderId });
+
+    if (!checkout) {
+      return res.status(404).json({ message: "No checkout data found." });
+    }
+
+    // If payment is already completed, prevent further payment attempts
+    if (checkout.paymentStatus) {
+      return res.status(400).json({ message: "Payment already completed" });
+    }
+
+    // Map checkout items to Stripe's line item format
+    const lineItems = checkout.items
+      .map((item) => {
+        if (!item.itemTotalPrice || isNaN(item.itemTotalPrice)) {
+          console.log("Invalid item total price for item:", item);
+          return null;
+        }
+
+        return {
+          price_data: {
+            currency: "inr",
+            product_data: {
+              name: item.productName,
+            },
+            unit_amount: item.itemTotalPrice * 100,
+          },
+          quantity: item.quantity,
+        };
+      })
+      .filter((item) => item !== null);
+
+    if (lineItems.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid items data, unable to process payment." });
+    }
+
+    // Include delivery charge as a separate line item
+    const deliveryCharge = isNaN(checkout.delivery) ? 0 : checkout.delivery;
+    lineItems.push({
+      price_data: {
+        currency: "inr",
+        product_data: {
+          name: "Delivery Charge",
+        },
+        unit_amount: deliveryCharge * 100, // Convert to paise
+      },
+      quantity: 1,
+    });
+
+    // Create a Stripe Checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: `${req.protocol}://${req.get("host")}/order/success`,
+      cancel_url: `${req.protocol}://${req.get("host")}/order/cancel`,
+      customer_email: user.email,
+    });
+
+    res.status(200).json({ url: session.url });
+  } catch (error) {
+    console.error("Error initiating payment:", error);
+    res.status(500).json({ message: "Error initiating payment", error });
+  }
+};
 // Handle Payment Success
 const handlePaymentSuccess = async (req, res) => {
   try {
@@ -377,11 +457,11 @@ const handlePaymentSuccess = async (req, res) => {
     res.status(500).json({ message: "Error handling payment success", error });
   }
 };
-
 // Handle Payment Cancellation
 const handlePaymentCancel = async (req, res) => {
   res.render("users/Payment-Cancel", {
     title: "Payment Canceled",
+    user: req.session.user,
     message: "You canceled the payment process. Please try again.",
   });
 };
@@ -394,4 +474,5 @@ module.exports = {
   initiatePayment,
   handlePaymentSuccess,
   handlePaymentCancel,
+  initiatePaymentOrder,
 };

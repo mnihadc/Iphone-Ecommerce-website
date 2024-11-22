@@ -28,6 +28,14 @@
         .text-highlight {
             color: #a8729a !important;
         }
+
+        .payment-btn {
+            background-color: #a8729a;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -46,7 +54,6 @@
                         </div>
 
                         <!-- Body -->
-
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <p class="lead fw-normal text-highlight mb-0">Receipt</p>
@@ -107,22 +114,54 @@
                             <div class="d-flex justify-content-between mb-5">
                                 <p class="text-muted mb-0">Receipts Voucher: <strong>{{offerCode}}</strong></p>
                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+
+                                {{#if (eq paymentStatus false)}}
+                                <!-- Payment Button (if payment is not done yet) -->
+                                <a class="btn btn-primary" href="#" onclick="initiatePayment('{{_id}}')">Confirm
+                                    Order</a>
+
+                                {{/if}}
+
+
                             </div>
-                        </div>
 
 
-                        <!-- Footer -->
-                        <div class="card-footer d-flex justify-content-between align-items-center px-4 py-4">
-                            <h5 class="text-white mb-0">Total Paid: <span class="h2 mb-0">₹{{totalPrice}}</span></h5>
+                            <!-- Footer -->
+                            <div class="card-footer d-flex justify-content-between align-items-center px-4 py-4">
+                                <h5 class="text-white mb-0">Total Paid: <span class="h2 mb-0">₹{{totalPrice}}</span>
+                                </h5>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </section>
     {{/each}}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+    function initiatePayment(orderId) {
+        fetch(`/order/initiate-payment-order/${orderId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ orderId: orderId }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.url) {
+                    window.location.href = data.url; // Redirect to payment gateway
+                } else {
+                    alert("Failed to initiate payment.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error initiating payment:", error);
+            });
+    }
+
+</script>
 
 </html>
