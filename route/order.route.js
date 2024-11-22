@@ -4,6 +4,9 @@ const {
   getCheckoutSummery,
   CancelOrder,
   getOrder,
+  initiatePayment,
+  handlePaymentSuccess,
+  handlePaymentCancel,
 } = require("../controller/order.controller");
 const verifyToken = require("../middleware/verifyToken");
 
@@ -13,4 +16,8 @@ router.post("/checkout", verifyToken, checkout);
 router.get("/checkout-summery", verifyToken, getCheckoutSummery);
 router.post("/cancel-order/:id", verifyToken, CancelOrder);
 router.get("/get-orders", verifyToken, getOrder);
+router.post("/initiate-payment", initiatePayment);
+router.get("/success", handlePaymentSuccess);
+router.get("/cancel", handlePaymentCancel);
+
 module.exports = router;

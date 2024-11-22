@@ -206,7 +206,7 @@
         <!-- Navigation Buttons -->
         <div class="mt-4 d-flex justify-content-between">
             <a href="#" class="btn btn-secondary" onclick="cancelOrder('{{checkout._id}}')">Cancel Order</a>
-            <a href="/confirm-order" class="btn btn-primary">Confirm Order</a>
+            <a class="btn btn-primary">Confirm Order</a>
         </div>
     </div>
 
@@ -235,6 +235,24 @@
                 });
         }
     }
+</script>
+<script>
+    document.querySelector(".btn-primary").addEventListener("click", () => {
+        fetch("/order/initiate-payment", {
+            method: "POST",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.url) {
+                    window.location.href = data.url; // Redirect to Stripe
+                } else {
+                    alert("Failed to initiate payment.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error initiating payment:", error);
+            });
+    });
 </script>
 
 </html>
