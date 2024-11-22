@@ -40,26 +40,31 @@ mongoose
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
   });
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Your frontend's URL
+    credentials: true, // Allow credentials (cookies)
+  })
+);
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false, // Don't save uninitialized sessions
+    saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI, // MongoDB URI from environment
-      ttl: 14 * 24 * 60 * 60, // Session expiration time (14 days)
+      mongoUrl: process.env.MONGO_URI,
+      ttl: 14 * 24 * 60 * 60, // 14 days
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      maxAge: 3600000, // Cookie expiration (1 hour)
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000, // 1 hour
     },
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 passport.use(
   new GoogleStrategy(
     {
