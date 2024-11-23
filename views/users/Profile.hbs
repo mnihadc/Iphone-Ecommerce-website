@@ -39,14 +39,14 @@
                 <div class="col-md-8">
                     <div class="card mb-3">
                         <div class="card-body">
-                            <form action="/profile/update-user/{{user.id}}" method="POST">
+                            <form action="/profile/update-user/{{user.userId}}" method="POST">
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Full Name</h6>
                                     </div>
                                     <div class="col-sm-9 text-secondary">
-                                        <input type="text" name="username" value="{{user.username}}"
-                                            class="form-control" required>
+                                        <input type="text" name="username" value="{{username}}" class="form-control"
+                                            required>
                                     </div>
                                 </div>
                                 <hr>
@@ -55,7 +55,7 @@
                                         <h6 class="mb-0">Email</h6>
                                     </div>
                                     <div class="col-sm-3">
-                                        <input type="email" name="email" value="{{user.email}}" class="form-control"
+                                        <input type="email" name="email" value="{{email}}" class="form-control"
                                             required>
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@
                                         <div>
                                             <button type="submit" class="btn btn-success ml-3">Save Changes</button>
                                             <a class="btn btn-danger ml-3"
-                                                href="/profile/delete-user/{{user.id}}">Delete-User</a>
+                                                href="/profile/delete-user/{{user.userId}}">Delete-User</a>
                                         </div>
                                         <div>
                                             <a class="btn btn-primary ml-3" href="/auth/logout">Logout</a>

@@ -5,15 +5,15 @@ const {
   removeCartItem,
   updateQuantity,
 } = require("../controller/cart.controller");
-const verifyToken = require("../middleware/verifyToken");
+const authenticateUser = require("../middleware/verifyToken");
 const router = express.Router();
 
 router.post("/addtocart/:productId", addToCart);
-router.get("/get-cart", verifyToken, getCartPage);
-router.delete("/remove-cart/:productId", verifyToken, removeCartItem);
+router.get("/get-cart", authenticateUser, getCartPage);
+router.delete("/remove-cart/:productId", authenticateUser, removeCartItem);
 router.put(
   "/update-quantity/:productId/:quantity",
-  verifyToken,
+  authenticateUser,
   updateQuantity
 );
 

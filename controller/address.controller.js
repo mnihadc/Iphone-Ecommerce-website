@@ -4,7 +4,7 @@ const getCreateAddressPage = (req, res, next) => {
   res.render("users/CreateAddress", {
     title: "Address Page",
     isAddressPage: true,
-    user: req.session.user,
+    user: req.user,
   });
 };
 
@@ -24,7 +24,7 @@ const CreateAddress = async (req, res, next) => {
     } = req.body;
 
     const newAddress = new Address({
-      userId: req.session.user.id,
+      userId: req.user.userId,
       fullName,
       email,
       gender,

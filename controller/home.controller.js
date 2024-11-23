@@ -1,7 +1,11 @@
 const Product = require("../model/Product");
 const nodemailer = require("nodemailer");
+
+// Get Home Page
 const getHomePage = async (req, res, next) => {
   try {
+    console.log(req.user);
+
     const products = await Product.aggregate([
       {
         $project: {
@@ -17,26 +21,25 @@ const getHomePage = async (req, res, next) => {
     res.render("users/Home", {
       title: "Home Page",
       isHomePage: true,
-      user: req.session.user,
-      products: products,
+      user: req.user, // Use token-based user
+      products,
     });
   } catch (error) {
     next(error);
   }
 };
 
+// Get Shop Page
 const getShopPage = async (req, res, next) => {
   try {
-    // Extract filters from query parameters
     const { search, category, priceRange } = req.query;
 
-    // Build filter criteria
     const filters = {};
     if (search) {
-      filters.name = { $regex: search, $options: "i" }; // Case-insensitive search
+      filters.name = { $regex: search, $options: "i" };
     }
     if (category) {
-      filters.category = category; // Exact category match
+      filters.category = category;
     }
     if (priceRange) {
       const [minPrice, maxPrice] = priceRange.split("-").map(Number);
@@ -46,7 +49,6 @@ const getShopPage = async (req, res, next) => {
       ];
     }
 
-    // Query the filtered products
     const products = await Product.find(filters, {
       name: 1,
       productImages: { $arrayElemAt: ["$productImages", 0] },
@@ -55,19 +57,17 @@ const getShopPage = async (req, res, next) => {
       category: 1,
     });
 
-    // Fetch all categories for filter dropdown
     const categories = await Product.distinct("category");
 
-    // Render JSON for AJAX responses or full page for regular requests
     if (req.xhr) {
       res.json({ products });
     } else {
       res.render("users/Shop", {
         title: "Shop",
         isShopPage: true,
-        products: products,
+        products,
         categories: categories.map((cat) => ({ category: cat })),
-        user: req.session.user,
+        user: req.user, // Use token-based user
       });
     }
   } catch (error) {
@@ -75,19 +75,21 @@ const getShopPage = async (req, res, next) => {
   }
 };
 
+// Search Suggestions
 const searchSuggestions = async (req, res, next) => {
-  const query = req.query.q; // Extract search query
+  const query = req.query.q;
   try {
-    // Use regex for case-insensitive matching
     const products = await Product.find(
       { name: { $regex: query, $options: "i" } },
-      { name: 1 } // Only return the name field
-    ); // Limit results to avoid unnecessary load
+      { name: 1 }
+    );
     res.json(products);
   } catch (error) {
     next(error);
   }
 };
+
+// View Product
 const getViewProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -103,6 +105,7 @@ const getViewProduct = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found." });
     }
+
     const formattedReleaseDate = new Date(
       product.releaseDate
     ).toLocaleDateString("en-US", {
@@ -139,7 +142,7 @@ const getViewProduct = async (req, res, next) => {
       specifications,
       releaseDate: formattedReleaseDate,
       isViewProduct: true,
-      user: req.session.user,
+      user: req.user, // Use token-based user
       limitedProducts,
     });
   } catch (error) {
@@ -147,59 +150,59 @@ const getViewProduct = async (req, res, next) => {
   }
 };
 
+// About Page
 const getAbout = (req, res, next) => {
   res.render("users/About", {
     title: "About",
     isAboutPage: true,
-    user: req.session.user,
+    user: req.user, // Use token-based user
   });
 };
+
+// Blog Page
 const getBlog = (req, res, next) => {
   res.render("users/Blog", {
     title: "Blog",
     isBlogPage: true,
-    user: req.session.user,
+    user: req.user, // Use token-based user
   });
 };
 
+// Contact Us Page
 const getContactUs = (req, res, next) => {
   res.render("users/ContactUs", {
     title: "Contact Us",
     isContactUsPage: true,
-    user: req.session.user,
+    user: req.user, // Use token-based user
   });
 };
 
+// Contact Us Form Submission
 const ContactUs = async (req, res, next) => {
   try {
     const { name, email, subject, message } = req.body;
 
-    // Validate input
     if (!name || !email || !subject || !message) {
       return res.status(400).json({ error: "All fields are required." });
     }
 
-    // Configure Nodemailer
     const transporter = nodemailer.createTransport({
-      service: "gmail", // Using Gmail
+      service: "gmail",
       auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS, // The app-specific password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
-    // Email content
     const mailOptions = {
       from: email,
-      to: "mncnihad@gmail.com", // Recipient's email (your email)
+      to: "mncnihad@gmail.com",
       subject: `Contact Form Submission: ${subject}`,
       text: `You received a new message from ${name} (${email}):\n\n${message}`,
     };
 
-    // Send email
     await transporter.sendMail(mailOptions);
 
-    // Respond to the client
     res.json({
       message: "Thank you for contacting us. We'll get back to you soon.",
     });

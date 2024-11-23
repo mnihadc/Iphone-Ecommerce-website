@@ -4,12 +4,14 @@ const Product = require("../model/Product");
 const moment = require("moment");
 require("dotenv").config(); // Ensure this is at the top of the file
 const Stripe = require("stripe");
+const User = require("../model/User");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
 const checkout = async (req, res) => {
   try {
     const { offerCode, shippingMethod } = req.body;
-    const user = req.session.user;
-    const userId = user?.id;
+    const user = req.user;
+    const userId = user?.userId;
 
     if (!userId) {
       return res
@@ -73,8 +75,8 @@ const checkout = async (req, res) => {
 
 const getCheckoutSummery = async (req, res, next) => {
   try {
-    const user = req.session.user;
-    const userId = user.id;
+    const user = req.user;
+    const userId = user.userId;
 
     const checkoutData = await Checkout.find({ userId })
       .sort({ createdAt: -1 })
@@ -133,7 +135,7 @@ const getCheckoutSummery = async (req, res, next) => {
 
     res.render("users/Checkout-Summery", {
       title: "Checkout Summary",
-      user: req.session.user,
+      user: req.user, // Changed to req.user directly
       isCheckoutSummery: true,
       ...fullCheckoutData,
     });
@@ -157,32 +159,24 @@ const CancelOrder = async (req, res, next) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
 const getOrder = async (req, res, next) => {
   try {
-    const user = req.session.user;
-
-    const userId = user?.id;
+    const user = req.user;
+    const userId = user?.userId;
 
     if (!userId) {
       return res.status(400).json({ message: "User not authenticated" });
     }
 
-    // Fetch all orders for the user
     const orders = await Checkout.find({ userId }).sort({ createdAt: -1 });
 
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: "No orders found" });
-    }
-
-    // Extract all product IDs from all orders
     const allProductIds = orders.flatMap((order) =>
       order.items.map((item) => item.productId)
     );
 
-    // Fetch product details for all product IDs
     const products = await Product.find({ _id: { $in: allProductIds } });
 
-    // Enrich each order's items with product details
     const enrichedOrders = orders.map((order) => {
       const enrichedItems = order.items.map((item) => {
         const product = products.find(
@@ -200,7 +194,7 @@ const getOrder = async (req, res, next) => {
                 stock: product.stock,
                 specifications: product.specifications,
               }
-            : null, // Handle missing product details gracefully
+            : null,
         };
       });
 
@@ -210,15 +204,13 @@ const getOrder = async (req, res, next) => {
       );
       const gst = totalPrice * 0.18;
 
-      // Calculate delivery date (+7 days from createdAt in IST)
       const createdDate = new Date(order.createdAt);
       const deliveryDate = new Date(
         createdDate.getTime() + 7 * 24 * 60 * 60 * 1000
       );
 
-      // Calculate progress (percentage of days passed)
       const currentDate = new Date();
-      const totalDays = 7; // 7 days for delivery
+      const totalDays = 7;
       const daysPassed = Math.min(
         Math.ceil((currentDate - createdDate) / (1000 * 60 * 60 * 24)),
         totalDays
@@ -246,14 +238,13 @@ const getOrder = async (req, res, next) => {
         totalPrice,
         gst,
         deliveryDate: formattedDeliveryDate,
-        progress: progress.toFixed(2), // Add progress percentage
+        progress: progress.toFixed(2),
       };
     });
 
-    // Pass enriched orders data to the frontend
     res.render("users/Order", {
       title: "Your Orders",
-      user: req.session.user,
+      user: req.user, // Changed to req.user directly
       isOrderPage: true,
       orders: enrichedOrders,
     });
@@ -265,8 +256,9 @@ const getOrder = async (req, res, next) => {
 
 const initiatePayment = async (req, res) => {
   try {
-    const user = req.session.user;
-    const userId = user?.id;
+    const user = req.user;
+    const userId = user?.userId;
+    console.log(user);
 
     if (!userId) {
       return res
@@ -331,8 +323,12 @@ const initiatePayment = async (req, res) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `${req.protocol}://${req.get("host")}/order/success`,
-      cancel_url: `${req.protocol}://${req.get("host")}/order/cancel`,
+      success_url: `${req.protocol}://${req.get(
+        "host"
+      )}/order/success?userId=${userId}`,
+      cancel_url: `${req.protocol}://${req.get(
+        "host"
+      )}/order/cancel?userId=${userId}`,
       customer_email: user.email,
     });
 
@@ -346,8 +342,8 @@ const initiatePayment = async (req, res) => {
 const initiatePaymentOrder = async (req, res, next) => {
   try {
     const { orderId } = req.params;
-    const user = req.session.user;
-    const userId = user.id;
+    const user = req.user;
+    const userId = user.userId;
 
     if (!orderId) {
       return res
@@ -414,10 +410,10 @@ const initiatePaymentOrder = async (req, res, next) => {
       mode: "payment",
       success_url: `${req.protocol}://${req.get(
         "host"
-      )}/order/success?orderId=${orderId}`,
+      )}/order/success?userId=${userId}&orderId=${orderId}`,
       cancel_url: `${req.protocol}://${req.get(
         "host"
-      )}/order/cancel?orderId=${orderId}`,
+      )}/order/cancel?userId=${userId}&orderId=${orderId}`,
       customer_email: user.email,
     });
 
@@ -430,44 +426,44 @@ const initiatePaymentOrder = async (req, res, next) => {
 // Handle Payment Success
 const handlePaymentSuccess = async (req, res) => {
   try {
-    const { orderId } = req.query; // Fetch orderId from query params
-    const user = req.session.user;
-    const userId = user?.id;
+    const { orderId, userId } = req.query;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
 
-    let checkout;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    let checkout;
     if (orderId) {
-      // If orderId is provided, find the specific order
+      // Find the checkout using the provided orderId
       checkout = await Checkout.findById(orderId);
       if (!checkout) {
         return res.status(404).json({ message: "Order not found" });
       }
     } else {
-      // If no orderId, use the latest checkout for the user
+      // If no orderId is provided, fetch the latest checkout for the user
       checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
       if (!checkout) {
         return res.status(404).json({ message: "No checkout data found" });
       }
     }
 
-    // Update the paymentStatus to true
+    // Update payment status
     checkout.paymentStatus = true;
     await checkout.save();
 
-    // You can add further actions like sending a confirmation email, updating stock, etc.
-
-    // Render payment success page
+    // Render the success page
     res.render("users/Payment-Success", {
       title: "Payment Successful",
-      message: "Thank you! Your payment was successful.",
-      user: req.session.user,
+      message: "Your payment was successful!",
+      user,
     });
   } catch (error) {
-    console.error("Error handling payment success:", error);
+    console.error("Error in handlePaymentSuccess:", error);
     res.status(500).json({ message: "Error handling payment success", error });
   }
 };
@@ -475,16 +471,14 @@ const handlePaymentSuccess = async (req, res) => {
 // Handle Payment Cancellation
 const handlePaymentCancel = async (req, res) => {
   try {
-    const { orderId } = req.query; // Fetch orderId from query params
-    const user = req.session.user;
-    const userId = user?.id;
+    const { userId, orderId } = req.query; // Fetch orderId from query params
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
 
     let checkout;
-
+    const user = await User.findById(userId);
     if (orderId) {
       // If orderId is provided, find the specific order
       checkout = await Checkout.findById(orderId);
@@ -502,7 +496,7 @@ const handlePaymentCancel = async (req, res) => {
     // Render payment cancel page
     res.render("users/Payment-Cancel", {
       title: "Payment Canceled",
-      user: req.session.user,
+      user,
       message: "You canceled the payment process. Please try again.",
     });
   } catch (error) {

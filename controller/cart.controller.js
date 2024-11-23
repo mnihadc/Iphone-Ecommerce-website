@@ -4,8 +4,8 @@ const Product = require("../model/Product");
 
 const getCartPage = async (req, res, next) => {
   try {
-    const user = req.session.user;
-    const userId = user.id;
+    const user = req.user;
+    const userId = user.userId;
 
     const cartItems = await Cart.find({ userId });
 
@@ -51,7 +51,7 @@ const getCartPage = async (req, res, next) => {
 const addToCart = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const userId = req.session?.user?.id;
+    const userId = req.user.userId;
 
     if (!userId) {
       return res.status(401).json({ message: "User not logged in" });
@@ -74,8 +74,8 @@ const addToCart = async (req, res, next) => {
 const removeCartItem = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const user = req.session.user;
-    const userId = user.id;
+    const user = req.user;
+    const userId = user.userId;
     if (!userId) {
       return res.status(401).json({ message: "User not logged in" });
     }
@@ -89,7 +89,7 @@ const removeCartItem = async (req, res, next) => {
 const updateQuantity = async (req, res) => {
   try {
     const { productId, quantity } = req.params;
-    const userId = req.session?.user?.id;
+    const userId = req.user.userId;
 
     if (!userId) {
       return res.status(401).json({ message: "User not logged in" });

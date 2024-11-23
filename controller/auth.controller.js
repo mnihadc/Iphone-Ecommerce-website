@@ -71,22 +71,20 @@ const Login = async (req, res, next) => {
       });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
     res.cookie("authToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 3600000,
+      maxAge: 3600000, // 1 hour
     });
 
-    req.session.isAuthenticated = true;
-    req.session.user = {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-    };
     res.redirect("/");
   } catch (error) {
     next(error);
@@ -96,14 +94,7 @@ const Login = async (req, res, next) => {
 // Logout Logic
 const Logout = (req, res) => {
   res.clearCookie("authToken");
-  req.session.isAuthenticated = false;
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ message: "Could not log out." });
-    }
-    res.clearCookie("connect.sid");
-    res.redirect("/auth/login");
-  });
+  res.redirect("/auth/login");
 };
 
 const forgotPassword = (req, res) => {

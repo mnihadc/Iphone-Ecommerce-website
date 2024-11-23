@@ -3,10 +3,10 @@ const {
   getCreateAddressPage,
   CreateAddress,
 } = require("../controller/address.controller");
-const verifyToken = require("../middleware/verifyToken");
+const authenticateUser = require("../middleware/verifyToken");
 const router = express.Router();
 
-router.get("/get-create-address", verifyToken, getCreateAddressPage);
-router.post("/create-address", CreateAddress);
+router.get("/get-create-address", authenticateUser, getCreateAddressPage);
+router.post("/create-address", authenticateUser, CreateAddress);
 
 module.exports = router;

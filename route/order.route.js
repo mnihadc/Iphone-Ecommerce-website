@@ -9,17 +9,17 @@ const {
   handlePaymentCancel,
   initiatePaymentOrder,
 } = require("../controller/order.controller");
-const verifyToken = require("../middleware/verifyToken");
+const authenticateUser = require("../middleware/verifyToken");
 
 const router = express.Router();
 
-router.post("/checkout", verifyToken, checkout);
-router.get("/checkout-summery", verifyToken, getCheckoutSummery);
-router.post("/cancel-order/:id", verifyToken, CancelOrder);
-router.get("/get-orders", verifyToken, getOrder);
+router.post("/checkout", authenticateUser, checkout);
+router.get("/checkout-summery", authenticateUser, getCheckoutSummery);
+router.post("/cancel-order/:id", authenticateUser, CancelOrder);
+router.get("/get-orders", authenticateUser, getOrder);
 router.post("/initiate-payment", initiatePayment);
-router.get("/success", handlePaymentSuccess);
-router.get("/cancel", handlePaymentCancel);
+router.get("/success", authenticateUser, handlePaymentSuccess);
+router.get("/cancel", authenticateUser, handlePaymentCancel);
 router.post("/initiate-payment-order/:orderId", initiatePaymentOrder);
 
 module.exports = router;

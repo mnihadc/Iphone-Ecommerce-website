@@ -4,23 +4,27 @@ const jwt = require("jsonwebtoken");
 const Address = require("../model/Address");
 
 const getProfile = async (req, res, next) => {
-  const user = req.session.user;
+  const user = req.user;
+  // Extracted from middleware
   if (!user) {
     return res.status(401).json({ message: "User is not logged in." });
   }
 
   try {
-    const userData = await User.findOne({ email: user.email });
+    const userData = await User.findById(user.userId);
+
     if (!userData) {
       return res.status(404).json({ message: "User not found." });
     }
-    const address = await Address.findOne({ userId: user.id });
+
+    const address = await Address.findOne({ userId: user.userId });
+
     res.render("users/Profile", {
       title: "Profile Page",
       isProfilePage: true,
       id: userData._id,
       email: userData.email,
-      user: req.session.user,
+      user,
       username: userData.username,
       password: userData.password,
       address: address
@@ -47,15 +51,14 @@ const getProfile = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   try {
-    const dataId = req.params.id;
+    const userId = req.user.userId; // Extract userId from the token
 
-    const user = await User.findByIdAndDelete(dataId);
+    const user = await User.findByIdAndDelete(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
-    req.session.destroy();
-    res.clearCookie("authToken");
-    res.clearCookie("connect.sid");
+
+    res.clearCookie("authToken"); // Clear the JWT cookie
     res.redirect("/auth/login");
   } catch (error) {
     next(error);
@@ -65,27 +68,42 @@ const deleteUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-    const userId = req.params.id;
+    const userId = req.user.userId; // Extract userId from the token
 
     const existingUser = await User.findById(userId);
     if (!existingUser) {
       return res.status(404).json({ message: "User not found." });
     }
+
     let updatedData = { username, email };
-    if (password && password !== existingUser.password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      updatedData.password = hashedPassword;
-    } else {
-      updatedData.password = existingUser.password;
+    if (password) {
+      const isPasswordMatch = await bcrypt.compare(
+        password,
+        existingUser.password
+      );
+      if (!isPasswordMatch) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updatedData.password = hashedPassword;
+      }
     }
+
     const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
       new: true,
     });
-    req.session.user = {
-      id: updatedUser._id,
-      username: updatedUser.username,
-      email: updatedUser.email,
-    };
+
+    // Regenerate the JWT token with updated user details
+    const newToken = jwt.sign(
+      { userId: updatedUser._id, email: updatedUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.cookie("authToken", newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 3600000,
+    });
 
     res.redirect("/profile/user");
   } catch (error) {
