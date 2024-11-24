@@ -53,7 +53,9 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL:
+        "https://iphone-ecommerce-website.onrender.com/auth/google/callback",
+      scope: ["profile", "email"], // Ensure to request profile and email
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -78,6 +80,26 @@ passport.use(
   )
 );
 
+// Routes for Google authentication
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/", session: false }), // <-- session: false added
+  (req, res) => {
+    // Successful login
+    res.cookie("authToken", req.user.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Make sure to set to true in production
+      sameSite: "strict",
+      maxAge: 3600000, // 1 hour
+    });
+    res.redirect("/profile/user"); // Redirect to the profile page or any other protected route
+  }
+);
 const hbs = exphbs.create({
   extname: "hbs",
   defaultLayout: "main",
