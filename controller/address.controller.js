@@ -35,7 +35,12 @@ const CreateAddress = async (req, res, next) => {
       district,
       state,
       postalCode,
+      select: true,
     });
+    await Address.updateMany(
+      { userId: req.user.userId, select: true },
+      { select: false }
+    );
     await newAddress.save();
 
     res.redirect("/profile/user");
@@ -48,7 +53,7 @@ const getMultipleAddress = async (req, res, next) => {
     const user = req.user;
     const userId = user.userId;
     const addresses = await Address.find({ userId });
-    
+
     if (!addresses || addresses.length === 0) {
       return res.status(404).json({
         success: false,

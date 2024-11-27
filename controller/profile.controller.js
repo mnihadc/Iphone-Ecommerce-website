@@ -17,7 +17,10 @@ const getProfile = async (req, res, next) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const address = await Address.findOne({ userId: user.userId });
+    const address = await Address.findOne({
+      userId: user.userId,
+      select: true,
+    });
 
     res.render("users/Profile", {
       title: "Profile Page",
