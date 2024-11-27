@@ -57,6 +57,10 @@ const addressSchema = new mongoose.Schema(
       required: true,
       match: [/^\d{6}$/, "Postal code must be 6 digits"],
     },
+    select: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
