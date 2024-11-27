@@ -150,6 +150,102 @@
                 margin-top: 15px;
             }
         }
+
+        :root {
+            --midnight-blue: #1D1E22;
+            --space-gray: #3A3B3F;
+            --silver: #F5F5F7;
+            --alpine-green: #4A5842;
+            --gold: #F8D12F;
+            --pacific-blue: #007AFF;
+            --graphite: #8E8E93;
+            --sunrise-pink: #FFC0CB;
+            --charcoal-black: #121212;
+            --slate-gray: #636366;
+            --white: #FFFFFF;
+        }
+
+        .bodyHead {
+            margin-top: 20px;
+            background: var(--silver);
+        }
+
+        .cart-summary .btn {
+            width: 100%;
+            padding: 12px;
+        }
+
+        .btn-primary {
+            background-color: var(--midnight-blue);
+            border-color: var(--midnight-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--pacific-blue);
+            border-color: var(--pacific-blue);
+        }
+
+        .btn-secondary {
+            background-color: var(--space-gray);
+            border-color: var(--space-gray);
+            color: var(--silver);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--graphite);
+            border-color: var(--graphite);
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .popup-header h5 {
+            margin: 0;
+        }
+
+        .popup-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 768px) {
+            .address-data {
+                display: block;
+                text-align: left;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .address-data {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 
@@ -206,6 +302,57 @@
             <p>No items found in the checkout summary.</p>
             {{/if}}
         </div>
+        <div class="mt-4" style="text-align: center;">
+            <h3 style="color: var(--charcoal-black);">Shipping Address</h3>
+            {{#if checkout.address}}
+            <div class="address-card">
+                <div class="address-header">
+                    <h4> {{checkout.address.fullName}}</h4>
+                </div>
+                <div class="address-details">
+                    <p><strong>Email:</strong> {{checkout.address.email}}</p>
+                    <p><strong>Phone:</strong> {{checkout.address.phone}}</p>
+                    <p><strong>Address:</strong> {{checkout.address.address}}, {{checkout.address.city}},
+                        {{checkout.address.district}}, {{checkout.address.state}},
+                        {{checkout.address.postalCode}}</p>
+                    <p><strong>Gender:</strong> {{checkout.address.gender}}</p>
+                    <p><strong>DOB:</strong> {{checkout.address.dob}}</p>
+                </div>
+            </div>
+            <button class="btn btn-secondary mt-3" onclick="showPopup()">Change Address</button>
+            {{/if}}
+        </div>
+
+        <!-- Popup -->
+        <div class="popup" id="addressPopup">
+            <div class="popup-header">
+                <h5>Select a New Address</h5>
+                <button class="btn btn-sm btn-danger" onclick="hidePopup()">Close</button>
+            </div>
+            <hr>
+            {{#if user.addresses.length}}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each user.addresses}}
+                    <tr>
+                        <td>{{this.fullAddress}}</td>
+                        <td><button class="btn btn-sm btn-primary">Select</button></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            {{else}}
+            <p>No other addresses available.</p>
+            <button class="btn btn-primary mt-2">Create New Address</button>
+            {{/if}}
+        </div>
+        <div class="popup-backdrop" id="popupBackdrop"></div>
 
         <!-- Order Summary -->
         <div class="mt-4">
@@ -289,6 +436,17 @@
                 console.error("Error initiating payment:", error);
             });
     });
+</script>
+<script>
+    function showPopup() {
+        document.getElementById('addressPopup').style.display = 'block';
+        document.getElementById('popupBackdrop').style.display = 'block';
+    }
+
+    function hidePopup() {
+        document.getElementById('addressPopup').style.display = 'none';
+        document.getElementById('popupBackdrop').style.display = 'none';
+    }
 </script>
 
 </html>

@@ -327,7 +327,6 @@
             return;
         }
 
-
         const cartItems = [];
         document.querySelectorAll(".quantity").forEach((quantityElement) => {
             const productId = quantityElement.dataset.productId;
@@ -360,6 +359,9 @@
                 if (data.message === "Checkout successful") {
                     alert("Checkout successful! Your order is being processed.");
                     window.location.href = "/order/checkout-summery";
+                } else if (data.message.includes("No address found")) {
+                    alert(data.message);
+                    window.location.href = data.redirectUrl; // Redirect to Add Address page
                 } else {
                     alert(`Error during checkout: ${data.message}`);
                 }
@@ -369,6 +371,7 @@
                 alert("An unexpected error occurred. Please try again later.");
             });
     });
+
 
 </script>
 

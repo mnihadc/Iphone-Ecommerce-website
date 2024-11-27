@@ -5,6 +5,7 @@ const moment = require("moment");
 require("dotenv").config(); // Ensure this is at the top of the file
 const Stripe = require("stripe");
 const User = require("../model/User");
+const Address = require("../model/Address");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const checkout = async (req, res) => {
@@ -17,6 +18,14 @@ const checkout = async (req, res) => {
       return res
         .status(400)
         .json({ message: "User ID is required and cannot be empty" });
+    }
+    const address = await Address.findOne({ userId, select: true });
+    if (!address) {
+      return res.status(400).json({
+        message:
+          "No address found. Please add a delivery address before checkout.",
+        redirect: "/address/get-create-address",
+      });
     }
 
     const cart = await Cart.find({ userId });
@@ -54,6 +63,7 @@ const checkout = async (req, res) => {
 
     const newCheckout = new Checkout({
       userId,
+      addressId: address._id,
       items: cartItems,
       totalPrice: finalTotalPrice,
       discount,
@@ -78,6 +88,7 @@ const getCheckoutSummery = async (req, res, next) => {
     const user = req.user;
     const userId = user.userId;
 
+    // Fetch the most recent checkout data
     const checkoutData = await Checkout.find({ userId })
       .sort({ createdAt: -1 })
       .limit(1);
@@ -86,8 +97,8 @@ const getCheckoutSummery = async (req, res, next) => {
       return res.status(404).json({ message: "No checkout history found" });
     }
 
+    // Retrieve product details
     const productIds = checkoutData[0].items.map((item) => item.productId);
-
     const products = await Product.find({ _id: { $in: productIds } });
 
     const checkoutItemsWithDetails = checkoutData[0].items.map((item) => {
@@ -122,6 +133,9 @@ const getCheckoutSummery = async (req, res, next) => {
       0
     );
 
+    // Fetch address details using addressId
+    const address = await Address.findById(checkoutData[0].addressId);
+
     const fullCheckoutData = {
       checkout: {
         ...checkoutData[0].toObject(),
@@ -130,12 +144,13 @@ const getCheckoutSummery = async (req, res, next) => {
         discount: checkoutData[0].discount || 0,
         delivery: checkoutData[0].delivery || "Standard-Delivery",
         offerCode: checkoutData[0].offerCode || null,
+        address: address ? address.toObject() : null,
       },
     };
 
     res.render("users/Checkout-Summery", {
       title: "Checkout Summary",
-      user: req.user, // Changed to req.user directly
+      user: req.user,
       isCheckoutSummery: true,
       ...fullCheckoutData,
     });
