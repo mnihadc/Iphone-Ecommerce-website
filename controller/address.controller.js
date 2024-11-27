@@ -54,9 +54,8 @@ const getMultipleAddress = async (req, res, next) => {
         message: "No addresses found for the user.",
       });
     }
-    res.render("/users/MultipleAddress", {
+    res.render("users/MultiAddress", {
       title: "Multiple Address Page",
-      isAddressPage: true,
       user: req.user,
       addresses,
     });

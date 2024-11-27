@@ -1,22 +1,14 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 /* Body */
 .addressbody {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background-color: #f995be;
   padding: 20px;
 }
 
 /* Container */
-.container {
+.containers {
   width: 100%;
   max-width: 800px;
   background: #ffffff;
