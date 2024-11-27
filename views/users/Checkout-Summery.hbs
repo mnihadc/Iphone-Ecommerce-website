@@ -330,29 +330,43 @@
                 <button class="btn btn-sm btn-danger" onclick="hidePopup()">Close</button>
             </div>
             <hr>
-            {{#if user.addresses.length}}
-            <table class="table">
+            {{#if checkout.addresses.length}}
+            <table class="table table-striped table-responsive">
                 <thead>
                     <tr>
+                        <th>Full Name</th>
                         <th>Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Postal Code</th>
+                        <th>Phone</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each user.addresses}}
+                    {{#each checkout.addresses}}
                     <tr>
-                        <td>{{this.fullAddress}}</td>
-                        <td><button class="btn btn-sm btn-primary">Select</button></td>
+                        <td>{{this.fullName}}</td>
+                        <td>{{this.address}}</td>
+                        <td>{{this.city}}</td>
+                        <td>{{this.state}}</td>
+                        <td>{{this.postalCode}}</td>
+                        <td>{{this.phone}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary"
+                                onclick="selectAddress('{{this._id}}')">Select</button>
+                        </td>
                     </tr>
                     {{/each}}
                 </tbody>
             </table>
             {{else}}
             <p>No other addresses available.</p>
-            <button class="btn btn-primary mt-2">Create New Address</button>
+            <button class="btn btn-primary mt-2" onclick="createNewAddress()">Create New Address</button>
             {{/if}}
         </div>
         <div class="popup-backdrop" id="popupBackdrop"></div>
+
 
         <!-- Order Summary -->
         <div class="mt-4">

@@ -135,7 +135,7 @@ const getCheckoutSummery = async (req, res, next) => {
 
     // Fetch address details using addressId
     const address = await Address.findById(checkoutData[0].addressId);
-
+    const allAddress = await Address.find({ userId: userId });
     const fullCheckoutData = {
       checkout: {
         ...checkoutData[0].toObject(),
@@ -145,6 +145,7 @@ const getCheckoutSummery = async (req, res, next) => {
         delivery: checkoutData[0].delivery || "Standard-Delivery",
         offerCode: checkoutData[0].offerCode || null,
         address: address ? address.toObject() : null,
+        addresses: allAddress,
       },
     };
 
