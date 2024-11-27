@@ -521,7 +521,39 @@ const handlePaymentCancel = async (req, res) => {
   }
 };
 
+const updateOrderAddress = async (req, res, next) => {
+  try {
+    const { orderId, addressId } = req.body; // Expecting data in req.body
+    const userId = req.user.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not logged in" });
+    }
+
+    // Validate if the order belongs to the user
+    const updatedOrder = await Checkout.findOneAndUpdate(
+      { _id: orderId, userId: userId }, // Find the order by ID and user
+      { addressId: addressId }, // Update the address
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedOrder) {
+      return res
+        .status(404)
+        .json({ message: "Order not found or unauthorized" });
+    }
+
+    res.status(200).json({
+      message: "Order address updated successfully",
+      updatedOrder,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
+  updateOrderAddress,
   checkout,
   getCheckoutSummery,
   CancelOrder,
