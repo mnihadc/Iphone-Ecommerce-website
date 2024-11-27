@@ -8,16 +8,30 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --midnight-blue: #1D1E22;
+            --space-gray: #3A3B3F;
+            --silver: #F5F5F7;
+            --alpine-green: #4A5842;
+            --gold: #F8D12F;
+            --pacific-blue: #007AFF;
+            --graphite: #8E8E93;
+            --sunrise-pink: #FFC0CB;
+            --charcoal-black: #121212;
+            --slate-gray: #636366;
+            --white: #FFFFFF;
+        }
+
         .bodyHead {
             margin-top: 20px;
-            background: #f8f9fa;
+            background: var(--silver);
         }
 
         .cart-item {
             position: relative;
             margin-bottom: 20px;
             padding: 15px;
-            background-color: #fff;
+            background-color: var(--white);
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
@@ -43,7 +57,7 @@
 
         .cart-item .cart-item-label {
             font-weight: 600;
-            color: #6c757d;
+            color: var(--slate-gray);
         }
 
         .count-input select {
@@ -56,8 +70,8 @@
             right: -10px;
             width: 24px;
             height: 24px;
-            background-color: #ff5252;
-            color: white;
+            background-color: var(--gold);
+            color: var(--white);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -77,6 +91,28 @@
         .cart-summary .btn {
             width: 100%;
             padding: 12px;
+        }
+
+        .btn-primary {
+            background-color: var(--midnight-blue);
+            border-color: var(--midnight-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--pacific-blue);
+            border-color: var(--pacific-blue);
+        }
+
+        .btn-secondary {
+            background-color: var(--space-gray);
+            border-color: var(--space-gray);
+            color: var(--silver);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--graphite);
+            border-color: var(--graphite);
         }
 
         @media (max-width: 768px) {
@@ -119,18 +155,18 @@
 
 <body>
     <div class="container p-2">
-        <h1 class="mt-4">Checkout Summary</h1>
+        <h1 class="mt-4 text-center" style="color: var(--midnight-blue);">Checkout Summary</h1>
 
         <!-- User Information -->
         {{#if user}}
         <div class="alert alert-info">
-            Logged in as: <strong>{{user.username}}</strong>
+            Logged in as: <strong>{{user.email}}</strong>
         </div>
         {{/if}}
 
         <!-- Checkout Items -->
         <div class="mt-4">
-            <h3>Order Details</h3>
+            <h3 style="color: var(--charcoal-black);">Order Details</h3>
             {{#if checkout.items.length}}
             <div class="list-group">
                 {{#each checkout.items}}
@@ -140,8 +176,8 @@
                             <img src="{{this.product.image}}" alt="{{this.product.name}}" class="img-fluid rounded">
                         </div>
                         <div class="col-md-5">
-                            <h5>{{this.product.name}}</h5>
-                            <p>
+                            <h5 style="color: var(--charcoal-black);">{{this.product.name}}</h5>
+                            <p style="color: var(--slate-gray);">
                                 <strong>Category:</strong> {{this.product.category}}<br>
                                 <strong>Battery:</strong> {{this.product.battery}}<br>
                                 <strong>Price:</strong> ₹{{this.product.price}}
@@ -152,7 +188,7 @@
                             <strong>Color:</strong>
                             <ul class="list-unstyled mb-0">
                                 {{#each this.product.colorOptions}}
-                                <li>
+                                <li style="color: var(--graphite);">
                                     {{this.colorName}} ({{this.colorCode}})
                                 </li>
                                 {{/each}}
@@ -160,7 +196,7 @@
                             <p><strong>Quantity:</strong> {{this.quantity}}</p>
                         </div>
                         <div class="col-md-3 text-right">
-                            <h5>Subtotal: ₹{{this.itemTotalPrice}}</h5>
+                            <h5 style="color: var(--midnight-blue);">Subtotal: ₹{{this.itemTotalPrice}}</h5>
                         </div>
                     </div>
                 </div>
@@ -173,23 +209,23 @@
 
         <!-- Order Summary -->
         <div class="mt-4">
-            <h3>Order Summary</h3>
+            <h3 style="color: var(--charcoal-black);">Order Summary</h3>
             <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between">
+                <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
                     <span>Subtotal:</span>
                     <strong>₹{{checkout.totalPrice}}</strong>
                 </li>
                 {{#if checkout.discount}}
-                <li class="list-group-item d-flex justify-content-between">
+                <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
                     <span>Discount:</span>
                     <strong>-₹{{checkout.discount}}</strong>
                 </li>
                 {{/if}}
-                <li class="list-group-item d-flex justify-content-between">
+                <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
                     <span>Delivery:</span>
                     <strong>₹{{checkout.delivery}}</strong>
                 </li>
-                <li class="list-group-item d-flex justify-content-between">
+                <li class="list-group-item d-flex justify-content-between" style="color: var(--midnight-blue);">
                     <span>Total:</span>
                     <strong>₹{{checkout.totalPrice}}</strong>
                 </li>

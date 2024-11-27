@@ -8,8 +8,8 @@
 body {
   font-family: "Arial", sans-serif;
   line-height: 1.6;
-  color: #333;
-  background-color: #f4f4f4;
+  color: #121212; /* Charcoal Black */
+  background-color: #f5f5f7; /* Silver */
 }
 
 .container {
@@ -20,8 +20,11 @@ body {
 
 /* About Section Styles */
 .about-intro {
-  background: linear-gradient(135deg, #ff6347, #ff9966);
-  /* Gradient effect */
+  background: linear-gradient(
+    135deg,
+    #1d1e22,
+    #3a3b3f
+  ); /* Midnight Blue to Space Gray */
   color: white;
   padding: 50px 0;
   text-align: center;
@@ -42,8 +45,8 @@ body {
 }
 
 .cta-button {
-  background-color: #333;
-  color: white;
+  background-color: #f8d12f; /* Gold */
+  color: #1d1e22; /* Midnight Blue */
   font-size: 18px;
   padding: 12px 30px;
   border: none;
@@ -54,7 +57,8 @@ body {
 }
 
 .cta-button:hover {
-  background-color: #ff6347;
+  background-color: #007aff; /* Pacific Blue */
+  color: #fff;
 }
 
 /* Why Shop Section Styles */
@@ -66,7 +70,7 @@ body {
 
 .why-shop h2 {
   font-size: 32px;
-  color: #333;
+  color: #1d1e22; /* Midnight Blue */
   margin-bottom: 20px;
   text-align: center;
 }
@@ -79,7 +83,7 @@ body {
 }
 
 .feature {
-  background-color: #f9f9f9;
+  background-color: #f5f5f7; /* Silver */
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -102,19 +106,19 @@ body {
 
 .feature h3 {
   font-size: 24px;
-  color: #333;
+  color: #121212; /* Charcoal Black */
   margin-bottom: 10px;
 }
 
 .feature p {
   font-size: 16px;
-  color: #555;
+  color: #636366; /* Slate Gray */
 }
 
 /* Our Promise Section Styles */
 .our-promise {
   padding: 50px 0;
-  background-color: #ff6347;
+  background-color: #1d1e22; /* Midnight Blue */
   color: white;
   text-align: center;
 }
@@ -143,7 +147,7 @@ body {
 
 /* Customer Testimonials */
 .customer-testimonials {
-  background-color: #f9f9f9;
+  background-color: #f5f5f7; /* Silver */
   padding: 50px 0;
 }
 
@@ -155,7 +159,7 @@ body {
 }
 
 .testimonial {
-  background-color: #fff;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -178,20 +182,20 @@ body {
 
 .testimonial h4 {
   font-size: 20px;
-  color: #333;
+  color: #1d1e22; /* Midnight Blue */
   margin-top: 10px;
 }
 
 .testimonial p {
   font-size: 14px;
-  color: #555;
+  color: #636366; /* Slate Gray */
   margin-top: 5px;
 }
 
 /* Partner Brands Section */
 .partner-brands {
   padding: 50px 0;
-  background-color: #fff;
+  background-color: #ffffff;
   text-align: center;
 }
 
@@ -240,6 +244,5 @@ body {
 
   .brand-logos img {
     width: 45%;
-    /* Make each logo 45% width */
   }
 }

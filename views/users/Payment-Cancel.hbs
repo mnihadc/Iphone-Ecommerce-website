@@ -1,4 +1,3 @@
-<!-- Payment-Cancel.hbs -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,11 +8,29 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --midnight-blue: #1D1E22;
+            --space-gray: #3A3B3F;
+            --silver: #F5F5F7;
+            --alpine-green: #4A5842;
+            --gold: #F8D12F;
+            --pacific-blue: #007AFF;
+            --graphite: #8E8E93;
+            --sunrise-pink: #FFC0CB;
+            --charcoal-black: #121212;
+            --slate-gray: #636366;
+            --white: #FFFFFF;
+            --danger-red: #dc3545;
+        }
+
         .cancel-card {
             max-width: 600px;
             margin: 50px auto;
             opacity: 0;
             animation: fadeIn 1s forwards;
+            background-color: var(--silver);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         @keyframes fadeIn {
@@ -27,21 +44,21 @@
         }
 
         .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: var(--midnight-blue);
+            border-color: var(--midnight-blue);
             transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
+            background-color: var(--pacific-blue);
+            border-color: var(--pacific-blue);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .icon {
             font-size: 5rem;
-            color: #dc3545;
+            color: var(--danger-red);
             animation: pulse 1.5s infinite;
         }
 
@@ -70,23 +87,25 @@
         }
 
         .order-summary {
-            background-color: #f8f9fa;
+            background-color: var(--silver);
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
         }
 
         .order-summary h5 {
-            color: #007bff;
+            color: var(--pacific-blue);
         }
 
         .order-summary li {
             font-size: 1.1rem;
             margin-bottom: 8px;
+            color: var(--charcoal-black);
         }
 
         .order-summary li strong {
-            color: #333;
+            color: var(--graphite);
         }
 
         /* Animation for the entire page */
@@ -104,16 +123,14 @@
             }
         }
 
-        /* Style for the progress bar text */
         .progress-label {
             text-align: center;
             margin-top: 5px;
             font-weight: bold;
         }
 
-        /* Additional Cancel Message Styling */
         .cancel-message {
-            color: #dc3545;
+            color: var(--danger-red);
             font-size: 1.25rem;
             font-weight: bold;
             margin-top: 15px;
@@ -121,12 +138,12 @@
 
         .order-id {
             font-size: 1.1rem;
-            color: #007bff;
+            color: var(--pacific-blue);
         }
     </style>
 </head>
 
-<body>
+<body style="background-color: var(--space-gray);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-6">
@@ -138,16 +155,17 @@
                         </div>
 
                         <!-- Cancel Title -->
-                        <h3 class="card-title text-danger animated-title">{{title}}</h3>
+                        <h3 class="card-title text-danger animated-title" style="color: var(--midnight-blue);">{{title}}
+                        </h3>
                         <p class="lead text-muted">{{message}}</p>
 
                         <!-- Cancel Confirmation Message -->
                         <div class="cancel-message">
                             <p>Your order has been canceled! 😔</p>
-                            <p class="order-id">Order ID: #</p>
+                            <p class="order-id">Order ID: #{{checkout._id}}</p>
                         </div>
 
-                        <!-- Cancel Progress (Optional) -->
+                        <!-- Cancel Progress -->
                         <div class="progress-bar-container">
                             <label for="orderProgress" class="progress-label">Your order was canceled:</label>
                             <div class="progress">
@@ -157,7 +175,7 @@
                         </div>
 
                         <!-- Back to Orders Button -->
-                        <a href="/" class="btn btn-primary mt-4">Go Back to Orders</a>
+                        <a href="/orders" class="btn btn-primary mt-4">Go Back to Orders</a>
                     </div>
                 </div>
             </div>

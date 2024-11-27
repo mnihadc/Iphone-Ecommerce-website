@@ -12,14 +12,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <style>
-        .bodeHead {
-            background: #e6e6e6;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
+        :root {
+            --midnight-blue: #1D1E22;
+            --space-gray: #3A3B3F;
+            --silver: #F5F5F7;
+            --alpine-green: #4A5842;
+            --gold: #F8D12F;
+            --pacific-blue: #007AFF;
+            --graphite: #8E8E93;
+            --sunrise-pink: #FFC0CB;
+            --charcoal-black: #121212;
+            --slate-gray: #636366;
+            --white: #FFFFFF;
+        }
+
+        body {
+            background-color: var(--silver);
             font-family: sans-serif;
-            font-size: 0.8rem;
-            font-weight: bold;
+            color: var(--charcoal-black);
         }
 
         .card {
@@ -32,18 +42,18 @@
         }
 
         .cart {
-            background-color: #fff;
+            background-color: var(--white);
             padding: 4vh 5vh;
             border-bottom-left-radius: 1rem;
             border-top-left-radius: 1rem;
         }
 
         .summary {
-            background-color: #ddd;
+            background-color: var(--space-gray);
             border-top-right-radius: 1rem;
             border-bottom-right-radius: 1rem;
             padding: 4vh;
-            color: rgb(65, 65, 65);
+            color: var(--slate-gray);
         }
 
         .title {
@@ -65,12 +75,13 @@
 
         .back-to-shop {
             margin-top: 4.5rem;
+            color: var(--pacific-blue);
         }
 
         .btn {
-            background-color: #000;
-            border-color: #000;
-            color: white;
+            background-color: var(--midnight-blue);
+            border-color: var(--midnight-blue);
+            color: var(--white);
             width: 100%;
             font-size: 0.7rem;
             margin-top: 4vh;
@@ -79,7 +90,8 @@
         }
 
         .btn:hover {
-            color: white;
+            background-color: var(--pacific-blue);
+            color: var(--white);
         }
 
         select,
@@ -88,8 +100,57 @@
             padding: 1.5vh 1vh;
             outline: none;
             width: 100%;
-            background-color: rgb(247, 247, 247);
+            background-color: var(--silver);
             margin-bottom: 4vh;
+        }
+
+        .title h4,
+        .title .text-muted {
+            color: var(--charcoal-black);
+        }
+
+        .remove-cart-item {
+            color: var(--pacific-blue);
+            cursor: pointer;
+        }
+
+        .remove-cart-item:hover {
+            color: var(--gold);
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 768px) {
+            .cart {
+                padding: 2vh 3vh;
+            }
+
+            .summary {
+                padding: 3vh;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                padding: 1vh;
+            }
+
+            .title h4 {
+                font-size: 1.1rem;
+            }
+
+            .main .img-fluid {
+                width: 4rem;
+            }
+        }
+
+        /* Small screen adjustments */
+        @media (max-width: 576px) {
+            .card {
+                width: 100%;
+            }
+
+            .main .quantity {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -122,9 +183,7 @@
                             <div class="col">
                                 <a class="decrement" data-product-id="{{this._id}}"
                                     data-price="{{this.unitPrice}}">-</a>
-                                <span class="border quantity" data-product-id="{{this._id}}">
-                                    {{this.newQuantity}}
-                                </span>
+                                <span class="border quantity" data-product-id="{{this._id}}">{{this.newQuantity}}</span>
                                 <a class="increment" data-product-id="{{this._id}}"
                                     data-price="{{this.unitPrice}}">+</a>
                             </div>
@@ -136,48 +195,40 @@
                     {{/each}}
 
                     <div class="back-to-shop"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to
-                            shop</span>
-                    </div>
+                            shop</span></div>
                     {{else}}
                     <!-- Display a message if the cart is empty -->
                     <div class="">
                         <div class="back-to-shop"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to
-                                shop</span>
-                        </div>
+                                shop</span></div>
                         <img style="width: 500px;height: 400px;text-align: center"
                             src="https://img.freepik.com/premium-vector/empty-cart_701961-7086.jpg" alt="Cart is Empty">
-
-
-                        {{/if}}
                     </div>
+                    {{/if}}
+                </div>
 
-                    <div class="col-md-4 summary">
-                        {{#if products.length}}
-                        <h5><b>Summary</b></h5>
-                        <hr>
-                        <div class="row">
-                            <div class="col">ITEMS {{products.length}}</div>
-                            <div class="col text-right">₹<span class="total-price">{{totalPrice}}</span></div>
-                        </div>
-                        <form>
-                            <p>SHIPPING</p>
-                            <select>
-                                <option value="Standard-Delivery" class="text-muted">Standard-Delivery- ₹5.00
-                                </option>
-                                <option value="Express-Delivery" class="text-muted">Express-Delivery-₹10.00
-                                </option>
-                            </select>
-
-                            <p>GIVE CODE</p>
-                            <input id="code" placeholder="Enter your code">
-                        </form>
-                        <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
-                            <div class="col">TOTAL PRICE</div>
-                            <div class="col text-right">₹<span class="total-price">{{totalPrice}}</span></div>
-                        </div>
-                        <button type="button" class="btn btn-primary">Checkout</button>
-                        {{/if}}
+                <div class="col-md-4 summary">
+                    {{#if products.length}}
+                    <h5><b style="color: #FFFFFF;">Summary</b></h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col" style="color: #FFFFFF;">ITEMS {{products.length}}</div>
+                        <div class="col text-right" style="color: #FFFFFF;">Total-Price: ₹<span
+                                class="total-price">{{totalPrice}}</span></div>
                     </div>
+                    <form>
+                        <p style="color: #FFFFFF;">SHIPPING</p>
+                        <select>
+                            <option value="Standard-Delivery" class="text-muted">Standard-Delivery- ₹5.00</option>
+                            <option value="Express-Delivery" class="text-muted">Express-Delivery-₹10.00</option>
+                        </select>
+
+                        <p style="color: #FFFFFF;">GIVE CODE</p>
+                        <input id="code" placeholder="Enter your code">
+                    </form>
+
+                    <button type="button" class="btn btn-primary">Checkout</button>
+                    {{/if}}
                 </div>
             </div>
         </div>
@@ -186,6 +237,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 </body>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {

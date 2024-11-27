@@ -228,8 +228,8 @@ const handleResetPassword = async (req, res) => {
 
     // Update the user's password
     user.password = hashedPassword;
-    user.otp = null; // Clear OTP after successful reset
-    user.otpExpire = null; // Clear OTP expiry
+    user.otp = null; 
+    user.otpExpire = null; 
     await user.save();
 
     // Send the user to the login page after successful password reset

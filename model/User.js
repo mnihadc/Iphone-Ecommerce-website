@@ -13,21 +13,21 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    minlength: 8, // Only required for non-OAuth users
+    minlength: 8,
   },
   googleId: {
-    type: String, // Stores Google profile ID
-    unique: true, // Ensures uniqueness for Google logins
-    sparse: true, // Allows null/undefined for non-Google users
+    type: String,
+    unique: true,
+    sparse: true,
   },
   profileImage: {
-    type: String, // Stores the user's Google profile picture URL
+    type: String,
   },
   otp: {
-    type: String, // Stores the OTP
+    type: String,
   },
   otpExpire: {
-    type: Date, // Stores the OTP expiration time
+    type: Date,
   },
   createdAt: {
     type: Date,

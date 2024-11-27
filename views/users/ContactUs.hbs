@@ -9,13 +9,138 @@
 	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+		.ftco-section {
+			margin-top: -50px;
+			/* Move the contact form 50px up */
+		}
 
+		/* Alternatively, adjusting the wrapper's margin to move everything up */
+		.wrapper {
+			margin-top: -50px;
+			/* Shift the wrapper up */
+		}
+
+		/* Overall Section Styling */
+		.ftco-section {
+			margin-top: -50px;
+			/* Move the contact form up */
+			background-color: #F5F5F7;
+			/* Silver background for a clean look */
+		}
+
+		/* Contact Form Styling */
+		.contact-wrap {
+			background-color: #FFFFFF;
+			/* White background for the form */
+			border-radius: 8px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			/* Soft shadow for depth */
+			padding: 20px;
+		}
+
+		/* Form Heading */
+		.contact-wrap h3 {
+			color: #121212;
+			/* Charcoal Black for text */
+			font-weight: 700;
+		}
+
+		/* Input Fields Styling */
+		.form-control {
+			border-radius: 4px;
+			border: 1px solid #8E8E93;
+			/* Graphite for borders */
+			padding: 12px;
+			margin-bottom: 15px;
+			font-size: 16px;
+			color: #121212;
+			/* Charcoal Black text */
+		}
+
+		.form-control:focus {
+			border-color: #007AFF;
+			/* Pacific Blue border on focus */
+			box-shadow: 0 0 4px rgba(0, 122, 255, 0.5);
+			/* Pacific Blue glow on focus */
+		}
+
+		/* Submit Button Styling */
+		.btn-primary {
+			background-color: #1D1E22;
+			/* Midnight Blue */
+			color: #FFFFFF;
+			/* White text */
+			border-radius: 4px;
+			padding: 12px 24px;
+			font-size: 16px;
+			transition: background-color 0.3s ease;
+		}
+
+		.btn-primary:hover {
+			background-color: #3A3B3F;
+			/* Space Gray on hover */
+		}
+
+		/* Success and Warning Message */
+		#form-message-success {
+			color: #4A5842;
+			/* Alpine Green for success */
+			display: none;
+		}
+
+		#form-message-warning {
+			color: #FFC0CB;
+			/* Sunrise Pink for warnings */
+			display: none;
+		}
+
+		/* Sidebar (Info Section) */
+		.info-wrap {
+			background-color: #1D1E22;
+			/* Midnight Blue */
+			color: #F5F5F7;
+			/* Silver text */
+			border-radius: 8px;
+			padding: 20px;
+		}
+
+		.info-wrap h3 {
+			color: #F5F5F7;
+			/* Silver for headings */
+			font-weight: 700;
+		}
+
+		.dbox .icon {
+			background-color: #F8D12F;
+			/* Gold accent color */
+			color: #FFFFFF;
+			border-radius: 50%;
+			padding: 12px;
+		}
+
+		.dbox .text p {
+			color: #F5F5F7;
+			/* Silver text for contact details */
+		}
+
+		.dbox .text p span {
+			font-weight: 600;
+		}
+
+		/* For smaller devices: */
+		@media (max-width: 768px) {
+			.contact-wrap {
+				padding: 20px;
+			}
+		}
+	</style>
 
 </head>
 
 <body>
-	<section class="ftco-section">
-		<div class="container" style="margin-bottom: 5rem;">
+	<section class="ftco-section" style=";">
+		<div class="container" style="">
 			<div class="row justify-content-center">
 				<div class="col-md-6 text-center pb-10">
 					<h2 class="heading-section">Contact Form</h2>
