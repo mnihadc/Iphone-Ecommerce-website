@@ -83,6 +83,22 @@
       padding: 20px;
       text-align: center;
     }
+
+    .address-page .card.selected {
+      border: 4px solid #2a6e02;
+      /* Green border */
+      background-color: #e8f5e9;
+      /* Light green background */
+    }
+
+    /* Highlight the selected button */
+    .address-page .select-btn.active {
+      background-color: #2a6e02;
+      /* Green background */
+      color: white;
+      border-color: #2a6e02;
+      /* Green border */
+    }
   </style>
 </head>
 
@@ -97,7 +113,7 @@
       <div class="card-columns">
         {{#each addresses}}
         <div class="p-2">
-          <div class="card" data-id="{{this._id}}">
+          <div class="card {{#if this.select}}selected{{/if}}" data-id="{{this._id}}">
             <div class="card-header">{{this.fullName}}</div>
             <div class="card-body">
               <p><strong>Email:</strong> {{this.email}}</p>
@@ -109,7 +125,10 @@
               <p><strong>District:</strong> {{this.district}}</p>
               <p><strong>State:</strong> {{this.state}}</p>
               <p><strong>Postal Code:</strong> {{this.postalCode}}</p>
-              <button class="btn btn-outline-success select-btn" onclick="selectAddress(this)">Select</button>
+              <button class="btn btn-outline-success select-btn {{#if this.select}}active{{/if}}"
+                onclick="selectAddress(this)">
+                {{#if this.select}}Selected{{else}}Select{{/if}}
+              </button>
             </div>
           </div>
         </div>
@@ -157,6 +176,7 @@
           console.error("Error:", error);
         });
     }
+
   </script>
 
 </body>

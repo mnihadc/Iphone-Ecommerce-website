@@ -48,6 +48,7 @@ const getMultipleAddress = async (req, res, next) => {
     const user = req.user;
     const userId = user.userId;
     const addresses = await Address.find({ userId });
+    
     if (!addresses || addresses.length === 0) {
       return res.status(404).json({
         success: false,
