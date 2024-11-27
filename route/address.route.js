@@ -11,6 +11,6 @@ const router = express.Router();
 router.get("/get-create-address", authenticateUser, getCreateAddressPage);
 router.post("/create-address", authenticateUser, CreateAddress);
 router.get("/get-multi-address", authenticateUser, getMultipleAddress);
-router.put("/selected-address", authenticateUser, selectAddress);
+router.patch("/selected-address", authenticateUser, selectAddress);
 
 module.exports = router;

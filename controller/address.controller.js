@@ -66,24 +66,40 @@ const getMultipleAddress = async (req, res, next) => {
 const selectAddress = async (req, res, next) => {
   try {
     const { addressId } = req.body;
-    const user = req.user;
-    const userId = user.userId;
-    const selectedAddress = await Address.findByIdAndUpdate(
-      addressId,
-      { selected: true },
+    const userId = req.user.userId;
+
+    const address = await Address.findOne({ _id: addressId, userId: userId });
+    if (!address) {
+      return res.status(404).json({
+        success: false,
+        message: "Address not found or doesn't belong to this user.",
+      });
+    }
+
+    await Address.updateMany({ userId }, { select: false });
+
+    const selectedAddress = await Address.findOneAndUpdate(
+      { _id: addressId, userId: userId },
+      { select: true },
       { new: true }
     );
+
     if (!selectedAddress) {
       return res.status(404).json({
         success: false,
         message: "Address not found.",
       });
     }
-    res.redirect("/profile/user");
+
+    return res.status(200).json({
+      success: true,
+      message: "Address selected successfully.",
+    });
   } catch (error) {
     next(error);
   }
 };
+
 module.exports = {
   getCreateAddressPage,
   CreateAddress,

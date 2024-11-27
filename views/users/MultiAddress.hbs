@@ -21,6 +21,21 @@
       color: #1D1E22;
     }
 
+    .address-page .card.selected {
+      border: 4px solid #2a6e02;
+    }
+
+    .select-btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .select-btn.active {
+      background-color: #2a6e02;
+      color: white;
+      border-color: #2a6e02;
+    }
+
     .address-page .card {
       background-color: #F5F5F7;
       border: 1px solid #8E8E93;
@@ -39,10 +54,6 @@
 
     .address-page .card-body {
       color: #636366;
-    }
-
-    .address-page .card.selected {
-      border: 4px solid #2a6e02;
     }
 
     .address-page .selected-badge {
@@ -86,7 +97,7 @@
       <div class="card-columns">
         {{#each addresses}}
         <div class="p-2">
-          <div class="card" onclick="selectAddress(this)">
+          <div class="card" data-id="{{this._id}}">
             <div class="card-header">{{this.fullName}}</div>
             <div class="card-body">
               <p><strong>Email:</strong> {{this.email}}</p>
@@ -98,6 +109,7 @@
               <p><strong>District:</strong> {{this.district}}</p>
               <p><strong>State:</strong> {{this.state}}</p>
               <p><strong>Postal Code:</strong> {{this.postalCode}}</p>
+              <button class="btn btn-outline-success select-btn" onclick="selectAddress(this)">Select</button>
             </div>
           </div>
         </div>
@@ -111,18 +123,39 @@
   </footer>
 
   <script>
-    function selectAddress(card) {
+    function selectAddress(button) {
       document.querySelectorAll('.card').forEach(c => {
         c.classList.remove('selected');
-        const badge = c.querySelector('.selected-badge');
-        if (badge) badge.remove();
+        c.querySelector('.select-btn').classList.remove('active');
+        c.querySelector('.select-btn').textContent = "Select";
       });
 
+      const card = button.closest('.card');
       card.classList.add('selected');
-      const badge = document.createElement('div');
-      badge.className = 'selected-badge';
-      badge.textContent = 'Selected';
-      card.appendChild(badge);
+      button.classList.add('active');
+      button.textContent = "Selected";
+
+      const addressId = card.getAttribute('data-id');
+
+      fetch('/address/selected-address', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ addressId: addressId })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log("Address selection updated.");
+          } else {
+            console.error("Failed to select address");
+            alert("Address selection failed. Please try again.");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
     }
   </script>
 
