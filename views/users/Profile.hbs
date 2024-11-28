@@ -115,35 +115,57 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-sm-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-1"><i
-                                            class="material-icons text-info mr-2">New
-                                            Buyer</i>:User Status</h6>
-                                    <p><small>(For more offers and exclusive features, become our Super Premium member.
+                                    <h6 class="d-flex align-items-center mb-1">
+                                        User Status : <i class="material-icons text-info mr-2"> New Buyer</i>
+                                    </h6>
+                                    <p>
+                                        <small>(For more offers and exclusive features, become our Super Premium member.
                                             Stay with us and continue your purchases to enjoy the best
                                             benefits.)</small>
                                     </p>
-                                    <small>New Buyer </small>
+
+                                    <!-- New Buyer Progress -->
+                                    <small>New Buyer</small>
                                     <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%"
-                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-primary" role="progressbar"
+                                            style="width: {{membershipLevel.newBuyer}}%"
+                                            aria-valuenow="{{membershipLevel.newBuyer}}" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                        </div>
                                     </div>
+
+                                    <!-- Engaged Shopper Progress -->
                                     <small>Engaged Shopper</small>
                                     <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%"
-                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-primary" role="progressbar"
+                                            style="width: {{membershipLevel.engagedShopper}}%"
+                                            aria-valuenow="{{membershipLevel.engagedShopper}}" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                        </div>
                                     </div>
-                                    <small>Premium Member </small>
+
+                                    <!-- Premium Member Progress -->
+                                    <small>Premium Member</small>
                                     <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%"
-                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-primary" role="progressbar"
+                                            style="width: {{membershipLevel.premiumMember}}%"
+                                            aria-valuenow="{{membershipLevel.premiumMember}}" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                        </div>
                                     </div>
+
+                                    <!-- Super Premium Member Progress -->
                                     <small>Super Premium Member</small>
                                     <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%"
-                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-success" role="progressbar"
+                                            style="width: {{membershipLevel.superPremiumMember}}%"
+                                            aria-valuenow="{{membershipLevel.superPremiumMember}}" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
