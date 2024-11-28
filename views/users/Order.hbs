@@ -71,7 +71,7 @@
                         <!-- Header -->
                         <div class="card-header bg-light px-4 py-4">
                             <h5 class="text-muted mb-0">
-                                Thanks for your order, <span class="text-highlight">{{username}}</span>!
+                                Thanks for your order, <span class="text-highlight">{{users.username}}</span>!
                             </h5>
                         </div>
 
@@ -118,23 +118,39 @@
                                 </div>
                             </div>
                             {{/each}}
+                            <div class="mb-4">
+                                <h5 class="text-muted mb-0">Delivery Address</h5>
+                                {{#if address}}
+                                <h6 class="ml-3"><b>{{address.fullName}}</b></h6>
+                                <p class="text-muted small mb-1 ml-4"><strong>{{address.address}}</strong></p>
+                                <p class="text-muted small mb-1 ml-4"><strong>{{address.city}},
+                                        {{address.postalCode}}</strong></p>
+                                <p class="text-muted small mb-1 ml-4"><strong>{{address.state}},
+                                        {{address.district}}</strong></p>
+                                <p class="text-muted small mb-1 ml-4">
+                                    <strong>{{address.phone}}, email : {{address.email}}</strong>
+                                </p>
+                                {{else}}
+                                <p class="text-muted small mb-1">Address not found</p>
+                                {{/if}}
+                            </div>
 
                             <!-- Summary -->
                             <div class="d-flex justify-content-between pt-2">
                                 <p class="fw-bold mb-0">Order Details</p>
-                                <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> ₹{{totalPrice}}</p>
+                                <p class="text-muted mb-0"><span class="fw-bold ">Total</span> ₹{{totalPrice}}</p>
                             </div>
                             <div class="d-flex justify-content-between pt-2">
                                 <p class="text-muted mb-0">Invoice Number: <strong>{{_id}}</strong></p>
-                                <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> ₹{{discount}}</p>
+                                <p class="text-muted mb-0"><span class="fw-bold">Discount</span> ₹{{discount}}</p>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <p class="text-muted mb-0">Invoice Date: <strong>{{createdAt}}</strong></p>
-                                <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span></p>
+                                <p class="text-muted mb-0"><span class="fw-bold ">GST 18%</span></p>
                             </div>
                             <div class="d-flex justify-content-between mb-5">
                                 <p class="text-muted mb-0">Receipts Voucher: <strong>{{offerCode}}</strong></p>
-                                <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+                                <p class="text-muted mb-0"><span class="fw-bold">Delivery Charges</span> Free</p>
                             </div>
 
                             <div class="p-2 d-flex justify-content-between">

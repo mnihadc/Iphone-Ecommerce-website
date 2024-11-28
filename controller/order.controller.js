@@ -180,6 +180,7 @@ const getOrder = async (req, res, next) => {
   try {
     const user = req.user;
     const userId = user?.userId;
+    const users = await User.findOne({ _id: userId });
 
     if (!userId) {
       return res.status(400).json({ message: "User not authenticated" });
@@ -191,7 +192,14 @@ const getOrder = async (req, res, next) => {
       order.items.map((item) => item.productId)
     );
 
-    const products = await Product.find({ _id: { $in: allProductIds } });
+    const allAddressIds = orders
+      .map((order) => order.addressId)
+      .filter(Boolean); // Ensure no undefined addresses
+
+    const [products, addresses] = await Promise.all([
+      Product.find({ _id: { $in: allProductIds } }),
+      Address.find({ _id: { $in: allAddressIds } }),
+    ]);
 
     const enrichedOrders = orders.map((order) => {
       const enrichedItems = order.items.map((item) => {
@@ -215,7 +223,8 @@ const getOrder = async (req, res, next) => {
       });
 
       const totalPrice = enrichedItems.reduce(
-        (acc, item) => acc + item.product.price * item.quantity,
+        (acc, item) =>
+          acc + (item.product ? item.product.price * item.quantity : 0),
         0
       );
       const gst = totalPrice * 0.18;
@@ -248,6 +257,18 @@ const getOrder = async (req, res, next) => {
         options
       );
 
+      // Find the address safely
+      const address = addresses.find(
+        (addr) => addr?._id?.toString() === order.addressId?.toString()
+      ) || {
+        name: "N/A",
+        street: "N/A",
+        city: "N/A",
+        state: "N/A",
+        zipCode: "N/A",
+        phone: "N/A",
+      };
+
       return {
         ...order.toObject(),
         items: enrichedItems,
@@ -255,12 +276,14 @@ const getOrder = async (req, res, next) => {
         gst,
         deliveryDate: formattedDeliveryDate,
         progress: progress.toFixed(2),
+        address,
+        users,
       };
     });
 
     res.render("users/Order", {
       title: "Your Orders",
-      user: req.user, // Changed to req.user directly
+      user: req.user,
       isOrderPage: true,
       orders: enrichedOrders,
     });

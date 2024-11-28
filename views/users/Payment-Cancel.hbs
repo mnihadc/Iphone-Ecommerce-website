@@ -20,10 +20,10 @@
             --charcoal-black: #121212;
             --slate-gray: #636366;
             --white: #FFFFFF;
-            --danger-red: #dc3545;
+            --warning-yellow: #FFC107;
         }
 
-        .cancel-card {
+        .waiting-card {
             max-width: 600px;
             margin: 50px auto;
             opacity: 0;
@@ -58,7 +58,7 @@
 
         .icon {
             font-size: 5rem;
-            color: var(--danger-red);
+            color: var(--warning-yellow);
             animation: pulse 1.5s infinite;
         }
 
@@ -76,16 +76,6 @@
             }
         }
 
-        .progress-bar-container {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .progress-bar {
-            height: 30px;
-            transition: width 1s ease-in-out;
-        }
-
         .order-summary {
             background-color: var(--silver);
             padding: 15px;
@@ -98,39 +88,14 @@
             color: var(--pacific-blue);
         }
 
-        .order-summary li {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-            color: var(--charcoal-black);
-        }
-
-        .order-summary li strong {
-            color: var(--graphite);
-        }
-
-        /* Animation for the entire page */
-        .animated-title {
-            animation: slideInFromLeft 1s ease-out;
-        }
-
-        @keyframes slideInFromLeft {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
         .progress-label {
             text-align: center;
             margin-top: 5px;
             font-weight: bold;
         }
 
-        .cancel-message {
-            color: var(--danger-red);
+        .waiting-message {
+            color: var(--warning-yellow);
             font-size: 1.25rem;
             font-weight: bold;
             margin-top: 15px;
@@ -147,35 +112,34 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-6">
-                <div class="card shadow-lg cancel-card">
+                <div class="card shadow-lg waiting-card">
                     <div class="card-body text-center">
-                        <!-- Cancel Icon -->
+                        <!-- Waiting Icon -->
                         <div class="icon mb-4">
-                            <i class="bi bi-x-circle"></i>
+                            <i class="bi bi-hourglass-split"></i>
                         </div>
 
-                        <!-- Cancel Title -->
-                        <h3 class="card-title text-danger animated-title" style="color: var(--midnight-blue);">{{title}}
-                        </h3>
+                        <!-- Waiting Title -->
+                        <h3 class="card-title" style="color: var(--midnight-blue);">{{title}}</h3>
                         <p class="lead text-muted">{{message}}</p>
 
-                        <!-- Cancel Confirmation Message -->
-                        <div class="cancel-message">
-                            <p>Your order has been canceled! 😔</p>
+                        <!-- Waiting Confirmation Message -->
+                        <div class="waiting-message">
+                            <p>Your order is waiting for payment ⏳</p>
                             <p class="order-id">Order ID: #{{checkout._id}}</p>
                         </div>
 
-                        <!-- Cancel Progress -->
+                        <!-- Waiting Progress -->
                         <div class="progress-bar-container">
-                            <label for="orderProgress" class="progress-label">Your order was canceled:</label>
+                            <label for="orderProgress" class="progress-label">Payment Status:</label>
                             <div class="progress">
-                                <div class="progress-bar bg-danger" style="width: 100%;" role="progressbar"
-                                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-warning" style="width: 50%;" role="progressbar"
+                                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
 
                         <!-- Back to Orders Button -->
-                        <a href="/orders" class="btn btn-primary mt-4">Go Back to Orders</a>
+                        <a href="/order/get-orders" class="btn btn-primary mt-4">Go Back to Orders</a>
                     </div>
                 </div>
             </div>
