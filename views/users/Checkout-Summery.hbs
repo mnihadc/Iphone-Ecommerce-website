@@ -353,8 +353,8 @@
                         <td>{{this.postalCode}}</td>
                         <td>{{this.phone}}</td>
                         <td>
-                            <button class="btn btn-sm btn-primary"
-                                onclick="selectAddress('{{this._id}}')">Select</button>
+                            <button class="btn btn-info" data-address-id="{{this._id}}">Select</button>
+
                         </td>
                     </tr>
                     {{/each}}
@@ -362,54 +362,53 @@
             </table>
             {{else}}
             <p>No other addresses available.</p>
-            <button class="btn btn-primary mt-2" onclick="createNewAddress()">Create New Address</button>
+            <button class="btn btn-primary" data-address-id="{{this.addressId}}"
+                data-order-id="{{checkout._id}}">Select</button {{/if}} </div>
+            <div class="popup-backdrop" id="popupBackdrop"></div>
+
+
+            <!-- Order Summary -->
+            <div class="mt-4">
+                <h3 style="color: var(--charcoal-black);">Order Summary</h3>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
+                        <span>Subtotal:</span>
+                        <strong>₹{{checkout.totalPrice}}</strong>
+                    </li>
+                    {{#if checkout.discount}}
+                    <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
+                        <span>Discount:</span>
+                        <strong>-₹{{checkout.discount}}</strong>
+                    </li>
+                    {{/if}}
+                    <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
+                        <span>Delivery:</span>
+                        <strong>₹{{checkout.delivery}}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between" style="color: var(--midnight-blue);">
+                        <span>Total:</span>
+                        <strong>₹{{checkout.totalPrice}}</strong>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Offer Code -->
+            {{#if checkout.offerCode}}
+            <div class="mt-3">
+                <p><strong>Applied Offer Code:</strong> {{checkout.offerCode}}</p>
+            </div>
             {{/if}}
-        </div>
-        <div class="popup-backdrop" id="popupBackdrop"></div>
 
-
-        <!-- Order Summary -->
-        <div class="mt-4">
-            <h3 style="color: var(--charcoal-black);">Order Summary</h3>
-            <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
-                    <span>Subtotal:</span>
-                    <strong>₹{{checkout.totalPrice}}</strong>
-                </li>
-                {{#if checkout.discount}}
-                <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
-                    <span>Discount:</span>
-                    <strong>-₹{{checkout.discount}}</strong>
-                </li>
-                {{/if}}
-                <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
-                    <span>Delivery:</span>
-                    <strong>₹{{checkout.delivery}}</strong>
-                </li>
-                <li class="list-group-item d-flex justify-content-between" style="color: var(--midnight-blue);">
-                    <span>Total:</span>
-                    <strong>₹{{checkout.totalPrice}}</strong>
-                </li>
-            </ul>
+            <!-- Navigation Buttons -->
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="#" class="btn btn-secondary" onclick="cancelOrder('{{checkout._id}}')">Cancel Order</a>
+                <button class="btn btn-primary" id="confirmOrderBtn">Confirm Order</button>
+            </div>
         </div>
 
-        <!-- Offer Code -->
-        {{#if checkout.offerCode}}
-        <div class="mt-3">
-            <p><strong>Applied Offer Code:</strong> {{checkout.offerCode}}</p>
-        </div>
-        {{/if}}
-
-        <!-- Navigation Buttons -->
-        <div class="mt-4 d-flex justify-content-between">
-            <a href="#" class="btn btn-secondary" onclick="cancelOrder('{{checkout._id}}')">Cancel Order</a>
-            <a class="btn btn-primary">Confirm Order</a>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 <script>
@@ -433,8 +432,9 @@
         }
     }
 </script>
+
 <script>
-    document.querySelector(".btn-primary").addEventListener("click", () => {
+    document.getElementById('confirmOrderBtn').addEventListener('click', function () {
         fetch("/order/initiate-payment", {
             method: "POST",
         })
@@ -450,7 +450,9 @@
                 console.error("Error initiating payment:", error);
             });
     });
+
 </script>
+
 <script>
     function showPopup() {
         document.getElementById('addressPopup').style.display = 'block';
@@ -461,6 +463,45 @@
         document.getElementById('addressPopup').style.display = 'none';
         document.getElementById('popupBackdrop').style.display = 'none';
     }
+</script>
+<script>
+    $(document).on('click', '.btn-info', function () {
+        var addressId = $(this).data('address-id');
+        var orderId = '{{checkout._id}}';  // Get the orderId directly from the template
+
+        console.log("Address ID:", addressId, "Order ID:", orderId); // Logs to the console
+
+        if (addressId && orderId) {
+            selectAddress(addressId, orderId);
+        } else {
+            alert("Invalid address or order ID");
+        }
+    });
+
+    function selectAddress(addressId, orderId) {
+        fetch("/order/update-order-address", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ orderId: orderId, addressId: addressId }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.message) {
+                    alert(data.message);
+                    hidePopup();  // Hide the popup after successful address change
+                    window.location.reload();  // Reload the page to reflect the new address
+                } else {
+                    alert("Failed to update address");
+                }
+            })
+            .catch((error) => {
+                console.error("Error updating address:", error);
+                alert("An error occurred while updating the address");
+            });
+    }
+
 </script>
 
 </html>

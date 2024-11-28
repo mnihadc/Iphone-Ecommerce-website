@@ -273,55 +273,43 @@ const getOrder = async (req, res, next) => {
 const initiatePayment = async (req, res) => {
   try {
     const user = req.user;
-    const userId = user?.userId;
-    console.log(user);
-
+    const userId = user.userId;
     if (!userId) {
       return res
         .status(400)
         .json({ message: "User ID is required and cannot be empty" });
     }
-
     // Fetch the latest checkout data for the user
     const checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
-
     if (!checkout) {
       return res.status(404).json({ message: "No checkout data found." });
     }
-
-    // If payment is already completed, prevent further payment attempts
-    if (checkout.paymentStatus) {
-      return res.status(400).json({ message: "Payment already completed" });
-    }
-
     // Map checkout items to Stripe's line item format
     const lineItems = checkout.items
       .map((item) => {
+        // Ensure itemTotalPrice is a valid number
         if (!item.itemTotalPrice || isNaN(item.itemTotalPrice)) {
           console.log("Invalid item total price for item:", item);
-          return null;
+          return null; // Handle invalid data gracefully
         }
-
         return {
           price_data: {
             currency: "inr",
             product_data: {
               name: item.productName,
             },
-            unit_amount: item.itemTotalPrice * 100,
+            unit_amount: item.itemTotalPrice * 100, // Convert to paise (for INR)
           },
           quantity: item.quantity,
         };
       })
-      .filter((item) => item !== null);
-
+      .filter((item) => item !== null); // Filter out any invalid items
     if (lineItems.length === 0) {
       return res
         .status(400)
         .json({ message: "Invalid items data, unable to process payment." });
     }
-
-    // Include delivery charge as a separate line item
+    // Include delivery charge as a separate line item (ensure delivery is a valid number)
     const deliveryCharge = isNaN(checkout.delivery) ? 0 : checkout.delivery;
     lineItems.push({
       price_data: {
@@ -333,7 +321,6 @@ const initiatePayment = async (req, res) => {
       },
       quantity: 1,
     });
-
     // Create a Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -347,7 +334,6 @@ const initiatePayment = async (req, res) => {
       )}/order/cancel?userId=${userId}`,
       customer_email: user.email,
     });
-
     res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Error initiating payment:", error);
@@ -524,6 +510,8 @@ const handlePaymentCancel = async (req, res) => {
 const updateOrderAddress = async (req, res, next) => {
   try {
     const { orderId, addressId } = req.body; // Expecting data in req.body
+    console.log("Received orderId:", orderId, "and addressId:", addressId); // Debugging
+
     const userId = req.user.userId;
 
     if (!userId) {
