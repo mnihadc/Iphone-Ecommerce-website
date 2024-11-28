@@ -103,7 +103,8 @@
                 fetch(`/shop?${params.toString()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                     .then(res => res.json())
                     .then(data => {
-                        productList.innerHTML = data.products.map(product => `
+                        if (data.products && data.products.length > 0) {
+                            productList.innerHTML = data.products.map(product => `
                         <div class="col-12 col-md-4 col-lg-3 mb-4 product-item">
                             <div class="product-card">
                                 <a href="/product-view/${product._id}">
@@ -115,13 +116,21 @@
                                 <p>${product.category}</p>
                                 <p class="product-price">
                                     ${product.offerPrice
-                                ? `<span class="text-danger">₹${product.offerPrice}</span> <del class="product-price-old" style="color: gray;">₹${product.price}</del>`
-                                : `₹${product.price}`}
+                                    ? `<span class="text-danger">₹${product.offerPrice}</span> <del class="product-price-old" style="color: gray;">₹${product.price}</del>`
+                                    : `₹${product.price}`}
                                 </p>
                                 <button class="add-to-cart-btn" data-product-id="${product._id}">Add to Cart</button>
                             </div>
                         </div>
-                        `).join('');
+                    `).join('');
+                        } else {
+                            productList.innerHTML = `
+                        <div class="col-12 text-center">
+                            <h5>No products found</h5>
+                            <p>Try adjusting your search or filter criteria.</p>
+                        </div>
+                    `;
+                        }
                     });
             }
 
@@ -134,10 +143,10 @@
                         .then(data => {
                             if (data.length > 0) {
                                 searchSuggestions.innerHTML = data.map((product, index) => `
-                                    <div class="suggestion-item ${index === activeIndex ? 'active' : ''}" data-name="${product.name}">
-                                        ${product.name}
-                                    </div>
-                                `).join('');
+                            <div class="suggestion-item ${index === activeIndex ? 'active' : ''}" data-name="${product.name}">
+                                ${product.name}
+                            </div>
+                        `).join('');
                                 searchSuggestions.style.display = 'block';
                             } else {
                                 searchSuggestions.innerHTML = '<div class="suggestion-item">No results found</div>';
