@@ -1,3 +1,4 @@
+const Admin = require("../model/Admin");
 const Product = require("../model/Product");
 const nodemailer = require("nodemailer");
 
@@ -18,10 +19,13 @@ const getHomePage = async (req, res, next) => {
         },
       },
     ]);
+    const banner = await Admin.findOne({ mainStatus: true });
+
     res.render("users/Home", {
       title: "Home Page",
       isHomePage: true,
-      user: req.user, // Use token-based user
+      user: req.user,
+      banner,
       products,
     });
   } catch (error) {
