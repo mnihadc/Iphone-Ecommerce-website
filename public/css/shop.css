@@ -111,12 +111,6 @@ h4 {
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.list-group {
-  background-color: black;
-  color: white;
-  max-height: 200px;
-  overflow-y: auto;
-}
 
 .suggestion-item {
   padding: 10px;
@@ -180,7 +174,13 @@ h4 {
   object-fit: cover;
   margin-bottom: 10px;
 }
-
+header {
+  text-align: center;
+  padding: 50px 20px;
+  background: linear-gradient(90deg, #1d1e22, #007aff);
+  color: white;
+  border-radius: 10px;
+}
 .product-card h5 {
   font-size: 1rem;
   font-weight: bold;
