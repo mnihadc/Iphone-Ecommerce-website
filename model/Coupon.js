@@ -13,6 +13,13 @@ const couponSchema = new mongoose.Schema({
     trim: true,
     uppercase: true,
   },
+  discountPercentage: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 100,
+    default: 10, // Default discount is 10%
+  },
   createdAt: {
     type: Date,
     default: Date.now,

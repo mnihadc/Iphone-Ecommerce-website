@@ -6,6 +6,7 @@ require("dotenv").config(); // Ensure this is at the top of the file
 const Stripe = require("stripe");
 const User = require("../model/User");
 const Address = require("../model/Address");
+const Coupon = require("../model/Coupon");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const checkout = async (req, res) => {
@@ -54,8 +55,15 @@ const checkout = async (req, res) => {
     );
 
     let discount = 0;
-    if (offerCode === "DISCOUNT10") {
-      discount = totalPrice * 0.1;
+    if (offerCode) {
+      const coupon = await Coupon.findOne({ code: offerCode.toUpperCase() });
+      if (coupon && coupon.validUntil > new Date()) {
+        discount = (totalPrice * coupon.discountPercentage) / 100; // Apply discount based on coupon
+      } else {
+        return res.status(400).json({
+          message: "Invalid or expired coupon code",
+        });
+      }
     }
 
     const shippingCost = shippingMethod === "Express-Delivery" ? 10 : 5;
@@ -88,7 +96,6 @@ const getCheckoutSummery = async (req, res, next) => {
     const user = req.user;
     const userId = user.userId;
 
-    // Fetch the most recent checkout data
     const checkoutData = await Checkout.find({ userId })
       .sort({ createdAt: -1 })
       .limit(1);
@@ -97,7 +104,6 @@ const getCheckoutSummery = async (req, res, next) => {
       return res.status(404).json({ message: "No checkout history found" });
     }
 
-    // Retrieve product details
     const productIds = checkoutData[0].items.map((item) => item.productId);
     const products = await Product.find({ _id: { $in: productIds } });
 
@@ -194,7 +200,7 @@ const getOrder = async (req, res, next) => {
 
     const allAddressIds = orders
       .map((order) => order.addressId)
-      .filter(Boolean); // Ensure no undefined addresses
+      .filter(Boolean);
 
     const [products, addresses] = await Promise.all([
       Product.find({ _id: { $in: allProductIds } }),
