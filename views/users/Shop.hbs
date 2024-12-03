@@ -53,7 +53,7 @@
 
     <div class="product-section">
         <div class="container">
-            <div class="row" id="productList">
+            <div class="row product-grid" id="productList"> <!-- product-grid class here -->
                 {{#each products}}
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
                     data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
@@ -82,6 +82,7 @@
             </div>
         </div>
     </div>
+
 
     <footer class="footer-32892 pb-0" style="background: rgb(59, 55, 55); color: azure; padding-top: 2rem;">
         <!-- Footer content here -->

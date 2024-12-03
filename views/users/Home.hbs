@@ -59,15 +59,15 @@
         <div class="container">
             <div class="row">
                 {{#each products}}
-                <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+                <div class="col-6 col-md-4 col-lg-3 mb-4">
                     <div class="product-item">
-                        <!-- Link the image to the view product page -->
+                        <!-- Image linked to the product view page -->
                         <a href="/product-view/{{this._id}}">
                             <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
                         </a>
-                        <!-- Optionally, make the product title clickable too -->
-                        <a href="/product-view/{{this._id}}" style="text-decoration: none;">
-                            <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                        <!-- Product title linked to the product view page -->
+                        <a href="/product-view/{{this._id}}" class="product-title">
+                            <h3>{{this.name}}</h3>
                         </a>
                         <strong class="product-price">
                             {{#if this.offerPrice}}
@@ -76,8 +76,7 @@
                             ₹{{this.price}}
                             {{/if}}
                         </strong>
-                        <button class="add-to-cart-btn" style="border-radius: 7px; border: silver 1px; color: green;"
-                            data-product-id="{{this._id}}">
+                        <button class="add-to-cart-btn" data-product-id="{{this._id}}">
                             Add to Cart
                         </button>
                     </div>
@@ -86,6 +85,7 @@
             </div>
         </div>
     </div>
+
     <!-- End Product Display -->
 
     <!-- Start Why Choose Us Section -->
