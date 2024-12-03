@@ -27,7 +27,7 @@
         }
 
         body {
-            background-color: var(--silver);
+            background-color: #E5E5E5;
             font-family: sans-serif;
             color: var(--charcoal-black);
         }
@@ -66,11 +66,12 @@
         }
 
         .img-fluid {
-            width: 3.5rem;
+            width: 5rem;
         }
 
         .close {
-            font-size: 0.7rem;
+            font-size: 1rem;
+            color: red;
         }
 
         .back-to-shop {
@@ -110,7 +111,7 @@
         }
 
         .remove-cart-item {
-            color: var(--pacific-blue);
+            color: red;
             cursor: pointer;
         }
 
@@ -149,7 +150,11 @@
             }
 
             .main .quantity {
-                font-size: 0.8rem;
+                font-size: 1.1rem;
+            }
+
+            .main .img-fluid {
+                display: none;
             }
         }
     </style>
@@ -181,10 +186,10 @@
                                 <div class="row">{{this.name}}</div>
                             </div>
                             <div class="col">
-                                <a class="decrement" data-product-id="{{this._id}}"
-                                    data-price="{{this.unitPrice}}">-</a>
+                                <a class="decrement" data-product-id="{{this._id}}" style="font-size: x-large;"
+                                    data-price=" {{this.unitPrice}}">-</a>
                                 <span class="border quantity" data-product-id="{{this._id}}">{{this.newQuantity}}</span>
-                                <a class="increment" data-product-id="{{this._id}}"
+                                <a class="increment" data-product-id="{{this._id}}" style="font-size: x-large;"
                                     data-price="{{this.unitPrice}}">+</a>
                             </div>
                             <div class="col">₹<span class="item-price">{{this.finalPrice}}</span>
@@ -194,7 +199,9 @@
                     </div>
                     {{/each}}
 
-                    <div class="back-to-shop"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to
+                    <div class="back-to-shop"><a href="/shop"
+                            style="font-size: 1.5rem;font-weight: bolder;">&leftarrow;</a><span class="text-muted">Back
+                            to
                             shop</span></div>
                     {{else}}
                     <!-- Display a message if the cart is empty -->
