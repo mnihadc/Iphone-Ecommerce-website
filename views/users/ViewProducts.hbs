@@ -42,24 +42,20 @@
         </div>
 
         <!-- Right Side: Product Details -->
-        <div class="product-details">
+        <div class="product-details ">
             <div class="product-name">
                 <div class="release-date">
                     Release Date: {{releaseDate}}
                 </div>
-                {{name}}
+                
             </div>
             <p class="product-category">Category: {{category}}</p>
             <p class="product-stock">Stock: {{stock}} units available</p>
             <h3>Specifications:</h3>
             <ul>
-                <li><strong>Processor:</strong> {{specifications.processor}}</li>
-                <li><strong>Memory:</strong> {{specifications.memory}}</li>
-                <li><strong>Storage:</strong> {{specifications.storage}}</li>
-                <li><strong>Display Size:</strong> {{specifications.displaySize}}</li>
-                <li><strong>Camera:</strong> {{specifications.camera}}</li>
-                <li><strong>Battery:</strong> {{specifications.battery}}</li>
-                <li><strong>Connectivity:</strong> {{specifications.connectivity}}</li>
+                {{#each specifications}}
+                <li><strong>{{this.key}}:</strong> {{this.value}}</li>
+                {{/each}}
             </ul>
             <h3>Color Options:</h3>
             <ul>
@@ -113,6 +109,7 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
@@ -151,6 +148,7 @@
         });
     });
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");

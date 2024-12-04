@@ -7,15 +7,20 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   offerPrice: { type: Number },
   stock: { type: Number, required: true },
-  productImages: { type: [String], required: true }, // Array of URLs
+  productImages: { type: [String], required: true },
   colorOptions: [
     {
       colorName: { type: String, required: true },
       colorCode: { type: String, required: true },
-      colorImage: { type: String }, // Single URL
+      colorImage: { type: String, default: "" }, // Default value for colorImage if not provided
     },
   ],
-  specifications: { type: Object, required: true },
+  specifications: [
+    {
+      key: { type: String, required: true }, // e.g., "Processor"
+      value: { type: String, required: true }, // e.g., "Intel Core i7"
+    },
+  ],
   releaseDate: { type: Date },
 });
 
