@@ -47,7 +47,7 @@
                 <div class="release-date">
                     Release Date: {{releaseDate}}
                 </div>
-                
+
             </div>
             <p class="product-category">Category: {{category}}</p>
             <p class="product-stock">Stock: {{stock}} units available</p>
@@ -80,35 +80,36 @@
     </div>
     <div class="product-section">
         <div class="container">
-            <div class="row">
+            <div class="row product-grid" id="productList"> <!-- product-grid class here -->
                 {{#each limitedProducts}}
-                <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                    <div class="product-item">
-                        <!-- Link the image to the view product page -->
-                        <a href="/product-view/{{this._id}}">
-                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
-                        </a>
-                        <!-- Optionally, make the product title clickable too -->
-                        <a href="/product-view/{{this._id}}" style="text-decoration: none;">
-                            <h3 class="product-title" style="color: black;">{{this.name}}</h3>
-                        </a>
-                        <strong class="product-price">
-                            {{#if this.offerPrice}}
-                            <span class="product-price-old">₹{{this.offerPrice}}</span>
-                            {{else}}
-                            ₹{{this.price}}
-                            {{/if}}
-                        </strong>
-                        <button class="add-to-cart-btns" style="border-radius: 7px;border: silver 1px;color: green;"
-                            data-product-id="{{this._id}}">
-                            Add to Cart
-                        </button>
-                    </div>
+                <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
+                    data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
+
+                    <a href="/product-view/{{this._id}}">
+                        <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                    </a>
+                    <a href="/product-view/{{this._id}}">
+                        <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                    </a>
+                    <h6 class="product-title" style="color: black;">{{this.category}}</h6>
+                    <strong class="product-price">
+                        {{#if this.offerPrice}}
+                        <span class="product-price-old">₹{{this.offerPrice}}</span>
+                        {{else}}
+                        ₹{{this.price}}
+                        {{/if}}
+                    </strong>
+                    <button class="add-to-cart-btn" style="border-radius: 7px; border: silver 1px; color: green;"
+                        data-product-id="{{this._id}}">
+                        Add to Cart
+                    </button>
+
                 </div>
                 {{/each}}
             </div>
         </div>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 

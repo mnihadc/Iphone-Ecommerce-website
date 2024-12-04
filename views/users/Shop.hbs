@@ -57,7 +57,7 @@
                 {{#each products}}
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
                     data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
-                    <div class="product-item">
+                    
                         <a href="/product-view/{{this._id}}">
                             <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
                         </a>
@@ -76,7 +76,7 @@
                             data-product-id="{{this._id}}">
                             Add to Cart
                         </button>
-                    </div>
+                    
                 </div>
                 {{/each}}
             </div>
