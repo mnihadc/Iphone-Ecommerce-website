@@ -29,7 +29,11 @@
     {{#if isForgotPasswordPage}}
     <link rel="stylesheet" href="/contact.css">
     {{/if}}
-    <link rel="icon" href="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg"  style="border-radius: 50%;">
+    {{#if isProfilePage}}
+    <link rel="stylesheet" href="/profile.css">
+    {{/if}}
+    <link rel="icon" href="/images/apple-icon-image-format-macintosh-icon-apple-logo-png.jpg"
+        style="border-radius: 50%;">
     <style>
         /* General Page and Header */
         body,

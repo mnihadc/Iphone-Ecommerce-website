@@ -9,95 +9,52 @@
   <style>
     /* Scoped Styles Only for this Page */
     .address-page {
-      background-color: #F5F5F7;
+      background: linear-gradient(90deg, #1d1e22, #007aff);
+      padding-top: 20px;
+      /* White for clean background */
       font-family: Arial, sans-serif;
-      color: #121212;
+      color: #2C2C2C;
+      /* Charcoal for text */
       min-height: 100vh;
-      padding: 1rem;
-      /* Adjust padding for fixed navbar */
-    }
-
-    .address-page h1 {
-      color: #1D1E22;
-    }
-
-    .address-page .card.selected {
-      border: 4px solid #2a6e02;
-    }
-
-    .select-btn {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .select-btn.active {
-      background-color: #2a6e02;
-      color: white;
-      border-color: #2a6e02;
     }
 
     .address-page .card {
-      background-color: #F5F5F7;
-      border: 1px solid #8E8E93;
+      background-color: #F5F5F5;
+      /* Light gray for card background */
+      border: 1px solid #C0C0C0;
+      /* Silver for card borders */
       border-radius: 8px;
       margin-bottom: 20px;
-      cursor: pointer;
-      position: relative;
     }
 
     .address-page .card-header {
-      background-color: #1D1E22;
-      color: #F5F5F7;
-      font-weight: bold;
-      font-size: 1.2rem;
+      background-color: #001f3f;
+      /* Midnight Blue */
+      color: #FFFFFF;
+      /* White text */
     }
 
-    .address-page .card-body {
-      color: #636366;
-    }
-
-    .address-page .selected-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #2a6e02;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 0.8rem;
-    }
-
-    .address-page .card-columns {
-      column-count: 2;
-    }
-
-    @media (max-width: 768px) {
-      .address-page .card-columns {
-        column-count: 1;
-      }
-    }
-
-    .footer {
-      background-color: #3A3B3F;
-      color: #4A5842;
-      padding: 20px;
-      text-align: center;
+    .address-page .select-btn.active {
+      background-color: #007BFF;
+      /* Electric Blue */
+      color: #FFFFFF;
+      /* White text */
+      border-color: #007BFF;
+      /* Match button color */
     }
 
     .address-page .card.selected {
-      border: 4px solid #2a6e02;
-      /* Green border */
-      background-color: #e8f5e9;
-      /* Light green background */
+      border: 4px solid #FFD700;
+      /* Gold border for selected card */
+      background-color: #FFF9E6;
+      /* Subtle gold-tinted background */
     }
 
-    /* Highlight the selected button */
-    .address-page .select-btn.active {
-      background-color: #2a6e02;
-      /* Green background */
-      color: white;
-      border-color: #2a6e02;
-      /* Green border */
+    .footer {
+      background-color: #001f3f;
+      /* Midnight Blue */
+      color: #C0C0C0;
+      /* Silver text */
     }
   </style>
 </head>
