@@ -51,7 +51,7 @@ const getCartPage = async (req, res, next) => {
 const addToCart = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const userId = req.user.userId;
+    const userId = req.user?.userId;
 
     if (!userId) {
       return res.status(401).json({ message: "User not logged in" });
