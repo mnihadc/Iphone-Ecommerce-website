@@ -100,7 +100,11 @@ app.get(
       sameSite: "strict",
       maxAge: 3600000, // 1 hour
     });
-    res.redirect("/"); // Redirect to the profile page or any other protected route
+    res.render("users/ContactUs", {
+      title: "Contact Us",
+      isContactUsPage: true,
+      user: req.user, // Use token-based user
+    });
   }
 );
 const hbs = exphbs.create({
