@@ -59,7 +59,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let user = await User.findOne({ googleId: profile.id });
+        let user = await User.findOne({ email: profile.emails[0].value });
         if (!user) {
           user = new User({
             googleId: profile.id,
@@ -67,6 +67,9 @@ passport.use(
             email: profile.emails[0].value,
             profileImage: profile.photos[0]?.value,
           });
+          await user.save();
+        } else if (!user.googleId) {
+          user.googleId = profile.id;
           await user.save();
         }
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
@@ -97,7 +100,7 @@ app.get(
       sameSite: "strict",
       maxAge: 3600000, // 1 hour
     });
-    res.redirect("/profile/user"); // Redirect to the profile page or any other protected route
+    res.redirect("/"); // Redirect to the profile page or any other protected route
   }
 );
 const hbs = exphbs.create({
