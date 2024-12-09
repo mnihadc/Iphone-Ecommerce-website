@@ -469,8 +469,6 @@
         var addressId = $(this).data('address-id');
         var orderId = '{{checkout._id}}';  // Get the orderId directly from the template
 
-        console.log("Address ID:", addressId, "Order ID:", orderId); // Logs to the console
-
         if (addressId && orderId) {
             selectAddress(addressId, orderId);
         } else {

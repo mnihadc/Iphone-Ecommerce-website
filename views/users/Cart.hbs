@@ -368,7 +368,7 @@
                     window.location.href = "/order/checkout-summery";
                 } else if (data.message.includes("No address found")) {
                     alert(data.message);
-                    window.location.href = data.redirectUrl; // Redirect to Add Address page
+                    window.location.href = "/address/get-create-address";
                 } else {
                     alert(`Error during checkout: ${data.message}`);
                 }
