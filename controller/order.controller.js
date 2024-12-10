@@ -169,16 +169,90 @@ const getCheckoutSummery = async (req, res, next) => {
 const CancelOrder = async (req, res, next) => {
   try {
     const id = req.params.id;
+    console.log("Cancel order request received for ID:", id);
 
-    const order = await Checkout.findByIdAndDelete(id);
+    // Find the order in the database
+    const order = await Checkout.findById(id);
     if (!order) {
+      console.log("Order not found for ID:", id);
       return res.status(404).json({ message: "Order not found." });
     }
+    console.log("Order details:", order);
 
-    res.status(200).json({ message: "Order canceled successfully." });
+    if (order.paymentIntentId) {
+      try {
+        console.log("Retrieving PaymentIntent:", order.paymentIntentId);
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          order.paymentIntentId
+        );
+        console.log("PaymentIntent retrieved:", paymentIntent);
+
+        // Check if charges exist and have data
+        if (!paymentIntent.charges || paymentIntent.charges.data.length === 0) {
+          console.log(
+            "No successful charges for PaymentIntent:",
+            paymentIntent.id
+          );
+
+          // If no successful charge, cancel the PaymentIntent
+          if (paymentIntent.status !== "canceled") {
+            console.log("Canceling PaymentIntent:", paymentIntent.id);
+            await stripe.paymentIntents.cancel(paymentIntent.id);
+          }
+
+          return res.status(200).json({
+            message:
+              "Order canceled successfully. No refund was necessary as payment was not completed. Amount will be credited to your bank account in 2-3 business days.",
+          });
+        }
+
+        // Proceed with the refund for successful payments
+        console.log("Processing refund for PaymentIntent:", paymentIntent.id);
+        const refund = await stripe.refunds.create({
+          payment_intent: order.paymentIntentId,
+        });
+
+        console.log("Refund response:", refund);
+        if (refund.status === "succeeded") {
+          order.refundStatus = "Refunded";
+          res.status(200).json({
+            message:
+              "Order canceled and refund processed successfully. Amount will be credited to your bank account in 2-3 business days.",
+          });
+        } else {
+          order.refundStatus = "Failed";
+          res.status(500).json({
+            message: "Refund failed. Please contact support.",
+          });
+        }
+
+        // Save refund status
+        await order.save();
+      } catch (error) {
+        console.error("Error during refund creation:", error.message);
+        order.refundStatus = "Failed";
+        await order.save();
+        return res.status(500).json({
+          message: "Refund failed. Please contact support.",
+          error: error.message,
+        });
+      }
+    } else {
+      // Handle cases where there's no paymentIntentId
+      console.log(
+        "No paymentIntentId found, order will be canceled without refund."
+      );
+      await Checkout.findByIdAndDelete(id);
+      res.status(200).json({
+        message:
+          "Order canceled successfully. No payment found to refund. Amount will be credited to your bank account in 2-3 business days.",
+      });
+    }
   } catch (error) {
-    console.error("Error canceling order:", error);
-    res.status(500).json({ message: "Internal server error." });
+    console.error("Error canceling order:", error.message);
+    res
+      .status(500)
+      .json({ message: "Internal server error.", error: error.message });
   }
 };
 
@@ -303,16 +377,39 @@ const initiatePayment = async (req, res) => {
   try {
     const user = req.user;
     const userId = user.userId;
+    const { orderId } = req.params; // Add orderId parameter to handle both initial and existing orders
+
     if (!userId) {
       return res
         .status(400)
         .json({ message: "User ID is required and cannot be empty" });
     }
-    // Fetch the latest checkout data for the user
-    const checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
-    if (!checkout) {
-      return res.status(404).json({ message: "No checkout data found." });
+
+    // Fetch the checkout data, based on whether it's a new checkout or an existing order
+    let checkout;
+    if (orderId) {
+      // If orderId is passed, fetch the specific order details
+      checkout = await Checkout.findOne({ _id: orderId });
+      if (!checkout) {
+        return res
+          .status(404)
+          .json({ message: "No checkout data found for this order." });
+      }
+      if (checkout.paymentStatus) {
+        return res
+          .status(400)
+          .json({ message: "Payment already completed for this order." });
+      }
+    } else {
+      // If no orderId is provided, fetch the latest checkout data
+      checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
+      if (!checkout) {
+        return res
+          .status(404)
+          .json({ message: "No checkout data found for this user." });
+      }
     }
+
     // Map checkout items to Stripe's line item format
     const lineItems = checkout.items
       .map((item) => {
@@ -333,11 +430,13 @@ const initiatePayment = async (req, res) => {
         };
       })
       .filter((item) => item !== null); // Filter out any invalid items
+
     if (lineItems.length === 0) {
       return res
         .status(400)
         .json({ message: "Invalid items data, unable to process payment." });
     }
+
     // Include delivery charge as a separate line item (ensure delivery is a valid number)
     const deliveryCharge = isNaN(checkout.delivery) ? 0 : checkout.delivery;
     lineItems.push({
@@ -350,19 +449,46 @@ const initiatePayment = async (req, res) => {
       },
       quantity: 1,
     });
-    // Create a Stripe Checkout session
+
+    // Create a payment intent if this is an existing order with no payment yet
+    let paymentIntent;
+    if (!checkout.paymentIntentId) {
+      paymentIntent = await stripe.paymentIntents.create({
+        amount: checkout.totalPrice * 100, // Convert to paise
+        currency: "inr",
+      });
+
+      // Save paymentIntentId to checkout
+      checkout.paymentIntentId = paymentIntent.id;
+
+      try {
+        await checkout.save(); // Save immediately
+      } catch (error) {
+        console.error("Error saving paymentIntentId:", error);
+        return res.status(500).json({ message: "Error saving checkout data" });
+      }
+    } else {
+      // If there's already a paymentIntentId, use it for the checkout session
+      paymentIntent = await stripe.paymentIntents.retrieve(
+        checkout.paymentIntentId
+      );
+    }
+
+    // Create Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
       success_url: `${req.protocol}://${req.get(
         "host"
-      )}/order/success?userId=${userId}`,
+      )}/order/success?userId=${userId}&orderId=${checkout._id}`,
       cancel_url: `${req.protocol}://${req.get(
         "host"
-      )}/order/cancel?userId=${userId}`,
-      customer_email: user.email,
+      )}/order/cancel?userId=${userId}&orderId=${checkout._id}`,
+      customer_email: user.email, // Provide email here
     });
+
+    // Return the URL for the Stripe Checkout session
     res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Error initiating payment:", error);
@@ -379,7 +505,7 @@ const initiatePaymentOrder = async (req, res, next) => {
     if (!orderId) {
       return res
         .status(400)
-        .json({ message: "User ID is required and cannot be empty" });
+        .json({ message: "Order ID is required and cannot be empty" });
     }
 
     // Fetch the latest checkout data for the user
@@ -389,12 +515,10 @@ const initiatePaymentOrder = async (req, res, next) => {
       return res.status(404).json({ message: "No checkout data found." });
     }
 
-    // If payment is already completed, prevent further payment attempts
     if (checkout.paymentStatus) {
       return res.status(400).json({ message: "Payment already completed" });
     }
 
-    // Map checkout items to Stripe's line item format
     const lineItems = checkout.items
       .map((item) => {
         if (!item.itemTotalPrice || isNaN(item.itemTotalPrice)) {
@@ -421,20 +545,23 @@ const initiatePaymentOrder = async (req, res, next) => {
         .json({ message: "Invalid items data, unable to process payment." });
     }
 
-    // Include delivery charge as a separate line item
-    const deliveryCharge = isNaN(checkout.delivery) ? 0 : checkout.delivery;
-    lineItems.push({
-      price_data: {
-        currency: "inr",
-        product_data: {
-          name: "Delivery Charge",
-        },
-        unit_amount: deliveryCharge * 100, // Convert to paise
-      },
-      quantity: 1,
+    // Create a payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: checkout.totalPrice * 100, // Convert to paise
+      currency: "inr",
     });
 
-    // Create a Stripe Checkout session
+    // Save `paymentIntentId` in checkout
+    checkout.paymentIntentId = paymentIntent.id;
+
+    try {
+      await checkout.save(); // Save immediately
+    } catch (error) {
+      console.error("Error saving paymentIntentId:", error);
+      return res.status(500).json({ message: "Error saving checkout data" });
+    }
+
+    // Create Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -445,15 +572,17 @@ const initiatePaymentOrder = async (req, res, next) => {
       cancel_url: `${req.protocol}://${req.get(
         "host"
       )}/order/cancel?userId=${userId}&orderId=${orderId}`,
-      customer_email: user.email,
+      customer_email: user.email, // Provide email here
     });
 
+    // Return the URL for the Stripe Checkout session
     res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Error initiating payment:", error);
     res.status(500).json({ message: "Error initiating payment", error });
   }
 };
+
 // Handle Payment Success
 const handlePaymentSuccess = async (req, res) => {
   try {

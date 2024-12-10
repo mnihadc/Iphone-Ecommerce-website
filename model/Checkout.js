@@ -53,6 +53,10 @@ const checkoutSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    paymentIntentId: {
+      type: String,
+      required: false,
+    },
     paymentStatus: {
       type: Boolean,
       required: true,
