@@ -1,0 +1,71 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #2a9d8f, #264653);
+}
+
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.coupons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.coupon {
+  position: relative;
+  flex: 1 1 calc(50% - 10px); /* Two cards in a row for larger screens */
+  box-sizing: border-box;
+  border: 2px dashed #4caf50;
+  padding: 20px;
+  border-radius: 8px;
+  background: #e8f5e9;
+}
+
+.coupon h2 {
+  margin: 0;
+  color: #2e7d32;
+}
+
+.coupon p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.status {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.valid {
+  background-color: #4caf50; /* Green for valid */
+}
+
+.expired {
+  background-color: #f44336; /* Red for expired */
+}
+
+@media (max-width: 768px) {
+  .coupon {
+    flex: 1 1 100%; /* One card per row for mobile */
+  }
+}
