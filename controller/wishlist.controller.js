@@ -91,4 +91,26 @@ const getWishList = async (req, res, next) => {
   }
 };
 
-module.exports = { addtoWishList, getWishList };
+const removeWishList = async (req, res, next) => {
+  try {
+    const productId = req.params.id; // Extract product ID from URL
+    const user = req.user; // User data from authentication middleware
+    const userId = user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User not logged in" });
+    }
+
+    const result = await WishList.deleteOne({ userId, productId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Product not found in wishlist" });
+    }
+
+    return res.status(200).json({ message: "Product removed from wishlist" });
+  } catch (error) {
+    next(error); // Pass error to global error handler
+  }
+};
+
+module.exports = { addtoWishList, getWishList, removeWishList };
