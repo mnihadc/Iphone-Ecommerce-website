@@ -1,3 +1,4 @@
+const Product = require("../model/Product");
 const WishList = require("../model/WishList");
 
 const addtoWishList = async (req, res, next) => {
@@ -28,4 +29,44 @@ const addtoWishList = async (req, res, next) => {
   }
 };
 
-module.exports = { addtoWishList };
+const getWishList = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // Ensure user is authenticated
+    if (!user || !user.userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized access. Please log in." });
+    }
+
+    const userId = user.userId;
+
+    // Fetch wishlist items for the user
+    const wishListItems = await WishList.find({ userId });
+
+    // Check if the wishlist is empty
+    if (!wishListItems || wishListItems.length === 0) {
+      return res.status(404).json({ message: "Your wishlist is empty." });
+    }
+
+    // Get product IDs from the wishlist
+    const productIds = wishListItems.map((item) => item.productId);
+
+    // Fetch product details for the wishlist items
+    const products = await Product.find({ _id: { $in: productIds } });
+
+    // Render the wishlist page with data
+    res.render("WishList", {
+      title: "WishList",
+      items: products, // Pass the product details to the view
+      WishListPage: true,
+    });
+  } catch (error) {
+    // Handle any server errors
+    console.error("Error fetching wishlist:", error);
+    next(error);
+  }
+};
+
+module.exports = { addtoWishList, getWishList };
