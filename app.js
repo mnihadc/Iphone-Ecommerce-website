@@ -14,6 +14,7 @@ const addressRouter = require("./route/address.route");
 const cartRouter = require("./route/cart.route");
 const bodyParser = require("body-parser");
 const orderRouter = require("./route/order.route");
+const wishlistRouter = require("./route/wishlist.route");
 const cookieParser = require("cookie-parser");
 const User = require("./model/User");
 const authenticateUser = require("./middleware/verifyToken");
@@ -135,6 +136,7 @@ app.use("/profile", profileRouter);
 app.use("/address", addressRouter);
 app.use("/cart", cartRouter);
 app.use("/order", orderRouter);
+app.use("/wishlist", wishlistRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
