@@ -80,6 +80,7 @@ const getWishList = async (req, res, next) => {
     // Render the wishlist page with formatted data
     res.render("users/WishList", {
       title: "WishList",
+      user,
       items: formattedProducts, // Pass the formatted product details to the view
       WishListPage: true,
     });

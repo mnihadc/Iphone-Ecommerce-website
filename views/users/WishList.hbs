@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="wishlist-item-time">Added on: {{createdTime}}</div>
-                    <a href="/cart/addtocart/{{_id}}" class="add-to-cart">Add to Cart</a>
+                    <button class="add-to-cart" data-product-id="{{this._id}}">Add to Cart</button>
                 </div>
             </div>
 
@@ -51,5 +51,43 @@
         </div>
     </div>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const wishlistContainer = document.querySelector('.wishlist'); // Correct selector for the wishlist container
+
+        // Attach event listener to the parent container
+        wishlistContainer.addEventListener('click', function (e) {
+            // Check if the clicked element is a "Add to Cart" button
+            if (e.target && e.target.classList.contains('add-to-cart')) {
+                const productId = e.target.getAttribute("data-product-id");
+
+                fetch(`/cart/addtocart/${productId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 201) {
+                            alert("Item successfully added to the cart!");
+                        } else if (status === 400) {
+                            alert("Item is already in the cart.");
+                        } else if (status === 401) {
+                            alert("Please log in to add items to the cart.");
+                            window.location.href = "/auth/login";
+                        } else {
+                            alert("An unexpected error occurred.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error adding to cart:", error);
+                        alert("An error occurred. Please try again later.");
+                    });
+            }
+        });
+    });
+
+</script>
 
 </html>
