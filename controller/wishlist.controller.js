@@ -54,12 +54,33 @@ const getWishList = async (req, res, next) => {
     const productIds = wishListItems.map((item) => item.productId);
 
     // Fetch product details for the wishlist items
-    const products = await Product.find({ _id: { $in: productIds } });
+    const products = await Product.find({ _id: { $in: productIds } }).lean(); // .lean() to allow direct object manipulation
 
-    // Render the wishlist page with data
-    res.render("WishList", {
+    // Format products data
+    // Format products data
+    const formattedProducts = products.map((product) => {
+      // Get the first color option from the product, if available
+      const colorOption = product.colorOptions?.[0];
+
+      return {
+        ...product,
+        colorName: colorOption?.colorName || "No Color Available", // Fallback to a default message
+        colorCode: colorOption?.colorCode || "#ffffff", // Fallback to white if no color code is provided
+        firstProductImage: product.productImages?.[0] || "", // Extract the first product image
+        createdTime: new Date(
+          product.createdTime || Date.now()
+        ).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }),
+      };
+    });
+
+    // Render the wishlist page with formatted data
+    res.render("users/WishList", {
       title: "WishList",
-      items: products, // Pass the product details to the view
+      items: formattedProducts, // Pass the formatted product details to the view
       WishListPage: true,
     });
   } catch (error) {
