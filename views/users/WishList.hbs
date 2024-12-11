@@ -41,6 +41,7 @@
 
                     <div class="wishlist-item-time">Added on: {{createdTime}}</div>
                     <button class="add-to-cart" data-product-id="{{this._id}}">Add to Cart</button>
+                    <button class="remove-from-wishlist" data-product-id="{{this._id}}">Remove </button>
                 </div>
             </div>
 
@@ -85,9 +86,34 @@
                         alert("An error occurred. Please try again later.");
                     });
             }
+            if (e.target && e.target.classList.contains('remove-from-wishlist')) {
+                const productId = e.target.getAttribute("data-product-id");
+                const wishlistItem = e.target.closest('.wishlist-item'); // Find the closest wishlist item container
+
+                // Make a DELETE request to remove from wishlist
+                fetch(`/wishlist/remove/${productId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 200) {
+                            alert(message);
+                            wishlistItem.remove(); // Remove item from the DOM if successful
+                        } else {
+                            alert("Failed to remove item from wishlist.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error removing item from wishlist:", error);
+                        alert("An error occurred while removing the item.");
+                    });
+            }
         });
     });
-
 </script>
+
 
 </html>

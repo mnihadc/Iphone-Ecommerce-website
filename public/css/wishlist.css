@@ -143,3 +143,34 @@ h1 {
     padding: 15px; /* Add padding for better spacing */
   }
 }
+/* Styling for the Remove button */
+.remove-from-wishlist {
+  background-color: transparent; /* Transparent background */
+  color: #e74c3c; /* Red color for the text */
+  font-size: 16px; /* Font size */
+  border: 2px solid #e74c3c; /* Red border */
+  padding: 8px 16px; /* Padding for button */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 5px; /* Rounded corners */
+  transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+/* Hover effect to make the button more interactive */
+.remove-from-wishlist:hover {
+  background-color: #e74c3c; /* Red background on hover */
+  color: white; /* White text on hover */
+  border-color: #c0392b; /* Darker red border on hover */
+}
+
+/* Focus effect for accessibility */
+.remove-from-wishlist:focus {
+  outline: none; /* Remove the default outline */
+  box-shadow: 0 0 5px rgba(231, 76, 60, 0.7); /* Add a subtle shadow */
+}
+
+/* Optional: Add some space between buttons */
+.wishlist-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
