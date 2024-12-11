@@ -20,6 +20,7 @@ const checkout = async (req, res) => {
         .status(400)
         .json({ message: "User ID is required and cannot be empty" });
     }
+
     const address = await Address.findOne({ userId, select: true });
     if (!address) {
       return res.status(400).json({
@@ -41,6 +42,7 @@ const checkout = async (req, res) => {
       const product = products.find(
         (prod) => prod._id.toString() === item.productId.toString()
       );
+
       return {
         productId: product._id,
         productName: product.name,
@@ -48,6 +50,24 @@ const checkout = async (req, res) => {
         itemTotalPrice: (product.offerPrice || product.price) * item.quantity,
       };
     });
+
+    // Correctly update stock
+    for (const item of cart) {
+      const product = products.find(
+        (prod) => prod._id.toString() === item.productId.toString()
+      );
+      if (!product || product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Insufficient stock for product: ${
+            product?.name || "Unknown"
+          }`,
+        });
+      }
+      await Product.updateOne(
+        { _id: product._id },
+        { $inc: { stock: -item.quantity } }
+      );
+    }
 
     const totalPrice = cartItems.reduce(
       (acc, item) => acc + item.itemTotalPrice,
@@ -58,7 +78,7 @@ const checkout = async (req, res) => {
     if (offerCode) {
       const coupon = await Coupon.findOne({ code: offerCode.toUpperCase() });
       if (coupon && coupon.validUntil > new Date()) {
-        discount = (totalPrice * coupon.discountPercentage) / 100; // Apply discount based on coupon
+        discount = (totalPrice * coupon.discountPercentage) / 100;
       } else {
         return res.status(400).json({
           message: "Invalid or expired coupon code",
@@ -169,23 +189,27 @@ const getCheckoutSummery = async (req, res, next) => {
 const CancelOrder = async (req, res, next) => {
   try {
     const id = req.params.id;
-    console.log("Cancel order request received for ID:", id);
 
     // Find the order in the database
     const order = await Checkout.findById(id);
     if (!order) {
-      console.log("Order not found for ID:", id);
       return res.status(404).json({ message: "Order not found." });
     }
-    console.log("Order details:", order);
+    for (const item of order.items) {
+      const product = await Product.findById(item.productId);
+      if (product) {
+        await Product.updateOne(
+          { _id: product._id },
+          { $inc: { stock: item.quantity } }
+        );
+      }
+    }
 
     if (order.paymentIntentId) {
       try {
-        console.log("Retrieving PaymentIntent:", order.paymentIntentId);
         const paymentIntent = await stripe.paymentIntents.retrieve(
           order.paymentIntentId
         );
-        console.log("PaymentIntent retrieved:", paymentIntent);
 
         // Check if charges exist and have data
         if (!paymentIntent.charges || paymentIntent.charges.data.length === 0) {
@@ -196,7 +220,6 @@ const CancelOrder = async (req, res, next) => {
 
           // If no successful charge, cancel the PaymentIntent
           if (paymentIntent.status !== "canceled") {
-            console.log("Canceling PaymentIntent:", paymentIntent.id);
             await stripe.paymentIntents.cancel(paymentIntent.id);
           }
 
@@ -207,12 +230,10 @@ const CancelOrder = async (req, res, next) => {
         }
 
         // Proceed with the refund for successful payments
-        console.log("Processing refund for PaymentIntent:", paymentIntent.id);
         const refund = await stripe.refunds.create({
           payment_intent: order.paymentIntentId,
         });
 
-        console.log("Refund response:", refund);
         if (refund.status === "succeeded") {
           order.refundStatus = "Refunded";
           res.status(200).json({
@@ -229,7 +250,6 @@ const CancelOrder = async (req, res, next) => {
         // Save refund status
         await order.save();
       } catch (error) {
-        console.error("Error during refund creation:", error.message);
         order.refundStatus = "Failed";
         await order.save();
         return res.status(500).json({
