@@ -53,35 +53,41 @@
 
     <div class="product-section">
         <div class="container">
-            <div class="row product-grid" id="productList"> <!-- product-grid class here -->
+            <div class="row product-grid" id="productList">
                 {{#each products}}
                 <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 product-item" data-category="{{this.category}}"
                     data-price="{{#if this.offerPrice}}{{this.offerPrice}}{{else}}{{this.price}}{{/if}}">
-                    
-                        <a href="/product-view/{{this._id}}">
-                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
-                        </a>
-                        <a href="/product-view/{{this._id}}">
-                            <h3 class="product-title" style="color: black;">{{this.name}}</h3>
-                        </a>
-                        <h6 class="product-title" style="color: black;">{{this.category}}</h6>
-                        <strong class="product-price">
-                            {{#if this.offerPrice}}
-                            <span class="product-price-old">₹{{this.offerPrice}}</span>
-                            {{else}}
-                            ₹{{this.price}}
-                            {{/if}}
-                        </strong>
+                    <a href="/product-view/{{this._id}}">
+                        <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                    </a>
+                    <a href="/product-view/{{this._id}}">
+                        <h3 class="product-title" style="color: black;">{{this.name}}</h3>
+                    </a>
+                    <h6 class="product-title" style="color: black;">{{this.category}}</h6>
+                    <strong class="product-price">
+                        {{#if this.offerPrice}}
+                        <span class="product-price-old">₹{{this.offerPrice}}</span>
+                        {{else}}
+                        ₹{{this.price}}
+                        {{/if}}
+                    </strong>
+                    <div class="product-actions">
+                        <!-- Add to Cart Button -->
                         <button class="add-to-cart-btn" style="border-radius: 7px; border: silver 1px; color: green;"
                             data-product-id="{{this._id}}">
                             Add to Cart
                         </button>
-                    
+                        <!-- Add to Wishlist Button (Heart symbol) -->
+                        <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
+                            <i class="fa fa-heart"></i> <!-- Heart icon -->
+                        </button>
+                    </div>
                 </div>
                 {{/each}}
             </div>
         </div>
     </div>
+
 
 
     <footer class="footer-32892 pb-0" style="background: rgb(59, 55, 55); color: azure; padding-top: 2rem;">
@@ -130,6 +136,11 @@
                                     : `₹${product.price}`}
                                 </p>
                                 <button class="add-to-cart-btn" data-product-id="${product._id}">Add to Cart</button>
+                                <!-- Add to Wishlist Button (Heart symbol) -->
+                        <button class="add-to-wishlist-btn" style="border-radius: 7px; border: silver 1px; color: red;"
+                            data-product-id="{{this._id}}">
+                            <i class="fa fa-heart"></i> <!-- Heart icon -->
+                        </button>
                             </div>
                         </div>
                     `).join('');

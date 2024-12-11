@@ -42,14 +42,18 @@
         </div>
 
         <!-- Right Side: Product Details -->
-        <div class="product-details ">
+        <div class="product-details">
             <div class="product-name">
                 <div class="release-date">
                     Release Date: {{releaseDate}}
                 </div>
-
             </div>
-            <p class="product-category">product: {{name}}</p>
+            <p class="product-category">Product: {{name}}
+                <!-- Wishlist Button (Heart symbol) -->
+                <button class="add-to-wishlist-btn">
+                    <i class="fa fa-heart"></i> <!-- Heart icon -->
+                </button>
+            </p>
             <p class="product-category">Category: {{category}}</p>
             <p class="product-stock">Stock: {{stock}} units available</p>
             <h3>Specifications:</h3>
@@ -73,12 +77,13 @@
                 <i class="product-price">₹{{price}}</i>
                 <b class="product-offer-price">₹{{offerPrice}}</b>
             </span>
-            <button class="add-to-cart-btn" style="border-radius: 7px;border: silver 1px;color: green;"
+            <button class="add-to-cart-btn" style="border-radius: 7px; border: silver 1px; color: green;"
                 data-product-id="{{this._id}}">
                 Add to Cart
             </button>
         </div>
     </div>
+
     <!--
     <div class="product-section">
         <div class="container">

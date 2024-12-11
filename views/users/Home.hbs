@@ -56,35 +56,43 @@
 
     <!-- Product display -->
     <div class="product-section">
-        <div class="container">
-            <div class="row">
-                {{#each products}}
-                <div class="col-6 col-md-4 col-lg-3 mb-4">
-                    <div class="product-item">
-                        <!-- Image linked to the product view page -->
-                        <a href="/product-view/{{this._id}}">
-                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
-                        </a>
-                        <!-- Product title linked to the product view page -->
-                        <a href="/product-view/{{this._id}}" class="product-title">
-                            <h3>{{this.name}}</h3>
-                        </a>
-                        <strong class="product-price">
-                            {{#if this.offerPrice}}
-                            <span class="product-price-old">₹{{this.offerPrice}}</span>
-                            {{else}}
-                            ₹{{this.price}}
-                            {{/if}}
-                        </strong>
-                        <button class="add-to-cart-btn" data-product-id="{{this._id}}">
-                            Add to Cart
-                        </button>
-                    </div>
+    <div class="container">
+        <div class="row">
+            {{#each products}}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="product-item">
+                    <!-- Image linked to the product view page -->
+                    <a href="/product-view/{{this._id}}">
+                        <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                    </a>
+                    <!-- Product title linked to the product view page -->
+                    <a href="/product-view/{{this._id}}" class="product-title">
+                        <h3>{{this.name}}</h3>
+                    </a>
+                    <strong class="product-price">
+                        {{#if this.offerPrice}}
+                        <span class="product-price-old">₹{{this.offerPrice}}</span>
+                        {{else}}
+                        ₹{{this.price}}
+                        {{/if}}
+                    </strong>
+
+                    <!-- Add to Cart Button -->
+                    <button class="add-to-cart-btn" data-product-id="{{this._id}}">
+                        Add to Cart
+                    </button>
+
+                    <!-- Wishlist Button (Heart symbol) -->
+                    <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
+                        <i class="fa fa-heart"></i> <!-- Heart icon from Font Awesome -->
+                    </button>
                 </div>
-                {{/each}}
             </div>
+            {{/each}}
         </div>
     </div>
+</div>
+
 
     <!-- End Product Display -->
 
