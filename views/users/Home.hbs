@@ -56,42 +56,42 @@
 
     <!-- Product display -->
     <div class="product-section">
-    <div class="container">
-        <div class="row">
-            {{#each products}}
-            <div class="col-6 col-md-4 col-lg-3 mb-4">
-                <div class="product-item">
-                    <!-- Image linked to the product view page -->
-                    <a href="/product-view/{{this._id}}">
-                        <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
-                    </a>
-                    <!-- Product title linked to the product view page -->
-                    <a href="/product-view/{{this._id}}" class="product-title">
-                        <h3>{{this.name}}</h3>
-                    </a>
-                    <strong class="product-price">
-                        {{#if this.offerPrice}}
-                        <span class="product-price-old">₹{{this.offerPrice}}</span>
-                        {{else}}
-                        ₹{{this.price}}
-                        {{/if}}
-                    </strong>
+        <div class="container">
+            <div class="row">
+                {{#each products}}
+                <div class="col-6 col-md-4 col-lg-3 mb-4">
+                    <div class="product-item">
+                        <!-- Image linked to the product view page -->
+                        <a href="/product-view/{{this._id}}">
+                            <img src="{{this.productImages}}" class="img-fluid product-thumbnail" alt="{{this.name}}">
+                        </a>
+                        <!-- Product title linked to the product view page -->
+                        <a href="/product-view/{{this._id}}" class="product-title">
+                            <h3>{{this.name}}</h3>
+                        </a>
+                        <strong class="product-price">
+                            {{#if this.offerPrice}}
+                            <span class="product-price-old">₹{{this.offerPrice}}</span>
+                            {{else}}
+                            ₹{{this.price}}
+                            {{/if}}
+                        </strong>
 
-                    <!-- Add to Cart Button -->
-                    <button class="add-to-cart-btn" data-product-id="{{this._id}}">
-                        Add to Cart
-                    </button>
+                        <!-- Add to Cart Button -->
+                        <button class="add-to-cart-btn" data-product-id="{{this._id}}">
+                            Add to Cart
+                        </button>
 
-                    <!-- Wishlist Button (Heart symbol) -->
-                    <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
-                        <i class="fa fa-heart"></i> <!-- Heart icon from Font Awesome -->
-                    </button>
+                        <!-- Wishlist Button (Heart symbol) -->
+                        <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    </div>
                 </div>
+                {{/each}}
             </div>
-            {{/each}}
         </div>
     </div>
-</div>
 
 
     <!-- End Product Display -->
@@ -299,6 +299,48 @@
                     })
                     .catch(error => {
                         console.error("Error adding to cart:", error);
+                        alert("An error occurred. Please try again later.");
+                    });
+            }
+        });
+    });
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Use the document as a fallback if #productList is unavailable
+        document.body.addEventListener('click', function (e) {
+            // Check if the clicked element is the button itself (or its child)
+            const button = e.target.closest('.add-to-wishlist-btn');
+            if (button) {
+                const productId = button.getAttribute("data-product-id");
+
+                // Make an AJAX request to add the product to the wishlist
+                fetch(`/wishlist/addtowishlist/${productId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
+                    .then(({ status, message }) => {
+                        if (status === 201) {
+                            // Successfully added to wishlist
+                            alert(message);
+                        } else if (status === 400) {
+                            // Product already in wishlist
+                            alert("Product is already in your wishlist.");
+                        } else if (status === 401) {
+                            // User not authenticated
+                            alert("Please log in to add items to the wishlist.");
+                            window.location.href = "/auth/login"; // Redirect to login page
+                        } else {
+                            // Other errors
+                            alert("An unexpected error occurred.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error adding to wishlist:", error);
                         alert("An error occurred. Please try again later.");
                     });
             }

@@ -2,13 +2,13 @@ const WishList = require("../model/WishList");
 
 const addtoWishList = async (req, res, next) => {
   try {
-    const { productId } = req.params;
+    const productId = req.params.id;
     const user = req.user;
-    const userId = user.userId;
+    const userId = user?.userId;
 
     // Check if the user is authenticated
     if (!userId) {
-      return res.status(401).json({ message: "User not authenticated" });
+      return res.status(401).json({ message: "User not logged in" });
     }
 
     // Check if the product is already in the wishlist
