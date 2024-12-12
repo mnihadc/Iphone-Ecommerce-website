@@ -76,12 +76,30 @@ const checkout = async (req, res) => {
 
     let discount = 0;
     if (offerCode) {
+      // Validate the coupon
       const coupon = await Coupon.findOne({ code: offerCode.toUpperCase() });
       if (coupon && coupon.validUntil > new Date()) {
-        discount = (totalPrice * coupon.discountPercentage) / 100;
+        // Check user order history
+        const userOrders = await Checkout.find({ userId });
+        const totalOrderPrice = userOrders.reduce(
+          (sum, order) => sum + order.totalPrice,
+          0
+        );
+
+        // Verify coupon conditions
+        if (
+          totalOrderPrice >= coupon.totalOrderPriceRange &&
+          userOrders.some((order) => order.totalPrice >= coupon.orderRange)
+        ) {
+          discount = (totalPrice * coupon.discountPercentage) / 100;
+        } else {
+          return res.status(400).json({
+            message: "Coupon does not meet the required conditions.",
+          });
+        }
       } else {
         return res.status(400).json({
-          message: "Invalid or expired coupon code",
+          message: "Invalid or expired coupon code.",
         });
       }
     }
@@ -101,12 +119,13 @@ const checkout = async (req, res) => {
 
     await newCheckout.save();
     await Cart.deleteMany({ userId });
+
     res.status(200).json({
       message: "Checkout successful",
       checkout: newCheckout,
     });
   } catch (err) {
-    console.error(err);
+    console.error("Error during checkout:", err);
     res.status(500).json({ message: "Error during checkout", error: err });
   }
 };
