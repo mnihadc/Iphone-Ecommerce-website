@@ -4,7 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Coupons</title>
+    <title>{{title}}</title>
+    <style>
+        .status {
+            padding: 5px;
+            font-weight: bold;
+        }
+
+        .status.valid {
+            color: green;
+        }
+
+        .status.expired {
+            color: red;
+        }
+
+        .coupon {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -12,27 +32,20 @@
         <div class="container">
             <h1>Your Coupons</h1>
             <div class="coupons">
+                {{#if coupons.length}}
+                {{#each coupons}}
                 <div class="coupon">
-                    <h2>10% Off on Electronics</h2>
-                    <p><strong>Code:</strong> SAVE10</p>
-                    <p><strong>Discount:</strong> 10%</p>
-                    <p><strong>Expiry Date:</strong> 2024-12-31</p>
-                    <span class="status valid">Valid</span>
+                    <h2>{{this.name}}</h2>
+                    <p><strong>Code:</strong> {{this.code}}</p>
+                    <p><strong>Discount:</strong> {{this.discountPercentage}}%</p>
+                    <p><strong>CreatedAt:</strong> {{this.createdAt}}</p>
+                    <p><strong>Expiry Date:</strong> {{this.validUntil}}</p>
+                    <span class="status {{this.status}}">{{this.status}}</span>
                 </div>
-                <div class="coupon">
-                    <h2>15% Off on Clothing</h2>
-                    <p><strong>Code:</strong> STYLE15</p>
-                    <p><strong>Discount:</strong> 15%</p>
-                    <p><strong>Expiry Date:</strong> 2024-12-25</p>
-                    <span class="status valid">Valid</span>
-                </div>
-                <div class="coupon">
-                    <h2>20% Off on Groceries</h2>
-                    <p><strong>Code:</strong> FRESH20</p>
-                    <p><strong>Discount:</strong> 20%</p>
-                    <p><strong>Expiry Date:</strong> 2024-12-20</p>
-                    <span class="status expired">Expired</span>
-                </div>
+                {{/each}}
+                {{else}}
+                <p>No coupons available.</p>
+                {{/if}}
             </div>
         </div>
     </div>

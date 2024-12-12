@@ -1,3 +1,5 @@
+const Checkout = require("../model/Checkout");
+const Coupon = require("../model/Coupon");
 const Product = require("../model/Product");
 const WishList = require("../model/WishList");
 
@@ -112,14 +114,71 @@ const removeWishList = async (req, res, next) => {
     next(error); // Pass error to global error handler
   }
 };
+// Assuming you have an Order model
 
-const getCoupon = (req, res, next) => {
-  const user = req.user;
-  const userId = user?.userId;
-  res.render("users/Coupon", {
-    title: "Coupon",
-    user,
-    getCouponPage: true,
-  });
+const getCoupon = async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).send("User not authenticated");
+    }
+
+    // Fetch user orders
+    const userOrders = await Checkout.find({ userId: user.userId });
+
+    // Calculate total order price for the user
+    const totalOrderPrice = userOrders.reduce(
+      (sum, order) => sum + order.totalPrice,
+      0
+    );
+
+    // Fetch all coupons
+    const couponData = await Coupon.find({});
+
+    // Filter and format coupons based on user's orders and total order price
+    const couponsWithStatus = couponData
+      .filter((coupon) => {
+        // Check if the coupon matches the user's orders
+        return (
+          totalOrderPrice >= coupon.totalOrderPriceRange &&
+          userOrders.some((order) => order.totalPrice >= coupon.orderRange)
+        );
+      })
+      .map((coupon) => {
+        const currentDate = new Date();
+        const isValid = coupon.validUntil > currentDate;
+
+        // Format the dates
+        const formattedCreatedAt = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }).format(new Date(coupon.createdAt));
+
+        const formattedValidUntil = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }).format(new Date(coupon.validUntil));
+
+        return {
+          ...coupon.toObject(),
+          status: isValid ? "valid" : "expired",
+          createdAt: formattedCreatedAt,
+          validUntil: formattedValidUntil,
+        };
+      });
+
+    res.render("users/Coupon", {
+      title: "Your Coupons",
+      user,
+      coupons: couponsWithStatus, // Pass only matching coupons
+      getCouponPage: true,
+    });
+  } catch (error) {
+    console.error("Error fetching coupons:", error);
+    next(error);
+  }
 };
+
 module.exports = { addtoWishList, getWishList, removeWishList, getCoupon };

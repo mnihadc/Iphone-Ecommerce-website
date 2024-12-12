@@ -195,6 +195,8 @@ const CancelOrder = async (req, res, next) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found." });
     }
+
+    // Restore product stock
     for (const item of order.items) {
       const product = await Product.findById(item.productId);
       if (product) {
@@ -205,67 +207,73 @@ const CancelOrder = async (req, res, next) => {
       }
     }
 
+    // Handle payments
     if (order.paymentIntentId) {
       try {
         const paymentIntent = await stripe.paymentIntents.retrieve(
           order.paymentIntentId
         );
 
-        // Check if charges exist and have data
         if (!paymentIntent.charges || paymentIntent.charges.data.length === 0) {
           console.log(
             "No successful charges for PaymentIntent:",
             paymentIntent.id
           );
 
-          // If no successful charge, cancel the PaymentIntent
+          // Cancel PaymentIntent if not already canceled
           if (paymentIntent.status !== "canceled") {
             await stripe.paymentIntents.cancel(paymentIntent.id);
           }
 
+          // Delete the order after handling the payment intent
+          await Checkout.findByIdAndDelete(id);
+
           return res.status(200).json({
             message:
-              "Order canceled successfully. No refund was necessary as payment was not completed. Amount will be credited to your bank account in 2-3 business days.",
+              "Order canceled successfully. No refund was necessary as payment was not completed.",
           });
         }
 
-        // Proceed with the refund for successful payments
+        // Process refund if payment was successful
         const refund = await stripe.refunds.create({
           payment_intent: order.paymentIntentId,
         });
 
         if (refund.status === "succeeded") {
           order.refundStatus = "Refunded";
-          res.status(200).json({
+          await order.save();
+
+          // Delete the order after successful refund
+          await Checkout.findByIdAndDelete(id);
+
+          return res.status(200).json({
             message:
               "Order canceled and refund processed successfully. Amount will be credited to your bank account in 2-3 business days.",
           });
         } else {
           order.refundStatus = "Failed";
-          res.status(500).json({
+          await order.save();
+
+          return res.status(500).json({
             message: "Refund failed. Please contact support.",
           });
         }
-
-        // Save refund status
-        await order.save();
       } catch (error) {
+        console.error("Refund error:", error);
         order.refundStatus = "Failed";
         await order.save();
+
         return res.status(500).json({
           message: "Refund failed. Please contact support.",
           error: error.message,
         });
       }
     } else {
-      // Handle cases where there's no paymentIntentId
-      console.log(
-        "No paymentIntentId found, order will be canceled without refund."
-      );
+      // No paymentIntentId, delete the order directly
       await Checkout.findByIdAndDelete(id);
-      res.status(200).json({
-        message:
-          "Order canceled successfully. No payment found to refund. Amount will be credited to your bank account in 2-3 business days.",
+
+      return res.status(200).json({
+        message: "Order canceled successfully. No payment found to refund.",
       });
     }
   } catch (error) {
