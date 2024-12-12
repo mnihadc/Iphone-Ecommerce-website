@@ -113,4 +113,13 @@ const removeWishList = async (req, res, next) => {
   }
 };
 
-module.exports = { addtoWishList, getWishList, removeWishList };
+const getCoupon = (req, res, next) => {
+  const user = req.user;
+  const userId = user?.userId;
+  res.render("users/Coupon", {
+    title: "Coupon",
+    user,
+    getCouponPage: true,
+  });
+};
+module.exports = { addtoWishList, getWishList, removeWishList, getCoupon };

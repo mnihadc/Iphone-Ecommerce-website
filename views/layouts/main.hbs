@@ -35,7 +35,10 @@
     {{#if WishListPage}}
     <link rel="stylesheet" href="/wishlist.css">
     {{/if}}
-    <link rel="icon" href="/images/IMG_P73CEg21wGTG.png" type="image/x-icon">
+    {{#if getCouponPage}}
+    <link rel="stylesheet" href="/coupon.css">
+    {{/if}}
+    <link rel=" icon" href="/images/IMG_P73CEg21wGTG.png" type="image/x-icon">
     <style>
         /* General Page and Header */
         body,
@@ -349,7 +352,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/wishlist/coupon">
+                        <a class="nav-link" href="/wishlist/get-coupons">
                             <i class="fas fa-gift" style="color: #F5F5F7;"></i> <!-- Coupon symbol -->
                         </a>
                     </li>

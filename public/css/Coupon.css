@@ -1,12 +1,10 @@
-body {
+.coupon-page body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
   background: linear-gradient(135deg, #2a9d8f, #264653);
 }
 
-.container {
-  max-width: 800px;
+.coupon-page .container {
+  max-width: 1000px;
   margin: 50px auto;
   padding: 20px;
   background: #fff;
@@ -14,58 +12,86 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+.coupon-page h1 {
   text-align: center;
   color: #333;
 }
 
-.coupons {
+.coupon-page .coupons {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-between;
 }
 
-.coupon {
+.coupon-page .coupon {
   position: relative;
-  flex: 1 1 calc(50% - 10px); /* Two cards in a row for larger screens */
-  box-sizing: border-box;
+  flex: 1 1 calc(50% - 10px);
   border: 2px dashed #4caf50;
-  padding: 20px;
+  padding: 15px;
   border-radius: 8px;
   background: #e8f5e9;
 }
 
-.coupon h2 {
+.coupon-page .coupon h2 {
   margin: 0;
+  font-size: 1.2rem;
   color: #2e7d32;
 }
 
-.coupon p {
+.coupon-page .coupon p {
   margin: 5px 0;
+  font-size: 0.9rem;
   color: #555;
 }
 
-.status {
+.coupon-page .status {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 5px 10px;
+  top: 15px;
+  right: 15px;
+  padding: 5px 8px;
+  font-size: 0.8rem;
   border-radius: 5px;
   font-weight: bold;
   color: #fff;
 }
 
-.valid {
-  background-color: #4caf50; /* Green for valid */
+.coupon-page .valid {
+  background-color: #4caf50;
 }
 
-.expired {
-  background-color: #f44336; /* Red for expired */
+.coupon-page .expired {
+  background-color: #f44336;
 }
 
 @media (max-width: 768px) {
-  .coupon {
-    flex: 1 1 100%; /* One card per row for mobile */
+  .coupon-page .container {
+    padding: 10px;
+  }
+
+  .coupon-page h1 {
+    font-size: 1.5rem;
+  }
+
+  .coupon-page .coupons {
+    gap: 10px;
+  }
+
+  .coupon-page .coupon {
+    flex: 1 1 100%;
+    padding: 10px;
+  }
+
+  .coupon-page .coupon h2 {
+    font-size: 1.4rem;
+  }
+
+  .coupon-page .coupon p {
+    font-size: 0.8rem;
+  }
+
+  .coupon-page .status {
+    font-size: 0.8rem;
+    padding: 3px 5px;
   }
 }
