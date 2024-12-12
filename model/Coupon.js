@@ -6,6 +6,11 @@ function calculateExpiry(durationInDays) {
 }
 
 const couponSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true, // Ensures every coupon has a name
+    trim: true,
+  },
   code: {
     type: String,
     required: true,
@@ -16,8 +21,6 @@ const couponSchema = new mongoose.Schema({
   discountPercentage: {
     type: Number,
     required: true,
-    min: 0,
-    max: 100,
     default: 10, // Default discount is 10%
   },
   createdAt: {
@@ -28,6 +31,14 @@ const couponSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: () => calculateExpiry(30),
+  },
+  orderRange: {
+    type: Number,
+    default: 0, // Minimum order value required to use the coupon
+  },
+  totalOrderPriceRange: {
+    type: Number,
+    default: 0, // Minimum total order price value required to use the coupon
   },
 });
 
