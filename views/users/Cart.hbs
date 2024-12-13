@@ -224,11 +224,12 @@
                                 class="total-price">{{totalPrice}}</span></div>
                     </div>
                     <form>
-                        <p style="color: #FFFFFF;">SHIPPING</p>
+                        <p style="color: #FFFFFF;">Payment Option:</p>
                         <select>
-                            <option value="Standard-Delivery" class="text-muted">Standard-Delivery- ₹5.00</option>
-                            <option value="Express-Delivery" class="text-muted">Express-Delivery-₹10.00</option>
+                            <option value="CashOnDelivery" class="text-muted">Cash On Delivery</option>
+                            <option value="Upi" class="text-muted">UPI</option>
                         </select>
+
 
                         <p style="color: #FFFFFF;">GIVE CODE</p>
                         <input id="code" placeholder="Enter your code">
@@ -327,10 +328,10 @@
         e.preventDefault();
 
         const offerCode = document.getElementById("code").value.trim();
-        const shippingMethod = document.querySelector("select").value.trim();
+        const paymentOption = document.querySelector("select").value.trim();
 
-        if (!["Express-Delivery", "Standard-Delivery"].includes(shippingMethod)) {
-            alert("Invalid shipping method. Please select a valid option.");
+        if (!["Upi", "CashOnDelivery"].includes(paymentOption)) {
+            alert("Invalid payment option. Please select a valid option.");
             return;
         }
 
@@ -350,7 +351,7 @@
 
         const cartData = {
             offerCode: offerCode || null,
-            shippingMethod,
+            paymentOption,
             items: cartItems,
         };
 

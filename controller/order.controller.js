@@ -11,7 +11,7 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const checkout = async (req, res) => {
   try {
-    const { offerCode, shippingMethod } = req.body;
+    const { offerCode, paymentOption } = req.body;
     const user = req.user;
     const userId = user?.userId;
 
@@ -51,7 +51,7 @@ const checkout = async (req, res) => {
       };
     });
 
-    // Correctly update stock
+    // Check stock and update it
     for (const item of cart) {
       const product = products.find(
         (prod) => prod._id.toString() === item.productId.toString()
@@ -76,17 +76,14 @@ const checkout = async (req, res) => {
 
     let discount = 0;
     if (offerCode) {
-      // Validate the coupon
       const coupon = await Coupon.findOne({ code: offerCode.toUpperCase() });
       if (coupon && coupon.validUntil > new Date()) {
-        // Check user order history
         const userOrders = await Checkout.find({ userId });
         const totalOrderPrice = userOrders.reduce(
           (sum, order) => sum + order.totalPrice,
           0
         );
 
-        // Verify coupon conditions
         if (
           totalOrderPrice >= coupon.totalOrderPriceRange &&
           userOrders.some((order) => order.totalPrice >= coupon.orderRange)
@@ -104,8 +101,7 @@ const checkout = async (req, res) => {
       }
     }
 
-    const shippingCost = shippingMethod === "Express-Delivery" ? 10 : 5;
-    const finalTotalPrice = totalPrice - discount + shippingCost;
+    const finalTotalPrice = totalPrice - discount;
 
     const newCheckout = new Checkout({
       userId,
@@ -114,7 +110,7 @@ const checkout = async (req, res) => {
       totalPrice: finalTotalPrice,
       discount,
       offerCode: offerCode || null,
-      delivery: shippingMethod,
+      paymentOption,
     });
 
     await newCheckout.save();
@@ -135,6 +131,7 @@ const getCheckoutSummery = async (req, res, next) => {
     const user = req.user;
     const userId = user.userId;
 
+    // Fetch the latest checkout data for the user
     const checkoutData = await Checkout.find({ userId })
       .sort({ createdAt: -1 })
       .limit(1);
@@ -143,10 +140,12 @@ const getCheckoutSummery = async (req, res, next) => {
       return res.status(404).json({ message: "No checkout history found" });
     }
 
-    const productIds = checkoutData[0].items.map((item) => item.productId);
+    const latestCheckout = checkoutData[0];
+
+    const productIds = latestCheckout.items.map((item) => item.productId);
     const products = await Product.find({ _id: { $in: productIds } });
 
-    const checkoutItemsWithDetails = checkoutData[0].items.map((item) => {
+    const checkoutItemsWithDetails = latestCheckout.items.map((item) => {
       const product = products.find(
         (prod) => prod._id.toString() === item.productId.toString()
       );
@@ -159,7 +158,7 @@ const getCheckoutSummery = async (req, res, next) => {
         product: product
           ? {
               name: product.name,
-              battery: product.specifications.battery,
+              battery: product.specifications?.battery,
               colorOptions: product.colorOptions.map((color) => ({
                 colorName: color.colorName,
                 colorCode: color.colorCode,
@@ -179,21 +178,31 @@ const getCheckoutSummery = async (req, res, next) => {
     );
 
     // Fetch address details using addressId
-    const address = await Address.findById(checkoutData[0].addressId);
-    const allAddress = await Address.find({ userId: userId });
+    const address = await Address.findById(latestCheckout.addressId);
+    const allAddress = await Address.find({ userId });
+
+    // Prepare the checkout summary data
     const fullCheckoutData = {
       checkout: {
-        ...checkoutData[0].toObject(),
+        ...latestCheckout.toObject(),
         items: checkoutItemsWithDetails,
         totalPrice: totalPrice,
-        discount: checkoutData[0].discount || 0,
-        delivery: checkoutData[0].delivery || "Standard-Delivery",
-        offerCode: checkoutData[0].offerCode || null,
+        discount: latestCheckout.discount || 0,
+        delivery: latestCheckout.delivery || "Standard-Delivery",
+        offerCode: latestCheckout.offerCode || null,
+        paymentOption: latestCheckout.paymentOption, // Include payment option
         address: address ? address.toObject() : null,
         addresses: allAddress,
       },
     };
-
+    const paymentOptions = [
+      {
+        value: "CashOnDelivery",
+        isSelected: latestCheckout.paymentOption === "CashOnDelivery",
+      },
+      { value: "Upi", isSelected: latestCheckout.paymentOption === "Upi" },
+    ];
+    // Render the checkout summary page
     res.render("users/Checkout-Summery", {
       title: "Checkout Summary",
       user: req.user,

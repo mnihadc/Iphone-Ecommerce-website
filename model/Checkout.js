@@ -35,10 +35,10 @@ const checkoutSchema = new mongoose.Schema(
         },
       },
     ],
-    delivery: {
+    paymentOption: {
       type: String,
-      enum: ["Standard-Delivery", "Express-Delivery"],
-      default: "Standard-Delivery",
+      enum: ["Upi", "CashOnDelivery"],
+      default: "Upi",
     },
     offerCode: {
       type: String,

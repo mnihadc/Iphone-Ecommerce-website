@@ -382,8 +382,17 @@
                     </li>
                     {{/if}}
                     <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
-                        <span>Delivery:</span>
-                        <strong>₹{{checkout.delivery}}</strong>
+                        <span>Payment-Option</span>
+                        <strong>
+                            <div class="summary-item">
+                                <p><strong>Payment Option:</strong> </p>
+                            </div><select>
+                                <option value="{{checkout.paymentOption}}" class="text-muted">{{checkout.paymentOption}}
+                                </option>
+                                <option value="CashOnDelivery" class="text-muted">Cash On Delivery</option>
+                                <option value="Upi" class="text-muted">UPI</option>
+                            </select>
+                        </strong>
                     </li>
                     <li class="list-group-item d-flex justify-content-between" style="color: var(--midnight-blue);">
                         <span>Total:</span>
@@ -434,40 +443,76 @@
 </script>
 
 <script>
-    document.getElementById('confirmOrderBtn').addEventListener('click', function () {
-        fetch("/order/initiate-payment", {
-            method: "POST",
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.url) {
-                    window.location.href = data.url; // Redirect to Stripe
-                } else {
-                    alert("Failed to initiate payment.");
-                }
+    <script>
+        document.getElementById('confirmOrderBtn').addEventListener('click', function () {
+        // Get the selected payment method
+        const paymentOption = document.querySelector('select').value;
+
+        if (paymentOption === 'CashOnDelivery') {
+            // Handle Cash on Delivery logic
+            fetch("/order/confirm-cod-order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orderId: "{{checkout._id}}" }), // Pass the order ID
             })
-            .catch((error) => {
-                console.error("Error initiating payment:", error);
-            });
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Order confirmed successfully with Cash on Delivery.");
+                        window.location.href = "/order/success"; // Redirect to success page
+                    } else {
+                        alert("Failed to confirm order. Please try again.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error confirming COD order:", error);
+                });
+        } else if (paymentOption === 'Upi') {
+            // Handle UPI payment logic (Stripe integration)
+            fetch("/order/initiate-payment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orderId: "{{checkout._id}}" }), // Pass the order ID
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.url) {
+                        window.location.href = data.url; // Redirect to Stripe
+                    } else {
+                        alert("Failed to initiate payment.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error initiating payment:", error);
+                });
+        } else {
+            alert("Please select a valid payment method.");
+        }
     });
+</script>
+
 
 </script>
 
 <script>
-    function showPopup() {
-        document.getElementById('addressPopup').style.display = 'block';
+        function showPopup() {
+            document.getElementById('addressPopup').style.display = 'block';
         document.getElementById('popupBackdrop').style.display = 'block';
     }
 
-    function hidePopup() {
-        document.getElementById('addressPopup').style.display = 'none';
+        function hidePopup() {
+            document.getElementById('addressPopup').style.display = 'none';
         document.getElementById('popupBackdrop').style.display = 'none';
     }
 </script>
 <script>
-    $(document).on('click', '.btn-info', function () {
+        $(document).on('click', '.btn-info', function () {
         var addressId = $(this).data('address-id');
-        var orderId = '{{checkout._id}}';  // Get the orderId directly from the template
+        var orderId = '{{ checkout._id }}';  // Get the orderId directly from the template
 
         if (addressId && orderId) {
             selectAddress(addressId, orderId);
@@ -476,28 +521,28 @@
         }
     });
 
-    function selectAddress(addressId, orderId) {
-        fetch("/order/update-order-address", {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ orderId: orderId, addressId: addressId }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.message) {
-                    alert(data.message);
-                    hidePopup();  // Hide the popup after successful address change
-                    window.location.reload();  // Reload the page to reflect the new address
-                } else {
-                    alert("Failed to update address");
-                }
+        function selectAddress(addressId, orderId) {
+            fetch("/order/update-order-address", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orderId: orderId, addressId: addressId }),
             })
-            .catch((error) => {
-                console.error("Error updating address:", error);
-                alert("An error occurred while updating the address");
-            });
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.message) {
+                        alert(data.message);
+                        hidePopup();  // Hide the popup after successful address change
+                        window.location.reload();  // Reload the page to reflect the new address
+                    } else {
+                        alert("Failed to update address");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error updating address:", error);
+                    alert("An error occurred while updating the address");
+                });
     }
 
 </script>
