@@ -677,6 +677,7 @@ const handlePaymentSuccess = async (req, res) => {
       title: "Payment Successful",
       message: "Your payment was successful!",
       user,
+      orderId,
     });
   } catch (error) {
     console.error("Error in handlePaymentSuccess:", error);
@@ -713,6 +714,7 @@ const handlePaymentCancel = async (req, res) => {
     res.render("users/Payment-Cancel", {
       title: "Payment Canceled",
       user,
+      orderId,
       message: "You canceled the payment process. Please try again.",
     });
   } catch (error) {
