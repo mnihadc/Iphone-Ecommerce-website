@@ -166,7 +166,13 @@
                             <div class="card-footer d-flex justify-content-between align-items-center px-4 py-4">
                                 <h5 class="text-white mb-0">Total Paid: <span class="h2 mb-0">₹{{totalPrice}}</span>
                                 </h5>
+                                <div class="p-2 d-flex justify-content-between">
+                                    <!-- Add this button for downloading the invoice -->
+                                    <a href="#" class="btn btn-success" onclick="downloadInvoice('{{_id}}')">Download
+                                        Invoice</a>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -228,5 +234,36 @@
         }
     }
 </script>
+<script>
+    function downloadInvoice(orderId) {
+        fetch(`/order/download-invoice/${orderId}`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/pdf",  // Make sure the Accept header is correct
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch the invoice.");
+                }
+                return response.blob();
+            })
+            .then((blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = `invoice_${orderId}.pdf`; // Specify the filename for download
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url); // Clean up the object URL
+            })
+            .catch((error) => {
+                console.error("Error downloading invoice:", error);
+                alert("An error occurred while downloading the invoice.");
+            });
+    }
+</script>
+
 
 </html>

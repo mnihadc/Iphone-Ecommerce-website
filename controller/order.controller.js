@@ -2,6 +2,9 @@ const Checkout = require("../model/Checkout");
 const Cart = require("../model/Cart");
 const Product = require("../model/Product");
 const moment = require("moment");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config(); // Ensure this is at the top of the file
 const Stripe = require("stripe");
 const User = require("../model/User");
@@ -785,6 +788,79 @@ const confirmOrderCOD = async (req, res, next) => {
   }
 };
 
+const generateInvoice = async (req, res) => {
+  const orderId = req.params.orderId;
+
+  try {
+    // Fetch the order data from the database and populate necessary fields
+    const order = await Checkout.findById(orderId)
+      .populate("items.productId") // Populate productId
+      .populate("addressId") // Populate addressId for address data
+      .populate("userId") // Populate userId to get username
+      .exec();
+    console.log(order);
+
+    if (!order) {
+      return res.status(404).send({ message: "Order not found" });
+    }
+
+    const doc = new PDFDocument();
+    let filename = `invoice_${orderId}.pdf`;
+    filename = encodeURIComponent(filename); // Ensure the filename is properly encoded
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    // Pipe the PDF document to the response stream
+    doc.pipe(res);
+
+    // Add invoice details to the PDF document
+    doc.fontSize(20).text(`Invoice for Order: ${orderId}`, { align: "center" });
+    doc
+      .fontSize(12)
+      .text(`Customer: ${order.userId.username}`, { align: "left" });
+    doc.text(
+      `Address: ${order.addressId.fullName}, ${order.addressId.address}, ${order.addressId.city}`
+    );
+
+    // Format the invoice date
+    const formattedDate = new Date(order.createdAt).toLocaleDateString();
+    doc.text(`Invoice Date: ${formattedDate}`, { align: "left" });
+
+    // Loop through the items and add to the invoice
+    doc.moveDown();
+    doc.text("Items:", { underline: true });
+    order.items.forEach((item) => {
+      doc.text(
+        `${item.productId.name} - ₹${item.productId.price.toFixed(2)} x ${
+          item.quantity
+        }`,
+        { indent: 20 }
+      );
+    });
+
+    // Add total and GST
+    doc.moveDown();
+    doc.text(`Total Price: ₹${order.totalPrice.toFixed(2)}`);
+    doc.text(`Discount: ₹${order.discount.toFixed(2)}`);
+    doc.text(`GST: ₹${(order.totalPrice * 0.18).toFixed(2)}`); // Assuming 18% GST
+    doc.text(
+      `Total Amount: ₹${(
+        order.totalPrice +
+        order.totalPrice * 0.18 -
+        order.discount
+      ).toFixed(2)}`
+    );
+
+    // Finalize the PDF and send it
+    doc.end();
+  } catch (error) {
+    console.error("Error generating invoice:", error.message);
+    res
+      .status(500)
+      .send({ message: "Error generating invoice", error: error.message });
+  }
+};
+
 module.exports = {
   updateOrderAddress,
   checkout,
@@ -796,4 +872,5 @@ module.exports = {
   handlePaymentSuccess,
   handlePaymentCancel,
   initiatePaymentOrder,
+  generateInvoice,
 };

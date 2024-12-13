@@ -691,3 +691,12 @@ header {
 .add-to-wishlist-btn:hover {
   color: rgb(0, 139, 0);
 }
+
+.zoomContainer {
+  z-index: 9999 !important; /* Ensure zoom appears above other elements */
+}
+
+.carousel-inner img {
+  max-height: 500px;
+  object-fit: cover;
+}

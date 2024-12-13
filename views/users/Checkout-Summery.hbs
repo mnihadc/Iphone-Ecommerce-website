@@ -384,8 +384,12 @@
                     <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
                         <span><strong>Payment-Option</strong></span>
                         <strong>
-                            <div class="summary-item">
-                                <p><strong> {{checkout.paymentOption}}</strong> </p>
+                            <div class="mt-3">
+                                <h5 style="color: var(--charcoal-black);">Select Payment Method</h5>
+                                <select class="form-control" id="paymentOptionSelect">
+                                    <option value="CashOnDelivery">Cash on Delivery</option>
+                                    <option value="Upi">UPI Payment</option>
+                                </select>
                             </div>
                         </strong>
                     </li>
@@ -439,7 +443,7 @@
 
 <script>
     document.getElementById('confirmOrderBtn').addEventListener('click', function () {
-        const paymentOption = document.querySelector('select').value;
+        const paymentOption = document.getElementById('paymentOptionSelect').value;  // Get selected payment option
         const orderId = "{{checkout._id}}"; // Fetch dynamically generated order ID
 
         if (!orderId) {
@@ -462,17 +466,16 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orderId }),
         })
-            .then((response) => response.json())
-            .then((data) => {
+            .then(response => response.json())
+            .then(data => {
                 if (data.success) {
                     alert(data.message);
-                    // Redirect to the success page with orderId and userId
                     window.location.href = `/order/success?userId=${data.userId}&orderId=${data.orderId}`;
                 } else {
                     alert("Failed to confirm order. Please try again.");
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error("Error confirming COD order:", error);
                 alert("An error occurred. Please try again later.");
             });
@@ -482,22 +485,21 @@
         fetch("/order/initiate-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderId }),
+            body: JSON.stringify({ orderId })
         })
-            .then((response) => response.json())
-            .then((data) => {
+            .then(response => response.json())
+            .then(data => {
                 if (data.url) {
-                    window.location.href = data.url; // Redirect to Stripe
+                    window.location.href = data.url; // Redirect to Stripe or UPI payment gateway
                 } else {
                     alert("Failed to initiate payment.");
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error("Error initiating payment:", error);
                 alert("An error occurred. Please try again later.");
             });
     }
-
 </script>
 
 
