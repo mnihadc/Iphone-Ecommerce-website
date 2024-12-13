@@ -754,9 +754,39 @@ const updateOrderAddress = async (req, res, next) => {
   }
 };
 
+const confirmOrderCOD = async (req, res, next) => {
+  const { orderId } = req.body;
+  const userId = req.user.userId;
+
+  try {
+    const result = await Checkout.updateOne(
+      { _id: orderId },
+      { status: "Confirmed", paymentMethod: "COD" }
+    );
+
+    if (result.matchedCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    // Send response after confirming the order
+    res.json({
+      success: true,
+      message: "Order confirmed with Cash on Delivery",
+      userId,
+      orderId,
+    });
+  } catch (error) {
+    console.error("Error confirming COD order:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   updateOrderAddress,
   checkout,
+  confirmOrderCOD,
   getCheckoutSummery,
   CancelOrder,
   getOrder,

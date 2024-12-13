@@ -443,74 +443,85 @@
 </script>
 
 <script>
-    <script>
-        document.getElementById('confirmOrderBtn').addEventListener('click', function () {
-        // Get the selected payment method
+    document.getElementById('confirmOrderBtn').addEventListener('click', function () {
         const paymentOption = document.querySelector('select').value;
+        const orderId = "{{checkout._id}}"; // Fetch dynamically generated order ID
+
+        if (!orderId) {
+            alert("Order ID is missing. Please try again.");
+            return;
+        }
 
         if (paymentOption === 'CashOnDelivery') {
-            // Handle Cash on Delivery logic
-            fetch("/order/confirm-cod-order", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ orderId: "{{checkout._id}}" }), // Pass the order ID
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        alert("Order confirmed successfully with Cash on Delivery.");
-                        window.location.href = "/order/success"; // Redirect to success page
-                    } else {
-                        alert("Failed to confirm order. Please try again.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error confirming COD order:", error);
-                });
+            confirmOrderCOD(orderId);
         } else if (paymentOption === 'Upi') {
-            // Handle UPI payment logic (Stripe integration)
-            fetch("/order/initiate-payment", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ orderId: "{{checkout._id}}" }), // Pass the order ID
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.url) {
-                        window.location.href = data.url; // Redirect to Stripe
-                    } else {
-                        alert("Failed to initiate payment.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error initiating payment:", error);
-                });
+            initiateUPIPayment(orderId);
         } else {
             alert("Please select a valid payment method.");
         }
     });
+
+    function confirmOrderCOD(orderId) {
+        fetch("/order/confirm-cod-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert(data.message);
+                    // Redirect to the success page with orderId and userId
+                    window.location.href = `/order/success?userId=${data.userId}&orderId=${data.orderId}`;
+                } else {
+                    alert("Failed to confirm order. Please try again.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error confirming COD order:", error);
+                alert("An error occurred. Please try again later.");
+            });
+    }
+
+    function initiateUPIPayment(orderId) {
+        fetch("/order/initiate-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.url) {
+                    window.location.href = data.url; // Redirect to Stripe
+                } else {
+                    alert("Failed to initiate payment.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error initiating payment:", error);
+                alert("An error occurred. Please try again later.");
+            });
+    }
+
 </script>
+
 
 
 </script>
 
 <script>
-        function showPopup() {
-            document.getElementById('addressPopup').style.display = 'block';
+    function showPopup() {
+        document.getElementById('addressPopup').style.display = 'block';
         document.getElementById('popupBackdrop').style.display = 'block';
     }
 
-        function hidePopup() {
-            document.getElementById('addressPopup').style.display = 'none';
+    function hidePopup() {
+        document.getElementById('addressPopup').style.display = 'none';
         document.getElementById('popupBackdrop').style.display = 'none';
     }
 </script>
 <script>
-        $(document).on('click', '.btn-info', function () {
+    $(document).on('click', '.btn-info', function () {
         var addressId = $(this).data('address-id');
         var orderId = '{{ checkout._id }}';  // Get the orderId directly from the template
 
@@ -521,28 +532,28 @@
         }
     });
 
-        function selectAddress(addressId, orderId) {
-            fetch("/order/update-order-address", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ orderId: orderId, addressId: addressId }),
+    function selectAddress(addressId, orderId) {
+        fetch("/order/update-order-address", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ orderId: orderId, addressId: addressId }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.message) {
+                    alert(data.message);
+                    hidePopup();  // Hide the popup after successful address change
+                    window.location.reload();  // Reload the page to reflect the new address
+                } else {
+                    alert("Failed to update address");
+                }
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.message) {
-                        alert(data.message);
-                        hidePopup();  // Hide the popup after successful address change
-                        window.location.reload();  // Reload the page to reflect the new address
-                    } else {
-                        alert("Failed to update address");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error updating address:", error);
-                    alert("An error occurred while updating the address");
-                });
+            .catch((error) => {
+                console.error("Error updating address:", error);
+                alert("An error occurred while updating the address");
+            });
     }
 
 </script>

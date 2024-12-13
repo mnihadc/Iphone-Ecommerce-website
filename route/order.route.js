@@ -9,6 +9,7 @@ const {
   handlePaymentCancel,
   initiatePaymentOrder,
   updateOrderAddress,
+  confirmOrderCOD,
 } = require("../controller/order.controller");
 const authenticateUser = require("../middleware/verifyToken");
 
@@ -23,5 +24,6 @@ router.get("/success", authenticateUser, handlePaymentSuccess);
 router.get("/cancel", authenticateUser, handlePaymentCancel);
 router.post("/initiate-payment-order/:orderId", initiatePaymentOrder);
 router.patch("/update-order-address", authenticateUser, updateOrderAddress);
+router.post("/confirm-cod-order", authenticateUser, confirmOrderCOD);
 
 module.exports = router;
