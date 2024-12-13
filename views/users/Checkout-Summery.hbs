@@ -382,16 +382,11 @@
                     </li>
                     {{/if}}
                     <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
-                        <span>Payment-Option</span>
+                        <span><strong>Payment-Option</strong></span>
                         <strong>
                             <div class="summary-item">
-                                <p><strong>Payment Option:</strong> </p>
-                            </div><select>
-                                <option value="{{checkout.paymentOption}}" class="text-muted">{{checkout.paymentOption}}
-                                </option>
-                                <option value="CashOnDelivery" class="text-muted">Cash On Delivery</option>
-                                <option value="Upi" class="text-muted">UPI</option>
-                            </select>
+                                <p><strong> {{checkout.paymentOption}}</strong> </p>
+                            </div>
                         </strong>
                     </li>
                     <li class="list-group-item d-flex justify-content-between" style="color: var(--midnight-blue);">
