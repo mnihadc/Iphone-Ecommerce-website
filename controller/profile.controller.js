@@ -6,28 +6,35 @@ const Checkout = require("../model/Checkout");
 
 const getProfile = async (req, res, next) => {
   const user = req.user;
+
+  // Check if the user is logged in
   if (!user) {
-    return res.status(401).json({ message: "User is not logged in." });
+    // Redirect unauthorized users to the homepage
+    return res.redirect("/");
   }
 
   try {
+    // Fetch user data
     const userData = await User.findById(user.userId);
     if (!userData) {
-      return res.status(404).json({ message: "User not found." });
+      // Redirect if user data is not found
+      return res.redirect("/");
     }
 
+    // Fetch user's primary address
     const address = await Address.findOne({
       userId: user.userId,
       select: true,
     });
 
-    // Get the total order value from the user's order history
+    // Fetch user's order history and calculate total order value
     const orders = await Checkout.find({ userId: user.userId });
     const totalOrderValue = orders.reduce(
       (sum, order) => sum + order.totalPrice,
       0
     );
 
+    // Membership level calculations
     let membershipLevel = {
       newBuyer: 0,
       engagedShopper: 0,
@@ -36,28 +43,23 @@ const getProfile = async (req, res, next) => {
     };
 
     if (totalOrderValue <= 100000) {
-      // New Buyer: 0 to 1 lakh
-      membershipLevel.newBuyer = 100; // New Buyer is fully completed
+      membershipLevel.newBuyer = 100;
     } else if (totalOrderValue <= 500000) {
-      // Engaged Shopper: 1 lakh to 5 lakh
-      membershipLevel.newBuyer = 100; // New Buyer is fully completed
+      membershipLevel.newBuyer = 100;
       membershipLevel.engagedShopper =
-        ((totalOrderValue - 100000) / (500000 - 100000)) * 100; // Linear progress within 1 lakh to 5 lakh
+        ((totalOrderValue - 100000) / (500000 - 100000)) * 100;
     } else if (totalOrderValue <= 2500000) {
-      // Premium Member: 5 lakh to 25 lakh
-      membershipLevel.newBuyer = 100; // New Buyer is fully completed
-      membershipLevel.engagedShopper = 100; // Engaged Shopper is fully completed
+      membershipLevel.newBuyer = 100;
+      membershipLevel.engagedShopper = 100;
       membershipLevel.premiumMember =
-        ((totalOrderValue - 500000) / (2500000 - 500000)) * 100; // Linear progress within 5 lakh to 25 lakh
+        ((totalOrderValue - 500000) / (2500000 - 500000)) * 100;
     } else if (totalOrderValue <= 5000000) {
-      // Super Premium Member: 25 lakh to 50 lakh
-      membershipLevel.newBuyer = 100; // New Buyer is fully completed
-      membershipLevel.engagedShopper = 100; // Engaged Shopper is fully completed
-      membershipLevel.premiumMember = 100; // Premium Member is fully completed
+      membershipLevel.newBuyer = 100;
+      membershipLevel.engagedShopper = 100;
+      membershipLevel.premiumMember = 100;
       membershipLevel.superPremiumMember =
-        ((totalOrderValue - 2500000) / (5000000 - 2500000)) * 100; // Linear progress within 25 lakh to 50 lakh
+        ((totalOrderValue - 2500000) / (5000000 - 2500000)) * 100;
     } else {
-      // If the user exceeds 50 lakh, Super Premium is fully completed
       membershipLevel.newBuyer = 100;
       membershipLevel.engagedShopper = 100;
       membershipLevel.premiumMember = 100;
@@ -88,11 +90,12 @@ const getProfile = async (req, res, next) => {
             gender: address.gender,
           }
         : null,
-      membershipLevel, // Send the membership levels to the frontend
+      membershipLevel,
     });
   } catch (error) {
     console.error("Error fetching user data:", error);
-    return res.status(500).json({ message: "Internal server error." });
+    // Redirect to home if there's an internal server error
+    return res.redirect("/");
   }
 };
 

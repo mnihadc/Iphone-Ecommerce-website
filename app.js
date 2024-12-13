@@ -18,14 +18,18 @@ const wishlistRouter = require("./route/wishlist.route");
 const cookieParser = require("cookie-parser");
 const User = require("./model/User");
 const authenticateUser = require("./middleware/verifyToken");
+const NodeCache = require("node-cache");
+
 const app = express();
 dotenv.config();
+
+// Initialize cache with a default TTL of 3600 seconds (1 hour)
+const myCache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(authenticateUser);
 
 // MongoDB connection
 const port = process.env.PORT_NO || 3000;
@@ -43,8 +47,8 @@ mongoose
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // Your frontend's URL
-    credentials: true, // Allow credentials (cookies)
+    origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 
@@ -56,7 +60,6 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         "https://iphone-ecommerce-website.onrender.com/auth/google/callback",
-      scope: ["profile", "email"], // Ensure to request profile and email
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -84,6 +87,18 @@ passport.use(
   )
 );
 
+// Middleware to prevent cache for protected routes
+app.use((req, res, next) => {
+  res.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  res.set("Surrogate-Control", "no-store");
+  next();
+});
+
 // Routes for Google authentication
 app.get(
   "/auth/google",
@@ -92,22 +107,34 @@ app.get(
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/", session: false }), // <-- session: false added
+  passport.authenticate("google", { failureRedirect: "/", session: false }),
   (req, res) => {
-    // Successful login
     res.cookie("authToken", req.user.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Make sure to set to true in production
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 3600000, // 1 hour
+      maxAge: 3600000,
     });
     res.render("users/ContactUs", {
       title: "Contact Us",
       isContactUsPage: true,
-      user: req.user, // Use token-based user
+      user: req.user,
     });
   }
 );
+
+// Logout route
+app.get("/logout", (req, res) => {
+  const cacheKey = `user_${req.user?.userId}`;
+  myCache.del(cacheKey);
+  res.clearCookie("authToken");
+  res.redirect("/login");
+});
+
+// Middleware for JWT authentication
+app.use(authenticateUser);
+
+// Set Handlebars as view engine
 const hbs = exphbs.create({
   extname: "hbs",
   defaultLayout: "main",
@@ -127,7 +154,20 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public/user")));
 app.use(express.static(path.join(__dirname, "public/css")));
 
-// JWT Middleware for Protected Routes
+// Caching example
+app.get("/some-route", (req, res) => {
+  const cacheKey = "someData";
+  const cachedData = myCache.get(cacheKey);
+
+  if (cachedData) {
+    return res.json({ data: cachedData, fromCache: true });
+  }
+
+  const data = { message: "This is the data from the database" };
+  myCache.set(cacheKey, data);
+
+  res.json({ data, fromCache: false });
+});
 
 // Routes
 app.use("/", homeRouter);
