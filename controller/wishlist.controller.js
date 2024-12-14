@@ -173,7 +173,6 @@ const getCoupon = async (req, res, next) => {
       title: "Your Coupons",
       user,
       coupons: couponsWithStatus, // Pass only matching coupons
-      getCouponPage: true,
     });
   } catch (error) {
     console.error("Error fetching coupons:", error);
