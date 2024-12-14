@@ -127,10 +127,14 @@ const getViewProduct = async (req, res, next) => {
       offerPrice,
       stock,
       productImages,
-      colorOptions,
+      colorOptions, // colorOptions is an array
       specifications,
       releaseDate,
     } = product;
+
+    // Get only the first color option from the colorOptions array
+    const selectedColorOption = colorOptions && colorOptions[0]; // Get the first element
+    console.log(selectedColorOption);
 
     res.render("users/ViewProducts", {
       title: name,
@@ -142,7 +146,7 @@ const getViewProduct = async (req, res, next) => {
       offerPrice,
       stock,
       productImages,
-      colorOptions,
+      colorOption: selectedColorOption, // Pass the first colorOption as a single object
       specifications,
       releaseDate: formattedReleaseDate,
       isViewProduct: true,

@@ -66,17 +66,14 @@
                 <li><strong>{{this.key}}:</strong> {{this.value}}</li>
                 {{/each}}
             </ul>
-            <h3>Color </h3>
+            <h3>Color</h3>
             <ul>
-                {{#each colorOptions}}
                 <li>
                     <span
-                        style="display:inline-block; width:20px; height:20px; background-color:{{this.colorCode}}; border:1px solid #000; margin-right:5px;"></span>
-                    {{this.colorName}}
+                        style="display:inline-block; width:20px; height:20px; background-color:{{colorOption.colorCode}}; border:1px solid #000; margin-right:5px;"></span>
+                    {{colorOption.colorName}}
                 </li>
-                {{/each}}
             </ul>
-
             <span>
                 <i class="product-price">₹{{price}}</i>
                 <b class="product-offer-price">₹{{offerPrice}}</b>
