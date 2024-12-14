@@ -8,13 +8,12 @@ const productSchema = new mongoose.Schema({
   offerPrice: { type: Number },
   stock: { type: Number, required: true },
   productImages: { type: [String], required: true },
-  colorOptions: [
-    {
-      colorName: { type: String, required: true },
-      colorCode: { type: String, required: true },
-      colorImage: { type: String, default: "" }, // Default value for colorImage if not provided
-    },
-  ],
+  colorOption: {
+    // Changed from colorOptions array to a single object
+    colorName: { type: String, required: true },
+    colorCode: { type: String, required: true },
+    colorImage: { type: String, default: "" }, // Default value for colorImage if not provided
+  },
   specifications: [
     {
       key: { type: String, required: true }, // e.g., "Processor"
