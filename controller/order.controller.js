@@ -205,6 +205,7 @@ const getCheckoutSummery = async (req, res, next) => {
       },
       { value: "Upi", isSelected: latestCheckout.paymentOption === "Upi" },
     ];
+
     // Render the checkout summary page
     res.render("users/Checkout-Summery", {
       title: "Checkout Summary",

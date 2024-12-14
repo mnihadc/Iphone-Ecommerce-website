@@ -383,15 +383,7 @@
                     {{/if}}
                     <li class="list-group-item d-flex justify-content-between" style="color: var(--slate-gray);">
                         <span><strong>Payment-Option</strong></span>
-                        <strong>
-                            <div class="mt-3">
-                                <h5 style="color: var(--charcoal-black);">Select Payment Method</h5>
-                                <select class="form-control" id="paymentOptionSelect">
-                                    <option value="CashOnDelivery">Cash on Delivery</option>
-                                    <option value="Upi">UPI Payment</option>
-                                </select>
-                            </div>
-                        </strong>
+                        <span><strong id="paymentOptionSelect">{{checkout.paymentOption}}</strong></span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between" style="color: var(--midnight-blue);">
                         <span>Total:</span>
@@ -458,7 +450,7 @@
 
 <script>
     document.getElementById('confirmOrderBtn').addEventListener('click', function () {
-        const paymentOption = document.getElementById('paymentOptionSelect').value;  // Get selected payment option
+        const paymentOption = "{{checkout.paymentOption}}";  // Get  payment option
         const orderId = "{{checkout._id}}"; // Fetch dynamically generated order ID
 
         if (!orderId) {
