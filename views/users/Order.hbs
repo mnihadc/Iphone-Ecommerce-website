@@ -205,41 +205,74 @@
                 if (data.url) {
                     window.location.href = data.url; // Redirect to payment gateway
                 } else {
-                    alert("Failed to initiate payment.");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Payment Failed",
+                        text: "Failed to initiate payment. Please try again.",
+                    });
                 }
             })
             .catch((error) => {
                 console.error("Error initiating payment:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An unexpected error occurred. Please try again later.",
+                });
             });
     }
 </script>
+
 <script>
     function cancelOrder(orderId) {
-        if (confirm("Are you sure you want to cancel this order?")) {
-            fetch(`/order/cancel-order/${orderId}`, {
-                method: "post",
-            })
-                .then((response) => {
-                    if (response.ok) {
-                        alert("Order canceled successfully.");
-                        window.location.href = "/shop";
-                    } else {
-                        alert("Failed to cancel the order. Please try again.");
-                    }
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action will cancel your order.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, cancel it!",
+            cancelButtonText: "No, keep it",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/order/cancel-order/${orderId}`, {
+                    method: "POST",
                 })
-                .catch((error) => {
-                    console.error("Error canceling order:", error);
-                    alert("An error occurred. Please try again.");
-                });
-        }
+                    .then((response) => {
+                        if (response.ok) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Order Canceled",
+                                text: "Your order has been canceled successfully.",
+                            }).then(() => {
+                                window.location.href = "/shop";
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Cancellation Failed",
+                                text: "Failed to cancel the order. Please try again.",
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error canceling order:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "An error occurred. Please try again later.",
+                        });
+                    });
+            }
+        });
     }
 </script>
+
 <script>
     function downloadInvoice(orderId) {
         fetch(`/order/download-invoice/${orderId}`, {
             method: "GET",
             headers: {
-                "Accept": "application/pdf",  // Make sure the Accept header is correct
+                "Accept": "application/pdf",
             },
         })
             .then((response) => {
@@ -253,17 +286,28 @@
                 const a = document.createElement("a");
                 a.style.display = "none";
                 a.href = url;
-                a.download = `invoice_${orderId}.pdf`; // Specify the filename for download
+                a.download = `invoice_${orderId}.pdf`;
                 document.body.appendChild(a);
                 a.click();
-                window.URL.revokeObjectURL(url); // Clean up the object URL
+                window.URL.revokeObjectURL(url);
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Invoice Downloaded",
+                    text: "Your invoice has been downloaded successfully.",
+                });
             })
             .catch((error) => {
                 console.error("Error downloading invoice:", error);
-                alert("An error occurred while downloading the invoice.");
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An error occurred while downloading the invoice. Please try again.",
+                });
             });
     }
 </script>
+
 
 
 </html>

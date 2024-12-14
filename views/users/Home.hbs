@@ -287,24 +287,49 @@
                     .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
                     .then(({ status, message }) => {
                         if (status === 201) {
-                            alert(message); // Item added successfully
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: message,
+                                confirmButtonText: 'Okay',
+                            });
                         } else if (status === 400) {
-                            alert("Item is already in cart.");
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Info',
+                                text: "Item is already in cart.",
+                                confirmButtonText: 'Okay',
+                            });
                         } else if (status === 401) {
-                            alert("Please log in to add items to the cart.");
-                            window.location.href = "/auth/login";
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Please log in',
+                                text: "Please log in to add items to the cart.",
+                                confirmButtonText: 'Log in',
+                            }).then(() => {
+                                window.location.href = "/auth/login";
+                            });
                         } else {
-                            alert("An unexpected error occurred.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: "An unexpected error occurred.",
+                                confirmButtonText: 'Okay',
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Error adding to cart:", error);
-                        alert("An error occurred. Please try again later.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: "An error occurred. Please try again later.",
+                            confirmButtonText: 'Okay',
+                        });
                     });
             }
         });
     });
-
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -326,27 +351,53 @@
                     .then(({ status, message }) => {
                         if (status === 201) {
                             // Successfully added to wishlist
-                            alert(message);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: message,
+                                confirmButtonText: 'Okay',
+                            });
                         } else if (status === 400) {
                             // Product already in wishlist
-                            alert("Product is already in your wishlist.");
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Info',
+                                text: "Product is already in your wishlist.",
+                                confirmButtonText: 'Okay',
+                            });
                         } else if (status === 401) {
                             // User not authenticated
-                            alert("Please log in to add items to the wishlist.");
-                            window.location.href = "/auth/login"; // Redirect to login page
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Please log in',
+                                text: "Please log in to add items to the wishlist.",
+                                confirmButtonText: 'Log in',
+                            }).then(() => {
+                                window.location.href = "/auth/login"; // Redirect to login page
+                            });
                         } else {
                             // Other errors
-                            alert("An unexpected error occurred.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: "An unexpected error occurred.",
+                                confirmButtonText: 'Okay',
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Error adding to wishlist:", error);
-                        alert("An error occurred. Please try again later.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: "An error occurred. Please try again later.",
+                            confirmButtonText: 'Okay',
+                        });
                     });
             }
         });
     });
-
 </script>
+
 
 </html>

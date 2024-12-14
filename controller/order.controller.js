@@ -798,7 +798,6 @@ const generateInvoice = async (req, res) => {
       .populate("addressId") // Populate addressId for address data
       .populate("userId") // Populate userId to get username
       .exec();
-    console.log(order);
 
     if (!order) {
       return res.status(404).send({ message: "Order not found" });

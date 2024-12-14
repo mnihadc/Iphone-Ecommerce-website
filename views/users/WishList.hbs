@@ -71,49 +71,107 @@
                     .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
                     .then(({ status, message }) => {
                         if (status === 201) {
-                            alert("Item successfully added to the cart!");
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success!",
+                                text: "Item successfully added to the cart.",
+                                confirmButtonText: "OK",
+                            });
                         } else if (status === 400) {
-                            alert("Item is already in the cart.");
+                            Swal.fire({
+                                icon: "info",
+                                title: "Already in Cart",
+                                text: "Item is already in the cart.",
+                                confirmButtonText: "Got it",
+                            });
                         } else if (status === 401) {
-                            alert("Please log in to add items to the cart.");
-                            window.location.href = "/auth/login";
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Login Required",
+                                text: "Please log in to add items to the cart.",
+                                confirmButtonText: "Login Now",
+                            }).then(() => {
+                                window.location.href = "/auth/login";
+                            });
                         } else {
-                            alert("An unexpected error occurred.");
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error!",
+                                text: "An unexpected error occurred. Please try again.",
+                                confirmButtonText: "OK",
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Error adding to cart:", error);
-                        alert("An error occurred. Please try again later.");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "An error occurred. Please try again later.",
+                            confirmButtonText: "OK",
+                        });
                     });
             }
+
+            // Handle "Remove from Wishlist" button click
             if (e.target && e.target.classList.contains('remove-from-wishlist')) {
                 const productId = e.target.getAttribute("data-product-id");
                 const wishlistItem = e.target.closest('.wishlist-item'); // Find the closest wishlist item container
 
-                // Make a DELETE request to remove from wishlist
-                fetch(`/wishlist/remove/${productId}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-                    .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
-                    .then(({ status, message }) => {
-                        if (status === 200) {
-                            alert(message);
-                            wishlistItem.remove(); // Remove item from the DOM if successful
-                        } else {
-                            alert("Failed to remove item from wishlist.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error removing item from wishlist:", error);
-                        alert("An error occurred while removing the item.");
-                    });
+                // Show a confirmation dialog before removing
+                Swal.fire({
+                    icon: "question",
+                    title: "Are you sure?",
+                    text: "Do you want to remove this item from your wishlist?",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, remove it",
+                    cancelButtonText: "Cancel",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Make a DELETE request to remove from wishlist
+                        fetch(`/wishlist/remove/${productId}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        })
+                            .then(response =>
+                                response.json().then(data => ({ status: response.status, message: data.message }))
+                            )
+                            .then(({ status, message }) => {
+                                if (status === 200) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Removed!",
+                                        text: message,
+                                        confirmButtonText: "OK",
+                                    });
+                                    wishlistItem.remove(); // Remove item from the DOM if successful
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Failed",
+                                        text: "Failed to remove item from wishlist.",
+                                        confirmButtonText: "OK",
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error removing item from wishlist:", error);
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "An error occurred while removing the item. Please try again later.",
+                                    confirmButtonText: "OK",
+                                });
+                            });
+                    }
+                });
             }
         });
     });
 </script>
+
 
 
 </html>

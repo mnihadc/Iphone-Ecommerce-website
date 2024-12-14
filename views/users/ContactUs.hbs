@@ -271,24 +271,37 @@
 				});
 
 				if (response.ok) {
-					document.getElementById("form-message-success").style.display = "block";
-					document.getElementById("form-message-warning").style.display = "none";
-					form.reset();
+					// Show success SweetAlert2
+					Swal.fire({
+						icon: 'success',
+						title: 'Message Sent!',
+						text: 'Your message was successfully sent.',
+						confirmButtonText: 'Okay',
+					}).then(() => {
+						form.reset(); // Reset the form after success
+					});
 				} else {
 					const result = await response.json();
-					document.getElementById("form-message-warning").innerText =
-						result.error || "There was an issue with your submission.";
-					document.getElementById("form-message-warning").style.display = "block";
-					document.getElementById("form-message-success").style.display = "none";
+					// Show error SweetAlert2
+					Swal.fire({
+						icon: 'error',
+						title: 'Error!',
+						text: result.error || "There was an issue with your submission.",
+						confirmButtonText: 'Okay',
+					});
 				}
 			} catch (error) {
-				document.getElementById("form-message-warning").innerText =
-					"An unexpected error occurred.";
-				document.getElementById("form-message-warning").style.display = "block";
+				// Show error SweetAlert2 for unexpected issues
+				Swal.fire({
+					icon: 'error',
+					title: 'Unexpected Error!',
+					text: "An unexpected error occurred.",
+					confirmButtonText: 'Okay',
+				});
 			}
 		});
 	});
-
 </script>
+
 
 </html>

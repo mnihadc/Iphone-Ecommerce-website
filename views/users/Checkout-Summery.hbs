@@ -418,24 +418,39 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-
 <script>
     function cancelOrder(orderId) {
         if (confirm("Are you sure you want to cancel this order?")) {
             fetch(`/order/cancel-order/${orderId}`, {
-                method: "post",
+                method: "POST",
             })
                 .then((response) => {
                     if (response.ok) {
-                        alert("Order canceled successfully.");
-                        window.location.href = "/shop";
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Order Canceled',
+                            text: 'Your order has been canceled successfully.',
+                            confirmButtonText: 'Okay',
+                        }).then(() => {
+                            window.location.href = "/shop";
+                        });
                     } else {
-                        alert("Failed to cancel the order. Please try again.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cancel Failed',
+                            text: 'Failed to cancel the order. Please try again.',
+                            confirmButtonText: 'Try Again',
+                        });
                     }
                 })
                 .catch((error) => {
                     console.error("Error canceling order:", error);
-                    alert("An error occurred. Please try again.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred. Please try again.',
+                        confirmButtonText: 'Okay',
+                    });
                 });
         }
     }
@@ -447,7 +462,12 @@
         const orderId = "{{checkout._id}}"; // Fetch dynamically generated order ID
 
         if (!orderId) {
-            alert("Order ID is missing. Please try again.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Order ID Missing',
+                text: 'Order ID is missing. Please try again.',
+                confirmButtonText: 'Okay',
+            });
             return;
         }
 
@@ -456,7 +476,12 @@
         } else if (paymentOption === 'Upi') {
             initiateUPIPayment(orderId);
         } else {
-            alert("Please select a valid payment method.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Payment Method',
+                text: 'Please select a valid payment method.',
+                confirmButtonText: 'Okay',
+            });
         }
     });
 
@@ -469,15 +494,31 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data.message);
-                    window.location.href = `/order/success?userId=${data.userId}&orderId=${data.orderId}`;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order Confirmed',
+                        text: data.message,
+                        confirmButtonText: 'Proceed',
+                    }).then(() => {
+                        window.location.href = `/order/success?userId=${data.userId}&orderId=${data.orderId}`;
+                    });
                 } else {
-                    alert("Failed to confirm order. Please try again.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Order Confirmation Failed',
+                        text: 'Failed to confirm the order. Please try again.',
+                        confirmButtonText: 'Try Again',
+                    });
                 }
             })
             .catch(error => {
                 console.error("Error confirming COD order:", error);
-                alert("An error occurred. Please try again later.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again later.',
+                    confirmButtonText: 'Okay',
+                });
             });
     }
 
@@ -492,18 +533,24 @@
                 if (data.url) {
                     window.location.href = data.url; // Redirect to Stripe or UPI payment gateway
                 } else {
-                    alert("Failed to initiate payment.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Payment Failed',
+                        text: 'Failed to initiate payment.',
+                        confirmButtonText: 'Try Again',
+                    });
                 }
             })
             .catch(error => {
                 console.error("Error initiating payment:", error);
-                alert("An error occurred. Please try again later.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again later.',
+                    confirmButtonText: 'Okay',
+                });
             });
     }
-</script>
-
-
-
 </script>
 
 <script>
@@ -517,6 +564,7 @@
         document.getElementById('popupBackdrop').style.display = 'none';
     }
 </script>
+
 <script>
     $(document).on('click', '.btn-info', function () {
         var addressId = $(this).data('address-id');
@@ -525,7 +573,12 @@
         if (addressId && orderId) {
             selectAddress(addressId, orderId);
         } else {
-            alert("Invalid address or order ID");
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Invalid address or order ID.',
+                confirmButtonText: 'Okay',
+            });
         }
     });
 
@@ -540,19 +593,36 @@
             .then((response) => response.json())
             .then((data) => {
                 if (data.message) {
-                    alert(data.message);
-                    hidePopup();  // Hide the popup after successful address change
-                    window.location.reload();  // Reload the page to reflect the new address
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Address Updated',
+                        text: data.message,
+                        confirmButtonText: 'Okay',
+                    }).then(() => {
+                        hidePopup();  // Hide the popup after successful address change
+                        window.location.reload();  // Reload the page to reflect the new address
+                    });
                 } else {
-                    alert("Failed to update address");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Update Failed',
+                        text: 'Failed to update address',
+                        confirmButtonText: 'Try Again',
+                    });
                 }
             })
             .catch((error) => {
                 console.error("Error updating address:", error);
-                alert("An error occurred while updating the address");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while updating the address',
+                    confirmButtonText: 'Okay',
+                });
             });
     }
 
 </script>
+
 
 </html>

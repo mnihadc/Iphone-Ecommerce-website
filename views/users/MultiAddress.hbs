@@ -123,18 +123,32 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            console.log("Address selection updated.");
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Address selection updated successfully!',
+              timer: 2000,
+              showConfirmButton: false
+            });
           } else {
-            console.error("Failed to select address");
-            alert("Address selection failed. Please try again.");
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Address selection failed. Please try again.'
+            });
           }
         })
         .catch(error => {
           console.error("Error:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An unexpected error occurred. Please try again.'
+          });
         });
     }
-
   </script>
+
 
 </body>
 

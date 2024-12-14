@@ -298,6 +298,7 @@
             });
         });
     });
+
     document.addEventListener("DOMContentLoaded", function () {
         const removeButtons = document.querySelectorAll(".remove-cart-item");
         removeButtons.forEach(button => {
@@ -311,18 +312,36 @@
                 })
                     .then(response => {
                         if (response.ok) {
-                            alert("Item removed from cart successfully!");
-                            location.reload();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Item removed from cart successfully!',
+                                confirmButtonText: 'Okay',
+                            }).then(() => {
+                                location.reload();
+                            });
                         } else {
-                            alert("Failed to remove item from cart.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'Failed to remove item from cart.',
+                                confirmButtonText: 'Try Again',
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Error removing item from cart:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Unexpected Error!',
+                            text: 'An unexpected error occurred while removing the item.',
+                            confirmButtonText: 'Okay',
+                        });
                     });
             });
         });
     });
+
     // Checkout functionality
     document.querySelector(".btn").addEventListener("click", function (e) {
         e.preventDefault();
@@ -331,7 +350,12 @@
         const paymentOption = document.querySelector("select").value.trim();
 
         if (!["Upi", "CashOnDelivery"].includes(paymentOption)) {
-            alert("Invalid payment option. Please select a valid option.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Payment Option',
+                text: 'Please select a valid payment option.',
+                confirmButtonText: 'Okay',
+            });
             return;
         }
 
@@ -345,7 +369,12 @@
         });
 
         if (cartItems.length === 0) {
-            alert("Your cart is empty. Please add items to checkout.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Cart Empty',
+                text: 'Your cart is empty. Please add items to checkout.',
+                confirmButtonText: 'Okay',
+            });
             return;
         }
 
@@ -365,22 +394,42 @@
             .then((response) => response.json())
             .then((data) => {
                 if (data.message === "Checkout successful") {
-                    alert("Checkout successful! Your order is being processed.");
-                    window.location.href = "/order/checkout-summery";
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Checkout Successful!',
+                        text: 'Your order is being processed.',
+                        confirmButtonText: 'Proceed',
+                    }).then(() => {
+                        window.location.href = "/order/checkout-summery";
+                    });
                 } else if (data.message.includes("No address found")) {
-                    alert(data.message);
-                    window.location.href = "/address/get-create-address";
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'No Address Found',
+                        text: data.message,
+                        confirmButtonText: 'Add Address',
+                    }).then(() => {
+                        window.location.href = "/address/get-create-address";
+                    });
                 } else {
-                    alert(`Error during checkout: ${data.message}`);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error During Checkout',
+                        text: `Error: ${data.message}`,
+                        confirmButtonText: 'Okay',
+                    });
                 }
             })
             .catch((err) => {
                 console.error("Checkout Error:", err);
-                alert("An unexpected error occurred. Please try again later.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unexpected Error!',
+                    text: 'An unexpected error occurred. Please try again later.',
+                    confirmButtonText: 'Okay',
+                });
             });
     });
-
-
 </script>
 
 

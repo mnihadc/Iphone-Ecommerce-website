@@ -35,7 +35,10 @@
   border-radius: 5px;
   font-size: 1rem;
 }
-
+.list-group {
+  background: black;
+  color: silver;
+}
 .filter-bar .btn {
   border-radius: 5px;
   font-size: 1rem;
