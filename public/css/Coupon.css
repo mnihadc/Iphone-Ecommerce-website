@@ -2,7 +2,28 @@
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #2a9d8f, #264653);
 }
+body {
+  background: linear-gradient(90deg, #1d1e22, #007aff);
+}
 
+.status {
+  padding: 5px;
+  font-weight: bold;
+}
+
+.status.valid {
+  color: green;
+}
+
+.status.expired {
+  color: red;
+}
+
+.coupon {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px 0;
+}
 .coupon-page .container {
   max-width: 1000px;
   margin: 50px auto;
