@@ -396,6 +396,9 @@ const getOrder = async (req, res, next) => {
         options
       );
 
+      // Check if the order is delivered
+      const isDelivered = currentDate >= deliveryDate;
+
       // Find the address safely
       const address = addresses.find(
         (addr) => addr?._id?.toString() === order.addressId?.toString()
@@ -417,6 +420,7 @@ const getOrder = async (req, res, next) => {
         progress: progress.toFixed(2),
         address,
         users,
+        isDelivered, // Add the delivered flag
       };
     });
 

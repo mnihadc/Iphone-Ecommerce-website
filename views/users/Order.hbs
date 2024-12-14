@@ -61,13 +61,13 @@
 </head>
 
 <body>
-    {{#if orders.length}}
+    {{#if orders}}
     {{#each orders}}
-    <section class="h-100 gradient-custom">
+    <section class="h-100 gradient-custom" style="background-color: {{#if isDelivered}}red{{else}}#f8f9fa{{/if}};">
         <div class="container py-5">
             <div class="row justify-content-center align-items-center">
                 <div class="col-lg-10 col-xl-8">
-                    <div class="card border-0" style="border-radius: 10px;">
+                    <div class="card border-0 {{#if isDelivered}}bg-green{{/if}}" style="border-radius: 10px;">
                         <!-- Header -->
                         <div class="card-header bg-light px-4 py-4">
                             <h5 class="text-muted mb-0">
@@ -87,14 +87,18 @@
                                     <div class="progress-bar" role="progressbar" style="width: {{progress}}%;"
                                         aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
-                                <p class="text-muted small ms-3">{{#if (eq progress 100)}}Delivered{{else}}In
-                                    Progress{{/if}}</p>
+                                <p class="text-muted small ms-3">{{#if isDelivered}} <span
+                                        style="color: silver; background: green;padding: 5px; border-radius: 5px;">
+                                        Delivered</span>{{else}}In
+                                    Progress{{/if}}
+                                </p>
                             </div>
 
                             <div class="d-flex justify-content-between">
                                 <p class="text-muted mb-0">Delivery Date: <strong>{{deliveryDate}}</strong></p>
                             </div>
                             <hr class="mt-2">
+
                             <!-- Loop through items -->
                             {{#each items}}
                             <div class="card shadow-sm border-0 mb-4">
@@ -118,27 +122,23 @@
                                 </div>
                             </div>
                             {{/each}}
+
                             <div class="mb-4">
                                 <h5 class="text-muted mb-0">Delivery Address</h5>
-                                {{#if address}}
                                 <h6 class="ml-3"><b>{{address.fullName}}</b></h6>
                                 <p class="text-muted small mb-1 ml-4"><strong>{{address.address}}</strong></p>
                                 <p class="text-muted small mb-1 ml-4"><strong>{{address.city}},
                                         {{address.postalCode}}</strong></p>
                                 <p class="text-muted small mb-1 ml-4"><strong>{{address.state}},
                                         {{address.district}}</strong></p>
-                                <p class="text-muted small mb-1 ml-4">
-                                    <strong>{{address.phone}}, email : {{address.email}}</strong>
-                                </p>
-                                {{else}}
-                                <p class="text-muted small mb-1">Address not found</p>
-                                {{/if}}
+                                <p class="text-muted small mb-1 ml-4"><strong>{{address.phone}}, email :
+                                        {{address.email}}</strong></p>
                             </div>
 
                             <!-- Summary -->
                             <div class="d-flex justify-content-between pt-2">
                                 <p class="fw-bold mb-0">Order Details</p>
-                                <p class="text-muted mb-0"><span class="fw-bold ">Total</span> ₹{{totalPrice}}</p>
+                                <p class="text-muted mb-0"><span class="fw-bold">Total</span> ₹{{totalPrice}}</p>
                             </div>
                             <div class="d-flex justify-content-between pt-2">
                                 <p class="text-muted mb-0">Invoice Number: <strong>{{_id}}</strong></p>
@@ -146,7 +146,7 @@
                             </div>
                             <div class="d-flex justify-content-between">
                                 <p class="text-muted mb-0">Invoice Date: <strong>{{createdAt}}</strong></p>
-                                <p class="text-muted mb-0"><span class="fw-bold ">GST 18%</span></p>
+                                <p class="text-muted mb-0"><span class="fw-bold">GST 18%</span></p>
                             </div>
                             <div class="d-flex justify-content-between mb-5">
                                 <p class="text-muted mb-0">Receipts Voucher: <strong>{{offerCode}}</strong></p>
@@ -154,11 +154,8 @@
                             </div>
 
                             <div class="p-2 d-flex justify-content-between">
-                                {{#if (eq paymentStatus false)}}
-                                <!-- Payment Button (if payment is not done yet) -->
-                                <a class="btn btn-primary" href="#" onclick="initiatePayment('{{_id}}')">Proceed to
+                                <a href="#" class="btn btn-primary" onclick="initiatePayment('{{_id}}')">Proceed to
                                     payment</a>
-                                {{/if}}
                                 <a href="#" class="btn btn-secondary" onclick="cancelOrder('{{_id}}')">Cancel Order</a>
                             </div>
 
@@ -166,17 +163,13 @@
                             <div class="card-footer d-flex justify-content-between align-items-center px-4 py-4">
                                 <h5 class="text-white mb-0">Total Paid: <span class="h2 mb-0">₹{{totalPrice}}</span>
                                 </h5>
-                                <div class="p-2 d-flex justify-content-between">
-                                    <!-- Add this button for downloading the invoice -->
-                                    <a href="#" class="btn btn-success" onclick="downloadInvoice('{{_id}}')">Download
-                                        Invoice</a>
-                                </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
     </section>
     {{/each}}
     {{else}}
@@ -307,7 +300,5 @@
             });
     }
 </script>
-
-
 
 </html>
