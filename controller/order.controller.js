@@ -228,69 +228,22 @@ const CancelOrder = async (req, res) => {
       return res.status(404).json({ message: "Order not found." });
     }
 
-    // Restore product stock
-    for (const item of order.items) {
-      const product = await Product.findById(item.productId);
-      if (product) {
-        await Product.updateOne(
-          { _id: product._id },
-          { $inc: { stock: item.quantity } }
-        );
-      }
-    }
+    // Delete the order from the database
+    await Checkout.findByIdAndDelete(id);
 
-    // Handle payment and refund
-    if (order.paymentIntentId) {
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        order.paymentIntentId
-      );
-
-      if (!paymentIntent.charges?.data?.length) {
-        // No successful charge, cancel payment intent
-        if (paymentIntent.status !== "canceled") {
-          await stripe.paymentIntents.cancel(paymentIntent.id);
-        }
-
-        await Checkout.findByIdAndDelete(id);
-        return res
-          .status(200)
-          .json({ message: "Order canceled. No refund necessary." });
-      }
-
-      // Process refund
-      const refund = await stripe.refunds.create({
-        payment_intent: order.paymentIntentId,
-      });
-
-      if (refund.status === "succeeded") {
-        order.refundStatus = "Refunded";
-        await order.save();
-        await Checkout.findByIdAndDelete(id);
-
-        return res.status(200).json({
-          message: "Order canceled and refund processed successfully.",
-        });
-      } else {
-        order.refundStatus = "Failed";
-        await order.save();
-        return res.status(500).json({
-          message: "Refund failed. Please contact support.",
-        });
-      }
-    } else {
-      // No payment intent
-      await Checkout.findByIdAndDelete(id);
-      return res
-        .status(200)
-        .json({ message: "Order canceled. No payment to refund." });
-    }
+    return res.status(200).json({
+      message: "Order canceled and deleted successfully.",
+    });
   } catch (error) {
     console.error("Error canceling order:", error);
-    return res
-      .status(500)
-      .json({ message: "Internal server error.", error: error.message });
+    return res.status(500).json({
+      message: "Internal server error.",
+      error: error.message,
+    });
   }
 };
+
+
 const getOrder = async (req, res, next) => {
   try {
     const user = req.user;
@@ -667,7 +620,50 @@ const handlePaymentSuccess = async (req, res) => {
     res.status(500).json({ message: "Error handling payment success", error });
   }
 };
+const handlePaymentSuccessCOD = async (req, res) => {
+  try {
+    const { orderId, userId } = req.query;
 
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    let checkout;
+    if (orderId) {
+      // Find the checkout using the provided orderId
+      checkout = await Checkout.findById(orderId);
+      if (!checkout) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+    } else {
+      // If no orderId is provided, fetch the latest checkout for the user
+      checkout = await Checkout.findOne({ userId }).sort({ createdAt: -1 });
+      if (!checkout) {
+        return res.status(404).json({ message: "No checkout data found" });
+      }
+    }
+
+    // Update payment status
+    checkout.paymentStatus = false;
+    await checkout.save();
+
+    // Render the success page
+    res.render("users/Payment-Success", {
+      title: "Payment Successful",
+      message: "Your payment was successful!",
+      user,
+      orderId,
+    });
+  } catch (error) {
+    console.error("Error in handlePaymentSuccess:", error);
+    res.status(500).json({ message: "Error handling payment success", error });
+  }
+};
 // Handle Payment Cancellation
 const handlePaymentCancel = async (req, res) => {
   try {
@@ -852,4 +848,5 @@ module.exports = {
   handlePaymentCancel,
   initiatePaymentOrder,
   generateInvoice,
+  handlePaymentSuccessCOD,
 };

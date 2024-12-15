@@ -171,6 +171,8 @@
                             <div class="card-footer d-flex justify-content-between align-items-center px-4 py-4">
                                 <h5 class="text-white mb-0">Total Paid: <span class="h2 mb-0">₹{{totalPrice}}</span>
                                 </h5>
+                                <a href="#" class="btn btn-success" onclick="downloadInvoice('{{_id}}')">Download
+                                    Invoice</a>
                             </div>
 
                         </div>
@@ -225,7 +227,7 @@
 </script>
 
 <script>
-    function cancelOrder(orderId) {
+    async function cancelOrder(orderId) {
         Swal.fire({
             title: "Are you sure?",
             text: "This action will cancel your order.",
@@ -233,36 +235,51 @@
             showCancelButton: true,
             confirmButtonText: "Yes, cancel it!",
             cancelButtonText: "No, keep it",
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                fetch(`/order/cancel-order/${orderId}`, {
-                    method: "POST",
-                })
-                    .then((response) => {
-                        if (response.ok) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Order Canceled",
-                                text: "Your order has been canceled successfully.",
-                            }).then(() => {
-                                window.location.href = "/shop";
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Cancellation Failed",
-                                text: "Failed to cancel the order. Please try again.",
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error canceling order:", error);
+                Swal.fire({
+                    title: "Processing...",
+                    text: "Please wait while we cancel your order.",
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+
+                try {
+                    const response = await fetch(`/order/cancel-order/${orderId}`, {
+                        method: "POST", // Or "DELETE" based on your API design
+                        headers: {
+                            "Content-Type": "application/json",
+                            // 'X-CSRF-Token': '<YOUR_CSRF_TOKEN>' // Uncomment if needed
+                        },
+                    });
+
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Order Canceled",
+                            text: "Your order has been canceled successfully.",
+                        }).then(() => {
+                            window.location.href = "/shop";
+                        });
+                    } else {
+                        const errorData = await response.json();
                         Swal.fire({
                             icon: "error",
-                            title: "Error",
-                            text: "An error occurred. Please try again later.",
+                            title: "Cancellation Failed",
+                            text: errorData.message || "Failed to cancel the order. Please try again.",
                         });
+                    }
+                } catch (error) {
+                    console.error("Error canceling order:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "An error occurred. Please try again later.",
                     });
+                }
             }
         });
     }

@@ -492,7 +492,7 @@
                         text: data.message,
                         confirmButtonText: 'Proceed',
                     }).then(() => {
-                        window.location.href = `/order/success?userId=${data.userId}&orderId=${data.orderId}`;
+                        window.location.href = `/order/success-cod?userId=${data.userId}&orderId=${data.orderId}`;
                     });
                 } else {
                     Swal.fire({
