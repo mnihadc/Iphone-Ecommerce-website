@@ -218,7 +218,7 @@ const getCheckoutSummery = async (req, res, next) => {
   }
 };
 
-const CancelOrder = async (req, res, next) => {
+const CancelOrder = async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -239,83 +239,58 @@ const CancelOrder = async (req, res, next) => {
       }
     }
 
-    // Handle payments
+    // Handle payment and refund
     if (order.paymentIntentId) {
-      try {
-        const paymentIntent = await stripe.paymentIntents.retrieve(
-          order.paymentIntentId
-        );
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        order.paymentIntentId
+      );
 
-        if (!paymentIntent.charges || paymentIntent.charges.data.length === 0) {
-          console.log(
-            "No successful charges for PaymentIntent:",
-            paymentIntent.id
-          );
-
-          // Cancel PaymentIntent if not already canceled
-          if (paymentIntent.status !== "canceled") {
-            await stripe.paymentIntents.cancel(paymentIntent.id);
-          }
-
-          // Delete the order after handling the payment intent
-          await Checkout.findByIdAndDelete(id);
-
-          return res.status(200).json({
-            message:
-              "Order canceled successfully. No refund was necessary as payment was not completed.",
-          });
+      if (!paymentIntent.charges?.data?.length) {
+        // No successful charge, cancel payment intent
+        if (paymentIntent.status !== "canceled") {
+          await stripe.paymentIntents.cancel(paymentIntent.id);
         }
 
-        // Process refund if payment was successful
-        const refund = await stripe.refunds.create({
-          payment_intent: order.paymentIntentId,
+        await Checkout.findByIdAndDelete(id);
+        return res
+          .status(200)
+          .json({ message: "Order canceled. No refund necessary." });
+      }
+
+      // Process refund
+      const refund = await stripe.refunds.create({
+        payment_intent: order.paymentIntentId,
+      });
+
+      if (refund.status === "succeeded") {
+        order.refundStatus = "Refunded";
+        await order.save();
+        await Checkout.findByIdAndDelete(id);
+
+        return res.status(200).json({
+          message: "Order canceled and refund processed successfully.",
         });
-
-        if (refund.status === "succeeded") {
-          order.refundStatus = "Refunded";
-          await order.save();
-
-          // Delete the order after successful refund
-          await Checkout.findByIdAndDelete(id);
-
-          return res.status(200).json({
-            message:
-              "Order canceled and refund processed successfully. Amount will be credited to your bank account in 2-3 business days.",
-          });
-        } else {
-          order.refundStatus = "Failed";
-          await order.save();
-
-          return res.status(500).json({
-            message: "Refund failed. Please contact support.",
-          });
-        }
-      } catch (error) {
-        console.error("Refund error:", error);
+      } else {
         order.refundStatus = "Failed";
         await order.save();
-
         return res.status(500).json({
           message: "Refund failed. Please contact support.",
-          error: error.message,
         });
       }
     } else {
-      // No paymentIntentId, delete the order directly
+      // No payment intent
       await Checkout.findByIdAndDelete(id);
-
-      return res.status(200).json({
-        message: "Order canceled successfully. No payment found to refund.",
-      });
+      return res
+        .status(200)
+        .json({ message: "Order canceled. No payment to refund." });
     }
   } catch (error) {
-    console.error("Error canceling order:", error.message);
-    res
+    console.error("Error canceling order:", error);
+    return res
       .status(500)
       .json({ message: "Internal server error.", error: error.message });
   }
 };
-
 const getOrder = async (req, res, next) => {
   try {
     const user = req.user;
