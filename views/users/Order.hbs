@@ -160,11 +160,13 @@
                             <div class="p-2 d-flex justify-content-between">
                                 {{#if paymentStatus}}
                                 <span class="badge bg-success" style="padding-top: 11px;">Payment Completed</span>
+                                <a href="#" class="btn btn-danger" onclick="refundOrder('{{_id}}')">Request Refund</a>
                                 {{else}}
                                 <a href="#" class="btn btn-primary" onclick="initiatePayment('{{_id}}')">Proceed to
                                     payment</a>
-                                {{/if}}
                                 <a href="#" class="btn btn-secondary" onclick="cancelOrder('{{_id}}')">Cancel Order</a>
+                                {{/if}}
+
                             </div>
 
                             <!-- Footer -->
@@ -225,7 +227,65 @@
             });
     }
 </script>
+<script>
+    function refundOrder(orderId) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This will initiate a refund request for your payment.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, refund it!",
+            cancelButtonText: "No, keep it",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Processing...",
+                    text: "Please wait while we process your refund request.",
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
 
+                try {
+                    const response = await fetch(`/order/refund/${orderId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        Swal.fire({
+                            icon: "success",
+                            title: "Refund Processed",
+                            text: data.message || "Your refund request has been processed successfully.",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        const errorData = await response.json();
+                        Swal.fire({
+                            icon: "error",
+                            title: "Refund Failed",
+                            text: errorData.message || "Failed to process the refund. Please try again.",
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error processing refund:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "An error occurred. Please try again later.",
+                    });
+                }
+            }
+        });
+    }
+
+</script>
 <script>
     async function cancelOrder(orderId) {
         Swal.fire({

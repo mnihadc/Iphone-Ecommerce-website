@@ -243,7 +243,6 @@ const CancelOrder = async (req, res) => {
   }
 };
 
-
 const getOrder = async (req, res, next) => {
   try {
     const user = req.user;
@@ -836,6 +835,89 @@ const generateInvoice = async (req, res) => {
   }
 };
 
+const refundPayment = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    if (!orderId) {
+      return res.status(400).json({ message: "Order ID is required" });
+    }
+
+    // Find the checkout order in the database
+    const checkout = await Checkout.findById(orderId);
+
+    if (!checkout) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Check if paymentStatus is true (indicating payment was successful)
+    if (!checkout.paymentStatus) {
+      return res
+        .status(400)
+        .json({ message: "Cannot refund an order that hasn't been paid for" });
+    }
+
+    const paymentIntentId = checkout.paymentIntentId;
+
+    if (!paymentIntentId) {
+      return res
+        .status(400)
+        .json({ message: "No payment intent found for this order" });
+    }
+
+    // Retrieve the payment intent details from Stripe
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    console.log(paymentIntent);
+
+    // Check if the PaymentIntent is successfully captured
+    if (paymentIntent.status !== "succeeded") {
+      return res.status(400).json({
+        message: "PaymentIntent was not successfully completed. Cannot refund.",
+      });
+    }
+
+    // Check if the payment has already been refunded
+    if (
+      paymentIntent.charges.data[0].refunds &&
+      paymentIntent.charges.data[0].refunds.data.length > 0
+    ) {
+      return res
+        .status(400)
+        .json({ message: "This payment has already been refunded." });
+    }
+
+    // Proceed with refund directly using the PaymentIntent ID
+    const refund = await stripe.refunds.create({
+      payment_intent: paymentIntentId, // Refund the PaymentIntent directly
+    });
+
+    console.log(refund);
+
+    if (refund.status === "succeeded") {
+      // Update the checkout status to reflect that the payment is refunded
+      checkout.paymentStatus = false; // Mark payment as not completed
+      await checkout.save();
+
+      return res.status(200).json({
+        message: "Refund successful",
+        refund,
+      });
+    } else {
+      return res.status(500).json({
+        message: "Refund failed",
+        refund,
+      });
+    }
+  } catch (error) {
+    console.error("Error processing refund:", error);
+    // Log the detailed Stripe error
+    if (error.raw) {
+      console.error("Stripe Error:", error.raw);
+    }
+    res.status(500).json({ message: "Error processing refund", error });
+  }
+};
+
 module.exports = {
   updateOrderAddress,
   checkout,
@@ -849,4 +931,5 @@ module.exports = {
   initiatePaymentOrder,
   generateInvoice,
   handlePaymentSuccessCOD,
+  refundPayment,
 };
