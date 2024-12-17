@@ -1,12 +1,12 @@
 const Admin = require("../model/Admin");
+const Coupon = require("../model/Coupon");
 const Product = require("../model/Product");
 const nodemailer = require("nodemailer");
+const WishList = require("../model/WishList");
 
 // Get Home Page
 const getHomePage = async (req, res, next) => {
   try {
-    console.log(req.user);
-
     const products = await Product.aggregate([
       {
         $project: {
@@ -53,7 +53,9 @@ const getShopPage = async (req, res, next) => {
       ];
     }
 
+    // Fetch products
     const products = await Product.find(filters, {
+      id: 1,
       name: 1,
       productImages: { $arrayElemAt: ["$productImages", 0] },
       offerPrice: 1,
@@ -61,17 +63,32 @@ const getShopPage = async (req, res, next) => {
       category: 1,
     });
 
+    // Fetch categories
     const categories = await Product.distinct("category");
 
+    // Check if user is logged in and if so, get their wishlist
+    const userWishlist = req.user
+      ? await WishList.find({ userId: req.user.userId })
+      : [];
+    const wishlistProductIds = userWishlist.map((item) =>
+      item.productId.toString()
+    );
+
+    // Add `isAdded` flag to each product
+    const productsWithIsAdded = products.map((product) => ({
+      ...product.toObject(),
+      isAdded: wishlistProductIds.includes(product.id.toString()),
+    }));
+
     if (req.xhr) {
-      res.json({ products });
+      res.json({ products: productsWithIsAdded });
     } else {
       res.render("users/Shop", {
         title: "Shop",
         isShopPage: true,
-        products,
+        products: productsWithIsAdded,
         categories: categories.map((cat) => ({ category: cat })),
-        user: req.user, // Use token-based user
+        user: req.user, // User from the token
       });
     }
   } catch (error) {

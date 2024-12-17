@@ -7,6 +7,23 @@
     <title>Shop</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+<style>
+    .add-to-wishlist-btn i {
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .added-to-wishlist i {
+        color: red;
+        /* Red solid heart */
+    }
+
+    .not-in-wishlist i {
+        color: silver;
+        /* Gray outline heart */
+    }
+</style>
 
 <body>
     <header class="">
@@ -78,9 +95,16 @@
                             Add to Cart
                         </button>
                         <!-- Add to Wishlist Button (Heart symbol) -->
+
+
                         <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
-                            <i class="fa fa-heart"></i>
+                            {{#if this.isAdded}}
+                            <i class="fa fa-heart" style="color: red;"></i> <!-- Red solid heart -->
+                            {{else}}
+                            <i class="fa fa-heart" style="color: silver;"></i> <!-- Gray outline heart -->
+                            {{/if}}
                         </button>
+
                     </div>
                 </div>
                 {{/each}}
@@ -258,10 +282,12 @@
             });
 
             // Add to Wishlist
+            // Add to Wishlist
             productList.addEventListener('click', function (e) {
                 const button = e.target.closest('.add-to-wishlist-btn');
                 if (button) {
                     const productId = button.getAttribute("data-product-id");
+                    const icon = button.querySelector('i'); // Find the heart icon inside the button
 
                     fetch(`/wishlist/addtowishlist/${productId}`, {
                         method: "POST",
@@ -273,6 +299,10 @@
                         .then(({ status, message }) => {
                             if (status === 201) {
                                 Swal.fire('Success', message, 'success');
+                                // Change the heart icon to red (wishlist added)
+                                icon.classList.remove('fa-heart', 'fa-heart-o'); // Remove existing classes
+                                icon.classList.add('fa-heart'); // Solid heart
+                                icon.style.color = 'red'; // Change the color to red
                             } else if (status === 400) {
                                 Swal.fire('Info', 'Product is already in your wishlist.', 'info');
                             } else if (status === 401) {
@@ -297,7 +327,7 @@
                         });
                 }
             });
-        });
+        })
     </script>
 
 </body>

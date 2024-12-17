@@ -897,8 +897,6 @@ const refundPayment = async (req, res) => {
       payment_intent: paymentIntentId, // Refund the PaymentIntent directly
     });
 
-    console.log(refund);
-
     if (refund.status === "succeeded") {
       // Update the checkout status to reflect that the payment is refunded
       checkout.paymentStatus = false; // Mark payment as not completed
