@@ -190,6 +190,7 @@ const getCheckoutSummery = async (req, res, next) => {
         ...latestCheckout.toObject(),
         items: checkoutItemsWithDetails,
         totalPrice: totalPrice,
+        totalPriceWithDiscount: totalPrice - latestCheckout.discount,
         discount: latestCheckout.discount || 0,
         delivery: latestCheckout.delivery || "Standard-Delivery",
         offerCode: latestCheckout.offerCode || null,
@@ -289,11 +290,15 @@ const getOrder = async (req, res, next) => {
         };
       });
 
-      const totalPrice = enrichedItems.reduce(
+      const totalPriceBeforeDiscount = enrichedItems.reduce(
         (acc, item) =>
           acc + (item.product ? item.product.price * item.quantity : 0),
         0
       );
+
+      // Apply discount if available
+      const discount = order.discount || 0; // Assuming discount is in the order object
+      const totalPrice = totalPriceBeforeDiscount - discount;
       const gst = totalPrice * 0.18;
 
       const createdDate = new Date(order.createdAt);
@@ -342,7 +347,8 @@ const getOrder = async (req, res, next) => {
       return {
         ...order.toObject(),
         items: enrichedItems,
-        totalPrice,
+        totalPriceBeforeDiscount,
+        totalPrice, // Total price after discount
         gst,
         deliveryDate: formattedDeliveryDate,
         progress: progress.toFixed(2),
