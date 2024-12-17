@@ -127,19 +127,22 @@ const searchSuggestions = async (req, res, next) => {
 const getViewProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const product = await Product.findById(productId);
-    const allProducts = await Product.find();
 
+    // Fetch the product details
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
+
+    // Fetch all products to show "related" products
+    const allProducts = await Product.find();
     const shuffledProducts = allProducts.sort(() => Math.random() - 0.5);
     const limitedProducts = shuffledProducts.slice(
       0,
       Math.min(shuffledProducts.length, 16)
     );
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found." });
-    }
-
+    // Format the release date
     const formattedReleaseDate = new Date(
       product.releaseDate
     ).toLocaleDateString("en-US", {
@@ -147,6 +150,16 @@ const getViewProduct = async (req, res, next) => {
       month: "long",
       day: "numeric",
     });
+
+    // Check if the product is in the user's wishlist
+    let isAddedToWishlist = false;
+    if (req.user) {
+      const userWishlist = await WishList.findOne({
+        userId: req.user.userId,
+        productId: productId,
+      });
+      isAddedToWishlist = !!userWishlist; // true if wishlist entry exists
+    }
 
     const {
       _id,
@@ -159,12 +172,10 @@ const getViewProduct = async (req, res, next) => {
       productImages,
       colorOptions, // colorOptions is an array
       specifications,
-      releaseDate,
     } = product;
 
-    // Get only the first color option from the colorOptions array
-    const selectedColorOption = colorOptions && colorOptions[0]; // Get the first element
-    console.log(selectedColorOption);
+    // Get the first color option from the array
+    const selectedColorOption = colorOptions && colorOptions[0];
 
     res.render("users/ViewProducts", {
       title: name,
@@ -176,12 +187,13 @@ const getViewProduct = async (req, res, next) => {
       offerPrice,
       stock,
       productImages,
-      colorOption: selectedColorOption, // Pass the first colorOption as a single object
+      colorOption: selectedColorOption,
       specifications,
       releaseDate: formattedReleaseDate,
       isViewProduct: true,
       user: req.user, // Use token-based user
       limitedProducts,
+      isAddedToWishlist, // Flag to check if in wishlist
     });
   } catch (error) {
     next(error);

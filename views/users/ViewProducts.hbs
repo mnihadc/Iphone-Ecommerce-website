@@ -11,6 +11,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
 
 </head>
+<style>
+    .add-to-wishlist-btn i {
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        margin-top: 7px;
+    }
+
+    .added-to-wishlist i {
+        color: red;
+        /* Red solid heart */
+    }
+
+    .not-in-wishlist i {
+        color: silver;
+        /* Gray outline heart */
+    }
+</style>
 
 <body>
 
@@ -54,9 +72,14 @@
             </div>
             <p class="product-category">Product: {{name}}
                 <!-- Wishlist Button (Heart symbol) -->
-                <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
-                    <i class="fa fa-heart"></i>
+                <button class="add-to-wishlist-btn" data-product-id="{{_id}}">
+                    {{#if isAddedToWishlist}}
+                    <i class="fa fa-heart" style="color: red;"></i> <!-- Red solid heart -->
+                    {{else}}
+                    <i class="fa fa-heart" style="color: silver;"></i> <!-- Silver outline heart -->
+                    {{/if}}
                 </button>
+
             </p>
             <p class="product-category">Category: {{category}}</p>
             <p class="product-stock">Stock: {{stock}} units available</p>
@@ -256,6 +279,7 @@
             const button = e.target.closest('.add-to-wishlist-btn');
             if (button) {
                 const productId = button.getAttribute("data-product-id");
+                const icon = button.querySelector('i'); // Get the heart icon element
 
                 fetch(`/wishlist/addtowishlist/${productId}`, {
                     method: "POST",
@@ -266,6 +290,7 @@
                     .then(response => response.json().then(data => ({ status: response.status, message: data.message })))
                     .then(({ status, message }) => {
                         if (status === 201) {
+                            // Successfully added to wishlist
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Added to Wishlist',
@@ -273,7 +298,15 @@
                                 timer: 1500,
                                 showConfirmButton: false
                             });
+
+                            // Change the heart icon to red
+                            if (icon) {
+                                icon.classList.remove('fa-heart-o'); // Remove empty heart
+                                icon.classList.add('fa-heart'); // Add filled heart
+                                icon.style.color = 'red'; // Change to red
+                            }
                         } else if (status === 400) {
+                            // Already in wishlist
                             Swal.fire({
                                 icon: 'info',
                                 title: 'Already in Wishlist',
@@ -282,6 +315,7 @@
                                 showConfirmButton: false
                             });
                         } else if (status === 401) {
+                            // User not logged in
                             Swal.fire({
                                 icon: 'warning',
                                 title: 'Login Required',
@@ -291,6 +325,7 @@
                                 window.location.href = "/auth/login";
                             });
                         } else {
+                            // Handle unexpected errors
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
@@ -310,6 +345,7 @@
         });
     });
 </script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
