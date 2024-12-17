@@ -19,6 +19,20 @@ const getHomePage = async (req, res, next) => {
         },
       },
     ]);
+
+    const userWishlist = req.user
+      ? await WishList.find({ userId: req.user.userId })
+      : [];
+    const wishlistProductIds = userWishlist.map((item) =>
+      item.productId.toString()
+    );
+
+    // Add `isAdded` property to each product
+    const productsWithWishlist = products.map((product) => ({
+      ...product,
+      isAdded: wishlistProductIds.includes(product._id.toString()),
+    }));
+
     const banner = await Admin.findOne({ mainStatus: true });
 
     res.render("users/Home", {
@@ -26,13 +40,12 @@ const getHomePage = async (req, res, next) => {
       isHomePage: true,
       user: req.user,
       banner,
-      products,
+      products: productsWithWishlist, // Send updated products array
     });
   } catch (error) {
     next(error);
   }
 };
-
 // Get Shop Page
 const getShopPage = async (req, res, next) => {
   try {
