@@ -138,7 +138,7 @@ const handleForgotPassword = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Password Reset OTP",
-      text: `Your OTP is: ${otp}. It expires in 15 minutes.`,
+      text: `Your OTP is: ${otp}. It expires in 15 minutes. By iStore`,
     });
 
     return res.status(200).json({ message: "OTP sent successfully." });
@@ -228,8 +228,8 @@ const handleResetPassword = async (req, res) => {
 
     // Update the user's password
     user.password = hashedPassword;
-    user.otp = null; 
-    user.otpExpire = null; 
+    user.otp = null;
+    user.otpExpire = null;
     await user.save();
 
     // Send the user to the login page after successful password reset
