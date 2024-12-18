@@ -87,26 +87,30 @@
                         <a href="/product-view/{{this._id}}" class="product-title">
                             <h3>{{this.name}}</h3>
                         </a>
-                        <strong class="product-price">
-                            {{#if this.offerPrice}}
-                            <span class="product-price-old">₹{{this.offerPrice}}</span>
-                            {{else}}
-                            ₹{{this.price}}
-                            {{/if}}
-                        </strong>
+
+                        <!-- Price and Wishlist button side by side -->
+                        <div class="price-wishlist-container">
+                            <strong class="product-price">
+                                {{#if this.offerPrice}}
+                                <span class="product-price-old">₹{{this.offerPrice}}</span>
+                                {{else}}
+                                ₹{{this.price}}
+                                {{/if}}
+                            </strong>
+
+                            <!-- Wishlist Button (Heart symbol) -->
+                            <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
+                                {{#if this.isAdded}}
+                                <i class="fa fa-heart" style="color: red;"></i> <!-- Red solid heart -->
+                                {{else}}
+                                <i class="fa fa-heart" style="color: silver;"></i> <!-- Gray outline heart -->
+                                {{/if}}
+                            </button>
+                        </div>
 
                         <!-- Add to Cart Button -->
-                        <button class="add-to-cart-btn mb-1" data-product-id="{{this._id}}">
+                        <button class="add-to-cart-btn mb-1 m-1" data-product-id="{{this._id}}">
                             Add to Cart
-                        </button>
-
-                        <!-- Wishlist Button (Heart symbol) -->
-                        <button class="add-to-wishlist-btn" data-product-id="{{this._id}}">
-                            {{#if this.isAdded}}
-                            <i class="fa fa-heart" style="color: red;"></i> <!-- Red solid heart -->
-                            {{else}}
-                            <i class="fa fa-heart" style="color: silver;"></i> <!-- Gray outline heart -->
-                            {{/if}}
                         </button>
                     </div>
                 </div>
@@ -114,6 +118,7 @@
             </div>
         </div>
     </div>
+
 
 
     <!-- End Product Display -->

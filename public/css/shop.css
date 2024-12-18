@@ -260,33 +260,58 @@ header {
   }
 }
 
-/* Mobile Specific Grid */
-@media (max-width: 767px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 cards per row on mobile */
+/* Style for mobile view */
+@media (max-width: 768px) {
+  .product-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px; /* Adding margin to space out the items */
   }
 
-  .product-section {
-    padding: 4rem 1rem;
+  .product-price {
+    margin-bottom: 10px;
+    font-size: 1.2rem; /* Larger font size for better visibility */
   }
 
-  .product-card {
-    padding: 15px;
+  .product-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%; /* Ensuring the buttons take up full width */
   }
 
-  .product-card img {
-    height: 180px;
+  .add-to-cart-btn {
+    width: 100%;
+    margin-top: 10px; /* Adds some space between the buttons */
   }
 
-  .product-card h5 {
-    font-size: 1rem;
+  .wishlist-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px; /* Adds space between price & wishlist button */
   }
 
-  .product-card .btn {
-    font-size: 0.8rem;
-    padding: 8px 16px;
+  .add-to-wishlist-btn {
+    margin-left: 10px; /* Adds some space between the price and heart button */
+  }
+
+  .product-price {
+    font-size: 1.2rem;
+    flex-grow: 1; /* Allows the price to take up space next to the heart */
+  }
+
+  /* Optional: Styling the heart button in mobile */
+  .add-to-wishlist-btn i {
+    font-size: 1.5rem; /* Increase the size of the heart icon */
+    cursor: pointer;
+    transition: color 0.3s ease;
   }
 }
+
 /* Add to Cart Button */
 /* Add to Cart Button */
 .add-to-cart-btn {
@@ -303,6 +328,34 @@ header {
 
 .add-to-cart-btn:hover {
   background-color: #218c53;
+}
+/* Wishlist Button (Heart symbol) */
+.add-to-wishlist-btn {
+  background: none; /* Remove background */
+  border: none; /* Remove border */
+  padding: 0; /* Remove padding */
+  cursor: pointer; /* Maintain cursor pointer for clickable effect */
+}
+
+.add-to-wishlist-btn i {
+  font-size: 1.5rem; /* Keep the icon size larger */
+  transition: color 0.3s ease;
+}
+
+.add-to-wishlist-btn:hover i {
+  color: #e74c3c; /* Change heart color on hover */
+}
+
+/* Mobile Responsiveness for Wishlist Button */
+@media (max-width: 767px) {
+  .add-to-wishlist-btn {
+    background: none; /* Ensure no background on mobile */
+    border: none; /* Remove border on mobile */
+  }
+
+  .add-to-wishlist-btn i {
+    font-size: 1.5rem; /* Larger heart icon size */
+  }
 }
 
 /* Mobile Responsiveness for Add to Cart Button */
