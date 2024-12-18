@@ -143,6 +143,73 @@
             }
         }
 
+        .empty-cart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            margin-top: 2rem;
+        }
+
+        .back-to-shop {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .back-to-shop a {
+            text-decoration: none;
+            color: var(--pacific-blue);
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .empty-cart-image {
+            max-width: 100%;
+            height: auto;
+            width: 500px;
+            /* Default for larger screens */
+            max-height: 400px;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-cart-text {
+            font-size: 1.2rem;
+            color: var(--slate-gray);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .empty-cart-image {
+                width: 90%;
+                /* Scales down on smaller screens */
+            }
+
+            .back-to-shop {
+                font-size: 14px;
+            }
+
+            .empty-cart-text {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .empty-cart-container {
+                padding: 10px;
+            }
+
+            .empty-cart-image {
+                width: 80%;
+                /* Smaller image size for mobile */
+            }
+
+            .empty-cart-text {
+                font-size: 0.9rem;
+            }
+        }
+
+
         /* Small screen adjustments */
         @media (max-width: 576px) {
             .card {
@@ -205,11 +272,14 @@
                             shop</span></div>
                     {{else}}
                     <!-- Display a message if the cart is empty -->
-                    <div class="">
-                        <div class="back-to-shop"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to
-                                shop</span></div>
-                        <img style="width: 500px;height: 400px;text-align: center"
-                            src="https://img.freepik.com/premium-vector/empty-cart_701961-7086.jpg" alt="Cart is Empty">
+                    <div class="empty-cart-container">
+                        <div class="back-to-shop">
+                            <a href="/shop">&leftarrow;</a><span class="text-muted">Back to shop</span>
+                        </div>
+                        <img class="empty-cart-image"
+                            src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-illustration-download-in-svg-png-gif-file-formats--shopping-ecommerce-simple-error-state-pack-user-interface-illustrations-6024626.png?f=webp"
+                            alt="Cart is Empty">
+                        <p class="empty-cart-text">Your cart is empty! Browse our shop and add items to your cart.</p>
                     </div>
                     {{/if}}
                 </div>

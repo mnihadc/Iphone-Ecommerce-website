@@ -190,7 +190,6 @@ const getViewProduct = async (req, res, next) => {
       colorOption: selectedColorOption,
       specifications,
       releaseDate: formattedReleaseDate,
-      isViewProduct: true,
       user: req.user, // Use token-based user
       limitedProducts,
       isAddedToWishlist, // Flag to check if in wishlist
