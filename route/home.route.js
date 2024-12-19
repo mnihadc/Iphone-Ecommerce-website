@@ -8,6 +8,7 @@ const {
   getBlog,
   getContactUs,
   ContactUs,
+  getChatBot,
 } = require("../controller/home.controller");
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.get("/about", getAbout);
 router.get("/get-blogs", getBlog);
 router.get("/get-contact-us", getContactUs);
 router.post("/contact-us", ContactUs);
+router.get("/get-chat-bot", getChatBot);
 
 module.exports = router;

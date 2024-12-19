@@ -261,6 +261,13 @@ const ContactUs = async (req, res, next) => {
   }
 };
 
+const getChatBot = (req, res, next) => {
+  res.render("users/ChatBot", {
+    title: "Chatbot",
+    user: req.user,
+  });
+};
+
 module.exports = {
   getHomePage,
   getShopPage,
@@ -270,4 +277,5 @@ module.exports = {
   getBlog,
   getContactUs,
   ContactUs,
+  getChatBot,
 };
