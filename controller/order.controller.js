@@ -773,65 +773,111 @@ const generateInvoice = async (req, res) => {
   const orderId = req.params.orderId;
 
   try {
-    // Fetch the order data from the database and populate necessary fields
+    // Fetch the order data
     const order = await Checkout.findById(orderId)
-      .populate("items.productId") // Populate productId
-      .populate("addressId") // Populate addressId for address data
-      .populate("userId") // Populate userId to get username
+      .populate("items.productId")
+      .populate("addressId")
+      .populate("userId")
       .exec();
 
     if (!order) {
       return res.status(404).send({ message: "Order not found" });
     }
 
-    const doc = new PDFDocument();
+    const PDFDocument = require("pdfkit");
+    const fs = require("fs");
+    const path = require("path");
+    const doc = new PDFDocument({ margin: 50 });
+
+    const logoPath = path.resolve(__dirname, "assets", "logo.png");
+
+    // Check if logo file exists
+    if (!fs.existsSync(logoPath)) {
+      console.warn("Logo file not found. Proceeding without logo.");
+    }
+
     let filename = `invoice_${orderId}.pdf`;
-    filename = encodeURIComponent(filename); // Ensure the filename is properly encoded
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
-
-    // Pipe the PDF document to the response stream
     doc.pipe(res);
 
-    // Add invoice details to the PDF document
-    doc.fontSize(20).text(`Invoice for Order: ${orderId}`, { align: "center" });
+    // Add border
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+    doc
+      .rect(20, 20, pageWidth - 40, pageHeight - 40)
+      .strokeColor("#000")
+      .stroke();
+
+    // Add logo if available
+    if (fs.existsSync(logoPath)) {
+      doc.image(logoPath, 50, 30, { width: 100 });
+    }
+
+    // Add header
+    doc
+      .fontSize(20)
+      .text("iStore", 150, 30, { align: "right" })
+      .fontSize(10)
+      .text("mncKings MTR", 150, 55, { align: "right" })
+      .text("Phone: +91-1234567890", 150, 70, { align: "right" })
+      .text("Email: support@istore.com", 150, 85, { align: "right" });
+
+    doc.moveDown(2);
+
+    // Invoice details
+    doc
+      .fontSize(18)
+      .text(`Invoice`, { align: "center", underline: true })
+      .moveDown();
     doc
       .fontSize(12)
-      .text(`Customer: ${order.userId.username}`, { align: "left" });
-    doc.text(
-      `Address: ${order.addressId.fullName}, ${order.addressId.address}, ${order.addressId.city}`
-    );
+      .text(`Invoice ID: ${orderId}`)
+      .text(`Invoice Date: ${new Date(order.createdAt).toLocaleDateString()}`)
+      .moveDown();
 
-    // Format the invoice date
-    const formattedDate = new Date(order.createdAt).toLocaleDateString();
-    doc.text(`Invoice Date: ${formattedDate}`, { align: "left" });
+    // Customer details
+    doc
+      .fontSize(12)
+      .text(`Customer: ${order.userId.username}`)
+      .text(
+        `Address: ${order.addressId.fullName}, ${order.addressId.address}, ${order.addressId.city}`
+      )
+      .moveDown();
 
-    // Loop through the items and add to the invoice
-    doc.moveDown();
-    doc.text("Items:", { underline: true });
+    // Items purchased
+    doc.fontSize(12).text("Items:", { underline: true }).moveDown(0.5);
     order.items.forEach((item) => {
       doc.text(
         `${item.productId.name} - ₹${item.productId.price.toFixed(2)} x ${
           item.quantity
-        }`,
-        { indent: 20 }
+        }`
       );
     });
 
-    // Add total and GST
-    doc.moveDown();
-    doc.text(`Total Price: ₹${order.totalPrice.toFixed(2)}`);
-    doc.text(`Discount: ₹${order.discount.toFixed(2)}`);
-    doc.text(`GST: ₹${(order.totalPrice * 0.18).toFixed(2)}`); // Assuming 18% GST
-    doc.text(
-      `Total Amount: ₹${(
-        order.totalPrice +
-        order.totalPrice * 0.18 -
-        order.discount
-      ).toFixed(2)}`
+    // Summary details
+    const totalAmount = order.items.reduce(
+      (sum, item) => sum + item.productId.price * item.quantity,
+      0
     );
+    const gst = totalAmount * 0.18; // Assuming GST is 18%
+    const finalAmount = totalAmount + gst - order.discount;
 
-    // Finalize the PDF and send it
+    doc.moveDown();
+    doc
+      .fontSize(12)
+      .text(`Total Price: ₹${totalAmount.toFixed(2)}`)
+      .text(`Discount: ₹${order.discount.toFixed(2)}`)
+      .text(`GST: ₹${gst.toFixed(2)}`)
+      .text(`Total Amount: ₹${finalAmount.toFixed(2)}`)
+      .moveDown();
+
+    // Thank you note
+    doc
+      .fontSize(12)
+      .text("Thank you for shopping with us!", { align: "center" });
+
+    // Finalize PDF
     doc.end();
   } catch (error) {
     console.error("Error generating invoice:", error.message);
